@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+<title>raizadalab.org - Rajeev Raizada</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15"
+/>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="conteneur">
+<div id="header">Raizada Lab</div>
+
+<div id="haut">
+<ul class="menuhaut">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="people.html">People</a></li>
+    <li><a href="publications.html">Papers</a></li> 
+    <li><a href="teaching.html">Teaching</a></li> 
+    <li><a href="news.html">News</a></li> 
+    <li><a href="jobs.html">Jobs</a></li>
+</ul>
+</div>
+
+<div id="centre">
+
+<H1>Some tutorial Python and Matlab programs for fMRI, pattern-based analysis and SPM </H1>
+
+Here are some tutorial files that show 
+how to use Python and Matlab for fMRI, including pattern-based analysis
+(also known as multi-voxel pattern analysis, or MVPA).
+Please feel more than free to use the code for teaching,
+and if you do, please 
+<A HREF="mailto:rajeev dot raizada at gmail dot com">
+mail me</A> with comments and feedback.
+<BR>
+<BR>
+The code has lots of comments in it,
+which attempt to explain the concepts as explicitly
+as possible. No prior knowledge of Matlab or linear algebra
+is assumed.
+<br>
+<br>
+
+The following tutorials illustrate standard fMRI analysis, i.e. modeling 
+individual voxel time-courses using a General Linear Model (GLM):
+<ul>
+<li> 
+<table align=right cellpadding=10>
+<tr align=center>
+<td> <img src="Pics/Web/hrf_tutorial_screenshot.gif" BORDER=2 width="250"> </td>
+</tr>
+</table>
+<A href="https://colab.research.google.com/drive/1-DDyBSCFUmzt3iFfQnD42y7xFTv5DPJB#sandboxMode=true">hrf_tutorial.ipynb</A>. That code is a live Python notebook, hosted on Google Colab, so it should run inside any web browser, without needing any additional software (i.e. you don't even need to have Python installed on your computer). 
+</li>
+<li>
+Matlab version: <A href="Matlab/fMRI/hrf_tutorial.m">hrf_tutorial.m</A> 
+</li>
+<li>
+This program is a good place to
+start. It shows the basic shape of a Haemodynamic Response Function
+(HRF), how to convolve an HRF with a time-series of stimulus onsets
+in order to produce a predicted fMRI signal, and how to plot the results
+in Matlab. The program also shows what happens when closely-spaced stimuli
+produce HRFs which overlap in time and linearly sum.
+</li>
+<br>
+<li> 
+<table align=right cellpadding=10>
+<tr align=center>
+<td> <img src="Pics/Web/math_of_conv_screenshot.gif" BORDER=2 width="250"> </td>
+</tr>
+</table>
+<A href="https://colab.research.google.com/drive/1rAQcdTGImpdXjeI46Usd6Y1-hKoeUvEB#sandboxMode=true">math_of_convolution.ipynb</A> (Live Python notebook, on Google Colab). 
+</li>
+<li>
+Matlab version:  <A
+href="Matlab/fMRI/math_of_convolution.m">math_of_convolution.m</A>
+</li>
+<li>
+This program shows
+how convolution works, going through all the steps of exactly
+what gets added up and multiplied with what. It also explains
+from the ground-up how to do for-loops in Matlab.
+(By the way, if you want to see an example of how to "vectorise"
+code to avoid for-loops altogether, look at the bkprop.m program
+in my 
+<a href="matlab-neural-nets.html">
+Matlab for neural-nets page</A>).
+</li>
+<br>
+<br>
+<li> 
+<table align=right cellpadding=10>
+<tr align=center>
+<td> <img src="Pics/Web/design_matrix_tutorial_screenshot.gif" BORDER=2 width="250"> </td>
+</tr>
+</table>
+<A href="https://colab.research.google.com/drive/1JxT6UsrLRbKsY-QG-1w--lUUE3UD26PK#sandboxMode=true">design_matrix_tutorial.ipynb</A>. (Live Python notebook, on Google Colab). 
+</li>
+<li>
+Matlab version:
+<A
+href="Matlab/fMRI/design_matrix_tutorial.m">design_matrix_tutorial.m</A>
+</li>
+<li>
+- This program shows what the rows and columns of a design matrix
+mean, how each column represents the predicted response to a given
+stimulus condition, and 
+how the design matrix gets used to estimate the sensitivity
+of a voxel to various stimulus conditions. 
+The program walks step-by-step through the process of
+estimating the model parameters for a voxel's noisy fMRI-signal,
+making plots of the results along the way.
+</li>
+</ul>
+<br>
+
+These next two tutorials show some approaches in pattern-based fMRI 
+anaylsis:
+<ul>
+<li>
+<table align=right cellpadding=10>
+<tr align=center>
+<td> <img src="Pics/Web/classification_plane_screenshot.gif" BORDER=2 width="250"> </td>
+</tr>
+</table> 
+<A href="https://colab.research.google.com/drive/1W_4EGLgumGS45jUrugqmmcbZXgjLtUjQ#sandboxMode=true">classification_plane_tutorial.ipynb</A>. (Live Python notebook, on Google Colab).
+</li>
+<li> 
+Matlab version:
+<A href="Matlab/fMRI/classification_plane_tutorial.m">
+classification_plane_tutorial.m</A>
+</li>
+<li> This is a very introductory tutorial,
+showing how a classification task (in this case, deciding whether people 
+are sumo wrestlers or basketball players, based on their height and weight)
+can be viewed as drawing a decision boundary in a feature space.
+It shows how to plot the data, calculate the weights of a simple linear 
+classifier, and see how the resulting classifier carves up the feature 
+space into two categories. 
+</li>
+<li> Note to PyMVPA users: <A HREF="http://mih.voxindeserto.de/">Michael Hanke</A>
+has very kindly ported this tutorial into Python and has 
+included it in the examples section of the 
+<A HREF="http://www.pymvpa.org/">PyMVPA toolbox</A>.
+The webpage describing it is
+<A HREF="http://dev.pymvpa.org/examples/hyperplane_demo.html">here</A>
+and the Python script is 
+<A
+HREF="http://github.com/hanke/PyMVPA/raw/mh/master/doc/examples/hyperplane_demo.py">here</A>.
+</li>
+<br>
+</li>
+<li> <A
+href="Matlab/fMRI/explore_kamitani_tong_pattern_based_fMRI.m">
+explore_kamitani_tong_pattern_based_fMRI.m</A> - This tutorial is a bit 
+more in-depth, and explores the ideas put forward in the important paper
+by Kamitani & Tong (2005). The code simulates a map of orientation columns in 
+primary visual cortex, divides this simulated cortex into voxel-like 
+chunks, and counts up how much tissue there is in each voxel which is tuned
+to particular orientations. It then shows how this coarse-grained measure
+can be used to decode which visual orientation is being presented,
+even when some noise is added to the activation map.
+I should emphasise that this code is simply inspired by the Kamitani & Tong study,
+and should not be thought of as in any way endorsed by those authors! You can 
+download the original paper from the 
+<A HREF="http://www.psy.vanderbilt.edu/tonglab/web/Publications.html">
+Tong lab website</A>.
+</li>
+</ul>
+
+The following programs show how to use Matlab to view brain
+slices and to overlay statistical maps on top of anatomical scans.
+In order to run them, you need the companion .mat file that contains
+the brain images: <A
+href="Matlab/fMRI/speech_brain_images.mat">
+speech_brain_images.mat</A> (Choose "Download link to disk" with 
+right-click, or Control-mouseclick).
+<ul>
+<li>
+<A
+href="Matlab/fMRI/showing_brain_images_tutorial.m">showing_brain_images_tutorial.m</A> - Start with this
+program. It doesn't assume any prior knowledge of Matlab. It shows
+how to extract slices (axial, sagittal etc.) from a 3D volume
+and how to plot them with the appropriate axes, colormaps,
+and color-scaling.
+<br>
+<br>
+<li>
+<A
+href="Matlab/fMRI/overlaying_Tmaps_tutorial.m">overlaying_Tmaps_tutorial.m</A> - This program
+shows how to overlay a statistical map on top of an anatomical map.
+It assumes that you've already worked through showing_brain_images_tutorial.m
+You can see some more examples of showing brain images, this time
+using the transparency properties of Matlab 6, in the program
+<A href="Matlab/fMRI/put_into_same_voxel_space.m">put_into_same_voxel_space.m</A> below.
+<BR>
+</ul>
+<br>
+The programs below are slightly more complicated, and use functions 
+from SPM99. The code gives commented examples of how to do things
+like reading SPM images into Matlab, finding their origins,
+displaying overlays, and extracting parts of SPM plots.
+<ul>
+<li>
+<A href="Matlab/fMRI/put_into_same_voxel_space.m">put_into_same_voxel_space.m</A> - This program
+lets you put one image into the same voxel space as another image.
+E.g. you might want to extract a Brodmann area from the brodmann.img
+file that comes with <A HREF="http://www.mricro.com" >MRIcro</a>, 
+and then put that set of 1x1x1mm voxels 
+into the same voxel space as your functional data, which probably
+covers a smaller volume and has larger voxels. 
+Then you can use the Brodmann area
+as an ROI to explore your functional results.
+<li>
+<A href="Matlab/fMRI/grab_mip.m">grab_mip.m</A> - 
+This program grabs the "glass brain"
+Maximum Intensity Projection (MIP) from an SPM99 results plot,
+makes the voxels orange-ish instead of gray, and offers
+the option of saving the separate brain images into EPS files,
+which are good for distilling into PDFs or for loading directly
+into Adobe Illustrator. By the way, the EPS files are large (around
+192K), but they shrink into nice compact 8K PDF files.
+
+
+</ul>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+
+<!-- Start of StatCounter Code for Default Guide -->
+<script type="text/javascript">
+var sc_project=2252953; 
+var sc_invisible=1; 
+var sc_security="16db8d6f"; 
+</script>
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="statcounter"><a title="counter for
+tumblr" href="http://statcounter.com/tumblr/"
+target="_blank"><img class="statcounter"
+src="http://c.statcounter.com/2252953/0/16db8d6f/0/"
+alt="counter for tumblr"></a></div></noscript>
+<!-- End of StatCounter Code for Default Guide -->
+
+</BODY>
+</HTML>
+
+

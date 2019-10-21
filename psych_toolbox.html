@@ -1,0 +1,79 @@
+<HTML>
+<TITLE>Rajeev Raizada: Tutorial Matlab code</TITLE>
+
+<BODY BGCOLOR="#EAEAEA">
+
+<H1> Some tutorial Matlab Psychophysics Toolbox programs </H1>
+
+The
+<a href="http://www.psychtoolbox.org/" target="_blank">
+Matlab Psychophysics Toolbox</a>, written by David Brainard and Denis Pelli,
+is a wonderful package for presenting stimuli.
+It allows Matlab programs to call low-level videocard
+and timing routines which provide extremely accurate
+control. It runs on Mac OS 9 and Windows, with Mac OS X and Linux
+on the way soon.
+I have used it for presenting visual,
+auditory and cross-modal stimuli, for psychophysical
+testing and for fMRI presentation.
+<br>
+<br>
+Below are some programs that show how
+to present flickering log-polar radial checkerboards, rotating
+wedges and expanding rings using Colour Look-Up Tables (CLUTs).
+The nice thing about CLUTs is that they let you
+change what's on the screen without needing
+to do any time-consuming re-drawing of pixels.
+You can just change the colour of the pixels
+that are already there, in less than the blink of an eye.
+These programs also show how to present stimuli
+with frame-accurate timing.
+
+Please feel free to
+<A HREF="mailto:raizada at u dot washington dot edu">mail me</A> with any
+questions or comments.
+<BR>
+<ul>
+<li>
+<A HREF="http://www.nmr.mgh.harvard.edu/~raj/demo_clut_checkerboards.m"
+target="_blank"> demo_clut_checkerboards.m</A> - Run this program
+to see the flashing checkerboards in action. 
+To run it, you also need the .mat file containing
+the matrix that defines the checkerboards,
+<A
+HREF="http://www.nmr.mgh.harvard.edu/~raj/clut_check_pic.mat"> 
+clut_check_pic.mat</a>, and the program that makes the CLUTS:
+<A
+HREF="http://www.nmr.mgh.harvard.edu/~raj/make_cluts.m" target="_blank">
+make_cluts.m</a>
+<br>
+<br>
+<li>
+<A HREF="http://www.nmr.mgh.harvard.edu/~raj/make_check_for_clut.m" 
+target="_blank">
+make_check_for_clut.m</A> - This program shows how
+the matrix stored in clut_check_pic.mat was made. 
+If you download that .mat file then you don't
+need to run this program. However, if you're curious to see
+how to make a log-polar radial checkboard, then take a look!
+</li>
+</ul>
+
+If you want to see more that the PsychToolbox can do,
+then a very good tutorial program is MinimalExample.m, 
+written by Daniel Shima.
+The mail that Daniel Shima sent, posting the code, is 
+<a href="http://groups.yahoo.com/group/psychtoolbox/message/1151"
+target="_blank">here</a>, but Yahoogroups doesn't store
+attachments any more, so you can download a .zip file
+containing the actual code from Allen Ingling's website,
+<a href="http://cns.nyu.edu/~ingling/ForumAttachments/1151.zip">
+here</a>.
+
+
+
+
+
+
+
+

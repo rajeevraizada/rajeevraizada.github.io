@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+<title>raizadalab.org - Rajeev Raizada</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15"
+/>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div id="conteneur">
+<div id="header">Raizada Lab</div>
+
+<div id="haut">
+<ul class="menuhaut">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="people.html">People</a></li>
+    <li><a href="publications.html">Papers</a></li> 
+    <li><a href="teaching.html">Teaching</a></li> 
+    <li><a href="news.html">News</a></li> 
+    <li><a href="jobs.html">Jobs</a></li>
+</ul>
+</div>
+
+
+<div id="centre">
+
+<h6> Matlab and Python code for similarity-based neural decoding </h6>
+
+This webpage contains computer code for running the analyses from the 
+Journal of Cognitive Neuroscience paper
+<A
+HREF="papers/RaizadaConnolly_JoCN_2012.pdf">
+Raizada & Connolly (2012): "What
+makes different people's representations alike: neural similarity-space
+solves the problem of across-subject fMRI decoding."</A>
+A zip-archive of the code can be downloaded from <A
+HREF="papers/RaizadaConnolly_SuppInfo_code.zip"> here,</A> 
+and direct links to individual scripts are given below.
+
+<h6> Main analysis, allowing across-subject decoding via similarity space </h6>
+
+First, download the Haxby data, from
+<A
+HREF="http://pymvpa.org/datadb/haxby2001.html">
+http://pymvpa.org/datadb/haxby2001.html<a>
+<br>
+<br>
+The first set of analyses in the paper use that data without any additional
+preprocessing (the brain volumes in the online archive have already been
+motion-corrected).
+<br>
+<br>
+To read in the fMRI data and write its similarity matrices to a Matlab-format file, 
+run the Python script 
+<A
+HREF="papers/RaizadaConnolly_SuppInfo_code/Step1_ReadHaxbyData_WriteMatlabSimMatrixSquareforms.py"> 
+Step1_ReadHaxbyData_WriteMatlabSimMatrixSquareforms.py</A>, 
+which uses functions from 
+<A HREF="http://pymvpa.org">PyMVPA</A>. 
+<br>
+<br>
+Next, to perform the across-subject decoding, run the Matlab script
+<A
+HREF="papers/RaizadaConnolly_SuppInfo_code/Step2_AcrossSubjDecoding_SimMatrixPermutationMatching.m"> 
+Step2_AcrossSubjDecoding_SimMatrixPermutationMatching.m</A> 
+
+
+<h6> Feature-selection, and similarity analyses of the feature-selected voxels</h6>
+
+The code for the second set of analyses in the paper can be found in the
+subdirectory Spatially_normalised_analyses of the zip archive. In order to
+compare the locations of the selected voxels across different subjects, the
+brain volumes were all spatially normalised to the standard MNI152 template
+at 3x3x3mm resolution using SPM8, before feature-selection or
+similarity-analysis was carried out. A batch script to run those standard
+preprocessing steps is 
+<A
+HREF="papers/RaizadaConnolly_SuppInfo_code/Spatially_normalised_analyses/Voxel_selection_analysis/Step1_split_and_spatially_normalise_haxby_data.m"> 
+Step1_split_and_spatially_normalise_haxby_data.m</A>.
+<br>
+<br>
+The normalised images are then detrended and written into Matlab-format
+.mat files by the Python script
+<A
+HREF="papers/RaizadaConnolly_SuppInfo_code/Spatially_normalised_analyses/Voxel_selection_analysis/Step2_haxby_normed_data_whole_brain_to_mat.py"> 
+Step2_haxby_normed_data_whole_brain_to_mat.py</A>, which uses the whole-brain
+mask image, also provided, 
+<A
+HREF="papers/RaizadaConnolly_SuppInfo_code/Spatially_normalised_analyses/Voxel_selection_analysis/wholebrain_mask_haxby_space.nii.gz"> 
+wholebrain_mask_haxby_space.nii.gz</A> 
+<br>
+<br>
+The feature-selection is performed by the Matlab script 
+<A
+HREF="papers/RaizadaConnolly_SuppInfo_code/Spatially_normalised_analyses/Voxel_selection_analysis/Step3_select_wholebrain_haxby_voxels_via_Ts_and_Fs.m"> 
+Step3_select_wholebrain_haxby_voxels_via_Ts_and_Fs.m</A>. 
+That script writes as output the similarity matrices derived from the
+selected voxels, for each subject:
+<A
+HREF="papers/RaizadaConnolly_SuppInfo_code/Spatially_normalised_analyses/Voxel_selection_analysis/haxby_wholebrain_selected_voxels_sims.mat"> 
+haxby_wholebrain_selected_voxels_sims.mat</A>. 
+<br>
+<br> 
+Those similarity matrices then
+serve as input for the across-subject decoding script:
+<A
+HREF="papers/RaizadaConnolly_SuppInfo_code/Spatially_normalised_analyses/Voxel_selection_analysis/Step4_AcrossSubjDecoding_using_selected_voxels_sims.m"> 
+Step4_AcrossSubjDecoding_using_selected_voxels_sims.m</A>. 
+That script is exactly the same as the one above from the first analysis,
+<A
+HREF="papers/RaizadaConnolly_SuppInfo_code/Step2_AcrossSubjDecoding_SimMatrixPermutationMatching.m"> 
+Step2_AcrossSubjDecoding_SimMatrixPermutationMatching.m</A>, 
+with the one alteration that a different .mat file of similarity matrix
+data is read-in at the beginning.
+<br>
+<br>
+Because the .mat file to be read-in by this Step4 decoding script is
+included with the rest of the code, the reader may skip straight to running
+the Step4 script, if desired. The data in that .mat file can be recreated
+from scratch by running the Steps 1 to 3 scripts.
+
+<h6> Chance-level performance of a Monte Carlo permutation distribution,
+compared against a binomial distribution</h6>
+
+Chance performance for our new permutation-matching decoding approach is
+determined by a permutation distribution. For more standard multi-class
+decoding approaches, chance performance is given by a binomial
+distribution. The Matlab script <A
+HREF="http://raizadalab.org/papers/RaizadaConnolly_SuppInfo_code/Additional_scripts/perm_matching_vs_binomial.m">
+perm_matching_vs_binomial.m</a> in the Additional_scripts subdirectory
+calculates and compares these two distributions, for the case of eight
+different stimulus conditions. As running that code demonstrates, for both
+distributions the expected number correct for chance performance is 1 out
+of 8, and the p<0.05 critical-value number correct is 3 out of 8.
+
+<br>
+<br>
+<br>
+<!-- Start of StatCounter Code for Default Guide -->
+<script type="text/javascript">
+var sc_project=7614067;
+var sc_invisible=1;
+var sc_security="933a002f";
+</script>
+<script type="text/javascript"
+src="http://www.statcounter.com/counter/counter.js"></script>
+<noscript><div class="statcounter"><a title="tumblr hit
+counter" href="http://statcounter.com/tumblr/"
+target="_blank"><img class="statcounter"
+src="http://c.statcounter.com/7614067/0/933a002f/1/"
+alt="tumblr hit counter"></a></div></noscript>
+<!-- End of StatCounter Code for Default Guide -->
+
+</BODY>
+</HTML>
