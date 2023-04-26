@@ -166,24 +166,31 @@ function main_draw_loop() {
 }
 
 function check_for_uncleared_overlap() {
+  // The p5play physics engine doesn't seem to detect
+  // uncleared overlap in some cases. It looks like
+  // we need to bypass the collision and overlap functions,
+  // and build our own manual checking.
   for (i = 0; i < block_count; i++) {
     block_i = number_blocks[i]; 
     for (j = 0; j < block_count; j++) {
       block_j = number_blocks[j];   
-      // If two blocks have been touching for a while, 
-      // see how far vertically apart they are. 
+      // Check how far vertically apart the two blocks are. 
       // Move apart if too close.
-      if (block_i.colliding(block_j) > 10) {
-        vertical_sep = Math.abs(block_i.y - block_j.y);
-        tol = 3;
-        if (vertical_sep>tol && vertical_sep<(block_size-tol)) {
+      vertical_sep = Math.abs(block_i.y - block_j.y);
+      // We only care about vertical sep if in same column,
+      // i.e. if horizontal_sep < tol.
+      // Also, we want i and j to be different blocks!
+      horizontal_sep = Math.abs(block_i.x - block_j.x);      
+      tol = 0.2 * block_size;
+      if ( horizontal_sep<tol && i!=j ) {
+        if ( vertical_sep<(block_size-tol) ) {
           // If overlapping too much, move top block upwards
           if (block_i.y < block_j.y) {
             block_i.vel.y -= 1;
           } else {
             block_j.vel.y -= 1;
           }
-        }
+        }  
       }  
     } 
   }
