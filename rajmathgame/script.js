@@ -159,13 +159,15 @@ function main_draw_loop() {
     }
   }
   // Check for uncleared overlap bug
-  if (block_count > 0 && swaps_remaining > 0 &&
-    total_motion<motion_thresh && swap_started==0 ) {    
+  if (block_count>0 && swaps_remaining>0 && swap_started==0 ) {    
     check_for_uncleared_overlap();
   }
 }
 
 function check_for_uncleared_overlap() {
+  textSize(15);
+  text('Checking for uncleared overlap',20,100)
+  block_count = number_blocks.length
   // The p5play physics engine doesn't seem to detect
   // uncleared overlap in some cases. It looks like
   // we need to bypass the collision and overlap functions,
@@ -181,14 +183,17 @@ function check_for_uncleared_overlap() {
       // i.e. if horizontal_sep < tol.
       // Also, we want i and j to be different blocks!
       horizontal_sep = Math.abs(block_i.x - block_j.x);      
-      tol = 0.2 * block_size;
+      tol = 0 * block_size;
       if ( horizontal_sep<tol && i!=j ) {
         if ( vertical_sep<(block_size-tol) ) {
+          text('Uncleared overlap found',150,100)
           // If overlapping too much, move top block upwards
           if (block_i.y < block_j.y) {
             block_i.vel.y -= 10;
+            text('Moving up block ' + i,20,100)
           } else {
             block_j.vel.y -= 10;
+            text('Moving up block ' + j,20,100)
           }
         }  
       }  
