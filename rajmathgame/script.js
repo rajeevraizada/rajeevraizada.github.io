@@ -57,7 +57,7 @@ let this_level_cleared = 0;
 let num_levels = 9;
 // People don't seem to like levels being locked. 
 // Next line prevents that:
-let highest_level_unlocked = num_levels; 
+let highest_level_unlocked = num_levels;
 let fr = 60;
 let g = 7; // Math.log(fr);
 let emoji_list = ['😎', '🤩', '🤠', '🐯', '🦊', '👑', '🦁',
@@ -75,6 +75,7 @@ let hint_dur = 5000;
 let hint_start_time;
 let hints_remaining;
 let hi_score = 0;
+let help_shown_time = 0;
 hint_start_time = -hint_dur; // Prevent any initial hint on start
 
 function draw() {
@@ -109,7 +110,7 @@ function main_draw_loop() {
   if (block_count > 0 && swaps_remaining > 0 &&
     total_motion < motion_thresh) {
     update_row_col_recs();
-    
+
     // Don't do any extra highlighting or swapping 
     // or block adding if a swap is already underway.
     // Also, wait for a short time after start of level,
@@ -143,6 +144,11 @@ function main_draw_loop() {
     hint_start_time = millis();
     hints_remaining -= 1;
   }
+  help_being_pressed = check_for_mouse_click_or_touch(help_button);
+  if (help_being_pressed==1 && (millis()-help_shown_time)>3000) {
+    window.alert('Aim: put equal-value blocks next to each other, to make them explode. To move blocks around, click on two that are next to each other to swap their positions.');
+    help_shown_time = millis();
+  }
   if (millis() - hint_start_time < hint_dur) {
     find_matching_pair_for_hint();
   } else {
@@ -159,8 +165,123 @@ function main_draw_loop() {
     }
   }
   // Check for uncleared overlap bug
-  if (block_count>0 && swaps_remaining>0 && swap_started==0 ) {    
+  if (block_count > 0 && swaps_remaining > 0 && swap_started == 0) {
     check_for_uncleared_overlap();
+  }
+}
+
+function setup() {
+  new Canvas(displayWidth, displayHeight);
+  world.gravity.y = g; // to_remove
+  max_x = min(displayWidth, 800);
+  max_y = min(displayHeight, 1300);
+  if (isMobileDevice) {
+    scale_value = 1;
+    y_offset = -50;
+  } else {
+    scale_value = 0.5;
+    y_offset = 120;
+  }
+  if (isChromebook) {
+    scale_value = 0.5;
+    y_offset = 150;
+  }
+  block_size =
+    round(min(scale_value * max_x / box_blocks_height,
+      scale_value * max_y / box_blocks_width));
+
+  number_blocks = new Group();
+  number_blocks.collider = 'dynamic';
+  number_blocks.color = 'white';
+  number_blocks.width = block_size;
+  number_blocks.height = block_size;
+  number_blocks.bounciness = 0.05;
+  number_blocks.mass = 0.1;
+  number_blocks.textSize = 20;
+  number_blocks.rotationLock = true; // Prevent lopsided blocks
+
+  show_hint_button = new Group();
+  show_hint_button.x = 300;
+  show_hint_button.y = 50;
+  show_hint_button.textSize = 15;
+  show_hint_button.text = 'Show hint';
+  show_hint_button.collider = 'static';
+  show_hint_button.width = 2 * block_size;
+  show_hint_button.height = 0.35 * block_size;
+  show_hint_button.color = 'white';
+  show_hint_button.textColor = 'blue';
+  show_hint_button.overlaps(number_blocks);
+
+  help_button = new Group();
+  help_button.x = 300;
+  help_button.y = 20;
+  help_button.textSize = 15;
+  help_button.text = 'How to play';
+  help_button.collider = 'static';
+  help_button.width = 2 * block_size;
+  help_button.height = 0.35 * block_size;
+  help_button.color = 'white';
+  help_button.textColor = 'purple';
+  help_button.overlaps(number_blocks);
+
+  game_over_button = new Group();
+  game_over_button.x = (box_blocks_width + 2) * block_size / 2;
+  game_over_button.y = (box_blocks_height + 3) * block_size / 2;
+  game_over_button.textSize = 28;
+  game_over_button.text = 'GAME OVER';
+  game_over_button.collider = 'static';
+  game_over_button.width = 3.5 * block_size;
+  game_over_button.height = 2 * block_size;
+  game_over_button.color = 'white';
+  game_over_button.textColor = 'red';
+  game_over_button.overlaps(number_blocks);
+  // game_over_button.overlaps(new_game_button);
+
+  congrats_button = new Group();
+  congrats_button.x = (box_blocks_width + 2) * block_size / 2;
+  congrats_button.y = (box_blocks_height + 3) * block_size / 2;
+  congrats_button.textSize = 14;
+  congrats_button.text = '🎉 Congrats! Click for next level 🎉';
+  congrats_button.collider = 'static';
+  congrats_button.width = 4 * block_size;
+  congrats_button.height = 2 * block_size;
+  congrats_button.color = 'white';
+  congrats_button.textColor = 'blue';
+  congrats_button.overlaps(number_blocks);
+  // congrats_button.overlaps(game_over_button);
+  // congrats_button.overlaps(new_game_button);
+
+  new_game_button = new Group();
+  new_game_button.x = (box_blocks_width + 2) * block_size / 2;
+  new_game_button.y = (box_blocks_height + 4.2) * block_size / 2;
+  new_game_button.textSize = 14;
+  new_game_button.text = 'Click here for new game';
+  new_game_button.collider = 'static';
+  new_game_button.width = 2.9 * block_size;
+  new_game_button.height = 0.6 * block_size;
+  new_game_button.color = 'white';
+  new_game_button.textColor = 'blue';
+  new_game_button.overlaps(number_blocks);
+  // new_game_button.overlaps(game_over_button);
+
+  confetti = new Group();
+  confetti.textSize = 30;
+  confetti.text = '🎉';
+  confetti.collider = 'dynamic';
+  confetti.diameter = 10;
+  // confetti.drag = 3;
+  confetti.overlaps(number_blocks);
+  confetti.overlaps(confetti);
+  // confetti.overlaps(game_over_button);
+
+  // Try to retrieve highest-level unlocked and hi-score
+  // highest_level_unlocked = getItem('highest_level_unlocked');
+  // if (typeof (highest_level_unlocked) != 'number') {
+  //   highest_level_unlocked = 1;
+  // }
+  hi_score = getItem('hi_score');
+  if (typeof (hi_score) != 'number') {
+    hi_score = 0;
   }
 }
 
@@ -173,33 +294,33 @@ function check_for_uncleared_overlap() {
   // we need to bypass the collision and overlap functions,
   // and build our own manual checking.
   for (i = 0; i < block_count; i++) {
-    block_i = number_blocks[i]; 
+    block_i = number_blocks[i];
     for (j = 0; j < block_count; j++) {
-      block_j = number_blocks[j];   
+      block_j = number_blocks[j];
       // Check how far vertically apart the two blocks are. 
       // Move apart if too close.
       vertical_sep = Math.abs(block_i.y - block_j.y);
       // We only care about vertical sep if in same column,
       // i.e. if horizontal_sep < tol.
       // Also, we want i and j to be different blocks!
-      horizontal_sep = Math.abs(block_i.x - block_j.x);      
+      horizontal_sep = Math.abs(block_i.x - block_j.x);
       tol = 0.1 * block_size;
-      if ( horizontal_sep<tol && i!=j ) {
-        if ( vertical_sep<(block_size-tol) ) {
+      if (horizontal_sep < tol && i != j) {
+        if (vertical_sep < (block_size - tol)) {
           // text('Uncleared overlap found',150,100)
           // If overlapping too much, move top block upwards
           if (block_i.y < block_j.y) {
             block_i.vel.y -= 10;
             block_i.flag = 1;
-            text('Moving up block ' + i,20,100)
+            // text('Moving up block ' + i,20,100)
           } else {
             block_j.vel.y -= 10;
             block_j.flag = 1;
-            text('Moving up block ' + j,20,100)
+            // text('Moving up block ' + j,20,100)
           }
-        }  
-      }  
-    } 
+        }
+      }
+    }
   }
 }
 
@@ -273,7 +394,7 @@ function show_debug_info() {
   for (i = 0; i < block_count; i++) {
     this_block = number_blocks[i];
     // text(this_block.category, this_block.x, this_block.y + 30);
-    if (this_block.flag==1) {
+    if (this_block.flag == 1) {
       text('⛳️', this_block.x, this_block.y + 30);
     }
   }
@@ -386,7 +507,7 @@ function mousePressed() {
 
 function start_new_level() {
   t0 = millis();
-  swaps_remaining = 10;  
+  swaps_remaining = 10;
   needed_to_clear = 30;
   hints_remaining = 3;
   number_blocks.remove();
@@ -400,6 +521,9 @@ function start_new_level() {
   hint_happening = 0;
   if (show_hint_button != null) {
     new show_hint_button.Sprite();
+  }
+  if (help_button != null) {
+    new help_button.Sprite();
   }
   if (game_over_button != null) {
     game_over_button.remove();
@@ -420,7 +544,7 @@ function show_score_etc() {
   text('Score: ' + score, 20, 20);
   text('Hi-score: ' + hi_score, 20, 40);
   text('Needed to clear level: ' + needed_to_clear, 20, 60);
-  text('Hints remaining: ' + hints_remaining, 230, 60);
+  text('Hints remaining: ' + hints_remaining, 230, 80);
   if (swaps_remaining <= 3) {
     fill('red');
   } else {
@@ -505,109 +629,6 @@ function add_new_blocks() {
       }
       col_removal_rec[i] = 0; // Reset removal count for this col
     }
-  }
-}
-
-function setup() {
-  new Canvas(displayWidth, displayHeight);
-  world.gravity.y = g; // to_remove
-  max_x = min(displayWidth, 800);
-  max_y = min(displayHeight, 1300);
-  if (isMobileDevice) {
-    scale_value = 1;
-    y_offset = -50;
-  } else {
-    scale_value = 0.5;
-    y_offset = 120;
-  }
-  if (isChromebook) {
-    scale_value = 0.5;
-    y_offset = 150;
-  }
-  block_size =
-    round(min(scale_value * max_x / box_blocks_height,
-      scale_value * max_y / box_blocks_width));
-
-  number_blocks = new Group();
-  number_blocks.collider = 'dynamic';
-  number_blocks.color = 'white';
-  number_blocks.width = block_size;
-  number_blocks.height = block_size;
-  number_blocks.bounciness = 0.05;
-  number_blocks.mass = 0.1;
-  number_blocks.textSize = 20;
-  number_blocks.rotationLock = true; // Prevent lopsided blocks
-
-  show_hint_button = new Group();
-  show_hint_button.x = 300;
-  show_hint_button.y = 20;
-  show_hint_button.textSize = 16;
-  show_hint_button.text = 'Show hint';
-  show_hint_button.collider = 'static';
-  show_hint_button.width = 2 * block_size;
-  show_hint_button.height = 0.5 * block_size;
-  show_hint_button.color = 'white';
-  show_hint_button.textColor = 'blue';
-  show_hint_button.overlaps(number_blocks);
-
-  game_over_button = new Group();
-  game_over_button.x = (box_blocks_width + 2) * block_size / 2;
-  game_over_button.y = (box_blocks_height + 3) * block_size / 2;
-  game_over_button.textSize = 28;
-  game_over_button.text = 'GAME OVER';
-  game_over_button.collider = 'static';
-  game_over_button.width = 3.5 * block_size;
-  game_over_button.height = 2 * block_size;
-  game_over_button.color = 'white';
-  game_over_button.textColor = 'red';
-  game_over_button.overlaps(number_blocks);
-  // game_over_button.overlaps(new_game_button);
-
-  congrats_button = new Group();
-  congrats_button.x = (box_blocks_width + 2) * block_size / 2;
-  congrats_button.y = (box_blocks_height + 3) * block_size / 2;
-  congrats_button.textSize = 14;
-  congrats_button.text = '🎉 Congrats! Click for next level 🎉';
-  congrats_button.collider = 'static';
-  congrats_button.width = 4 * block_size;
-  congrats_button.height = 2 * block_size;
-  congrats_button.color = 'white';
-  congrats_button.textColor = 'blue';
-  congrats_button.overlaps(number_blocks);
-  // congrats_button.overlaps(game_over_button);
-  // congrats_button.overlaps(new_game_button);
-
-  new_game_button = new Group();
-  new_game_button.x = (box_blocks_width + 2) * block_size / 2;
-  new_game_button.y = (box_blocks_height + 4.2) * block_size / 2;
-  new_game_button.textSize = 14;
-  new_game_button.text = 'Click here for new game';
-  new_game_button.collider = 'static';
-  new_game_button.width = 2.9 * block_size;
-  new_game_button.height = 0.6 * block_size;
-  new_game_button.color = 'white';
-  new_game_button.textColor = 'blue';
-  new_game_button.overlaps(number_blocks);
-  // new_game_button.overlaps(game_over_button);
-
-  confetti = new Group();
-  confetti.textSize = 30;
-  confetti.text = '🎉';
-  confetti.collider = 'dynamic';
-  confetti.diameter = 10;
-  // confetti.drag = 3;
-  confetti.overlaps(number_blocks);
-  confetti.overlaps(confetti);
-  // confetti.overlaps(game_over_button);
-
-  // Try to retrieve highest-level unlocked and hi-score
-  // highest_level_unlocked = getItem('highest_level_unlocked');
-  // if (typeof (highest_level_unlocked) != 'number') {
-  //   highest_level_unlocked = 1;
-  // }
-  hi_score = getItem('hi_score');
-  if (typeof (hi_score) != 'number') {
-    hi_score = 0;
   }
 }
 
