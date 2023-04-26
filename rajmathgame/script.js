@@ -55,9 +55,11 @@ let game_has_started = 0;
 let level = 1;
 let this_level_cleared = 0;
 let num_levels = 9;
-let highest_level_unlocked; //to_remove
+// People don't seem to like levels being locked. 
+// Next line prevents that:
+let highest_level_unlocked = num_levels; 
 let fr = 60;
-let g = 5; // Math.log(fr);
+let g = 7; // Math.log(fr);
 let emoji_list = ['😎', '🤩', '🤠', '🐯', '🦊', '👑', '🦁',
   '🐶', '🦄', '🦋', '🐙', '🤪', '🌈', '🍔', '🧁', '🍨', '😁',
   '🥇', '🎸', '🎯', '🚀', '💰', '💎', '🧸', '🎁', '😺', '💩'];
@@ -104,10 +106,10 @@ function main_draw_loop() {
   // show_debug_info();
 
   // Check for matches, and highlight and swap if matches found
-  if (block_count > 0 && swaps_remaining >= 0 &&
+  if (block_count > 0 && swaps_remaining > 0 &&
     total_motion < motion_thresh) {
     update_row_col_recs();
-
+    
     // Don't do any extra highlighting or swapping 
     // or block adding if a swap is already underway.
     // Also, wait for a short time after start of level,
@@ -155,6 +157,35 @@ function main_draw_loop() {
       // show_intro_screen();
 
     }
+  }
+  // Check for uncleared overlap bug
+  if (block_count > 0 && swaps_remaining > 0 &&
+    total_motion<motion_thresh && swap_started==0 ) {    
+    check_for_uncleared_overlap();
+  }
+}
+
+function check_for_uncleared_overlap() {
+  for (i = 0; i < block_count; i++) {
+    block_i = number_blocks[i]; 
+    for (j = 0; j < block_count; j++) {
+      block_j = number_blocks[j];   
+      // If two blocks have been touching for a while, 
+      // see how far vertically apart they are. 
+      // Move apart if too close.
+      if (block_i.colliding(block_j) > 10) {
+        vertical_sep = Math.abs(block_i.y - block_j.y);
+        tol = 3;
+        if (vertical_sep>tol && vertical_sep<(block_size-tol)) {
+          // If overlapping too much, move top block upwards
+          if (block_i.y < block_j.y) {
+            block_i.vel.y -= 1;
+          } else {
+            block_j.vel.y -= 1;
+          }
+        }
+      }  
+    } 
   }
 }
 
@@ -235,12 +266,12 @@ function show_debug_info() {
 
 function congrats_level_cleared() {
   highest_level_unlocked = Math.max(level + 1, highest_level_unlocked);
-  storeItem('highest_level_unlocked', highest_level_unlocked);
+  // storeItem('highest_level_unlocked', highest_level_unlocked);
   level = min(num_levels, level + 1);
   this_level_cleared = 1;
   new congrats_button.Sprite();
   if (level >= num_levels) {
-    congrats_button.text = '🎉 Congrats! All levels unlocked! 🎉';
+    congrats_button.text = '🎉 Congrats! Highest level completed! 🎉';
   }
 }
 
@@ -259,10 +290,10 @@ function show_intro_screen() {
     // text('Goal:', text_x, y_start + 6 * y_gap);
     // text('Complete a level by clearing 100 blocks', text_x, y_start + 7 * y_gap);
     // text('before you run out of swaps!', text_x, y_start + 8 * y_gap);
-    text('Personal hi-score: ' + hi_score, text_x, y_start + 7 * y_gap);
-    text('Highest level unlocked so far: ' + highest_level_unlocked, text_x, y_start + 8 * y_gap);
+    text('Personal hi-score: ' + hi_score, text_x, y_start + 9 * y_gap);
+    // text('Highest level unlocked so far: ' + highest_level_unlocked, text_x, y_start + 8 * y_gap);
 
-    text('Completing a level unlocks the next one.', text_x, y_start + 9 * y_gap);
+    // text('Completing a level unlocks the next one.', text_x, y_start + 9 * y_gap);
     text('Select a level below:', text_x, y_start + 11 * y_gap);
 
     rect(text_x - 20, y_start + 12 * y_gap, 250, 1.5 * y_gap);
@@ -340,8 +371,8 @@ function mousePressed() {
 
 function start_new_level() {
   t0 = millis();
-  swaps_remaining = 25;  // Increased from 20 
-  needed_to_clear = 100;
+  swaps_remaining = 10;  
+  needed_to_clear = 30;
   hints_remaining = 3;
   number_blocks.remove();
   make_box_walls();
@@ -374,7 +405,7 @@ function show_score_etc() {
   text('Score: ' + score, 20, 20);
   text('Hi-score: ' + hi_score, 20, 40);
   text('Needed to clear level: ' + needed_to_clear, 20, 60);
-  text('Hints remaining: ' + hints_remaining, 260, 60);
+  text('Hints remaining: ' + hints_remaining, 230, 60);
   if (swaps_remaining <= 3) {
     fill('red');
   } else {
@@ -493,7 +524,7 @@ function setup() {
   number_blocks.rotationLock = true; // Prevent lopsided blocks
 
   show_hint_button = new Group();
-  show_hint_button.x = 320;
+  show_hint_button.x = 300;
   show_hint_button.y = 20;
   show_hint_button.textSize = 16;
   show_hint_button.text = 'Show hint';
@@ -555,10 +586,10 @@ function setup() {
   // confetti.overlaps(game_over_button);
 
   // Try to retrieve highest-level unlocked and hi-score
-  highest_level_unlocked = getItem('highest_level_unlocked');
-  if (typeof (highest_level_unlocked) != 'number') {
-    highest_level_unlocked = 1;
-  }
+  // highest_level_unlocked = getItem('highest_level_unlocked');
+  // if (typeof (highest_level_unlocked) != 'number') {
+  //   highest_level_unlocked = 1;
+  // }
   hi_score = getItem('hi_score');
   if (typeof (hi_score) != 'number') {
     hi_score = 0;
@@ -732,7 +763,7 @@ function make_text_for_this_level(this_block) {
       this_block.textSize = 20;
     } else {
       this_text = this_cat_string;
-      this_block.textSize = 15;
+      this_block.textSize = 14;
     }
   }
   // Level 6: exponents
