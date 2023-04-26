@@ -186,9 +186,9 @@ function check_for_uncleared_overlap() {
         if ( vertical_sep<(block_size-tol) ) {
           // If overlapping too much, move top block upwards
           if (block_i.y < block_j.y) {
-            block_i.vel.y -= 1;
+            block_i.vel.y -= 10;
           } else {
-            block_j.vel.y -= 1;
+            block_j.vel.y -= 10;
           }
         }  
       }  
