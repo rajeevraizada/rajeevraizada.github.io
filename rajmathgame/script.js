@@ -131,7 +131,7 @@ function main_draw_loop() {
   if (needed_to_clear <= 0 && this_level_cleared == 0) {
     congrats_level_cleared();
   }
-  if (swaps_remaining < 0) {
+  if (swaps_remaining <= 0) {
     new game_over_button.Sprite();
     new new_game_button.Sprite();
     new_game_button.overlaps(game_over_button);
