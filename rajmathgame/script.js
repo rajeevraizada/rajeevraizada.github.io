@@ -166,7 +166,7 @@ function main_draw_loop() {
 
 function check_for_uncleared_overlap() {
   textSize(15);
-  text('Checking for uncleared overlap',20,100)
+  // text('Checking for uncleared overlap',20,100)
   block_count = number_blocks.length
   // The p5play physics engine doesn't seem to detect
   // uncleared overlap in some cases. It looks like
@@ -183,16 +183,18 @@ function check_for_uncleared_overlap() {
       // i.e. if horizontal_sep < tol.
       // Also, we want i and j to be different blocks!
       horizontal_sep = Math.abs(block_i.x - block_j.x);      
-      tol = 0 * block_size;
+      tol = 0.1 * block_size;
       if ( horizontal_sep<tol && i!=j ) {
         if ( vertical_sep<(block_size-tol) ) {
-          text('Uncleared overlap found',150,100)
+          // text('Uncleared overlap found',150,100)
           // If overlapping too much, move top block upwards
           if (block_i.y < block_j.y) {
             block_i.vel.y -= 10;
+            block_i.flag = 1;
             text('Moving up block ' + i,20,100)
           } else {
             block_j.vel.y -= 10;
+            block_j.flag = 1;
             text('Moving up block ' + j,20,100)
           }
         }  
@@ -257,22 +259,23 @@ function find_matching_pair_for_hint() {
 function show_debug_info() {
   // text('num_categories: ' + num_categories, 20, 80)
   block_count = number_blocks.length
-  text('smallest_dist_so_far: ' + smallest_dist_so_far, 200, 60)
-  text('rows_of_smallest_dist_blocks: '
-    + rows_of_smallest_dist_blocks, 20, 80)
-  text('cols_of_smallest_dist_blocks: '
-    + cols_of_smallest_dist_blocks, 20, 100)
-  text('highest_level_unlocked: ' + highest_level_unlocked, 20, 80); //to_remove
-  text('Type: ' + typeof (highest_level_unlocked), 200, 80); // to_remove
-  text('isMobile: ' + isMobileDevice, 20, 100);
-  text('isChromebook: ' + isChromebook, 20, 120);
-  text('Display size: ' + displayWidth + 'x' + displayHeight, 200, 100);
+  // text('smallest_dist_so_far: ' + smallest_dist_so_far, 200, 60)
+  // text('rows_of_smallest_dist_blocks: ' + rows_of_smallest_dist_blocks, 20, 80)
+  // text('cols_of_smallest_dist_blocks: ' + cols_of_smallest_dist_blocks, 20, 100)
+  // text('highest_level_unlocked: ' + highest_level_unlocked, 20, 80); //to_remove
+  // text('Type: ' + typeof (highest_level_unlocked), 200, 80); // to_remove
+  // text('isMobile: ' + isMobileDevice, 20, 100);
+  // text('isChromebook: ' + isChromebook, 20, 120);
+  // text('Display size: ' + displayWidth + 'x' + displayHeight, 200, 100);
 
   // text('Gravity ' + round(g, 2), 300, 60)
   // text('Time since selected ' + round((millis()-first_selection_time)/1000, 1), 300, 60)
   for (i = 0; i < block_count; i++) {
     this_block = number_blocks[i];
-    text(this_block.category, this_block.x, this_block.y + 30);
+    // text(this_block.category, this_block.x, this_block.y + 30);
+    if (this_block.flag==1) {
+      text('⛳️', this_block.x, this_block.y + 30);
+    }
   }
 }
 
