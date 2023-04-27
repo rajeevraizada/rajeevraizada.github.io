@@ -59,7 +59,7 @@ let num_levels = 9;
 // Next line prevents that:
 let highest_level_unlocked = num_levels;
 let fr = 60;
-let g = 7; // Math.log(fr);
+let g = 10; // Math.log(fr);
 let emoji_list = ['😎', '🤩', '🤠', '🐯', '🦊', '👑', '🦁',
   '🐶', '🦄', '🦋', '🐙', '🤪', '🌈', '🍔', '🧁', '🍨', '😁',
   '🥇', '🎸', '🎯', '🚀', '💰', '💎', '🧸', '🎁', '😺', '💩'];
