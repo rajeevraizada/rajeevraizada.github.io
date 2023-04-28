@@ -145,7 +145,7 @@ function main_draw_loop() {
     hints_remaining -= 1;
   }
   help_being_pressed = check_for_mouse_click_or_touch(help_button);
-  if (help_being_pressed==1 && (millis()-help_shown_time)>3000) {
+  if (help_being_pressed == 1 && (millis() - help_shown_time) > 3000) {
     window.alert('Aim: put equal-value blocks next to each other, to make them explode. To move blocks around, click on two that are next to each other to swap their positions.');
     help_shown_time = millis();
   }
@@ -202,7 +202,7 @@ function setup() {
 
   show_hint_button = new Group();
   show_hint_button.x = 300;
-  show_hint_button.y = 50;
+  show_hint_button.y = 55;
   show_hint_button.textSize = 15;
   show_hint_button.text = 'Show hint';
   show_hint_button.collider = 'static';
@@ -214,7 +214,7 @@ function setup() {
 
   help_button = new Group();
   help_button.x = 300;
-  help_button.y = 20;
+  help_button.y = 15;
   help_button.textSize = 15;
   help_button.text = 'How to play';
   help_button.collider = 'static';
@@ -391,9 +391,11 @@ function show_debug_info() {
 
   // text('Gravity ' + round(g, 2), 300, 60)
   // text('Time since selected ' + round((millis()-first_selection_time)/1000, 1), 300, 60)
+  top_row_categs = get_categories_in_top_two_rows();
+  text('Categs in top two rows: ' + top_row_categs, 20,100);
   for (i = 0; i < block_count; i++) {
     this_block = number_blocks[i];
-    // text(this_block.category, this_block.x, this_block.y + 30);
+    text(this_block.category, this_block.x, this_block.y + 30);
     if (this_block.flag == 1) {
       text('⛳️', this_block.x, this_block.y + 30);
     }
@@ -507,8 +509,8 @@ function mousePressed() {
 
 function start_new_level() {
   t0 = millis();
-  swaps_remaining = 10;
-  needed_to_clear = 30;
+  swaps_remaining = 15;
+  needed_to_clear = 40;
   hints_remaining = 3;
   number_blocks.remove();
   make_box_walls();
@@ -544,7 +546,7 @@ function show_score_etc() {
   text('Score: ' + score, 20, 20);
   text('Hi-score: ' + hi_score, 20, 40);
   text('Needed to clear level: ' + needed_to_clear, 20, 60);
-  text('Hints remaining: ' + hints_remaining, 230, 80);
+  text('Hints remaining: ' + hints_remaining, 235, 83);
   if (swaps_remaining <= 3) {
     fill('red');
   } else {
@@ -617,21 +619,6 @@ function remove_matching_blocks() {
   }
 }
 
-function add_new_blocks() {
-  // Add new blocks at the top of cols with blocks removed
-  for (i = 0; i < col_removal_rec.length; i++) {
-    this_col_removal_count = col_removal_rec[i];
-    if (this_col_removal_count > 0) {
-      for (j = 0; j < this_col_removal_count; j++) {
-        this_x = col_to_x(i);
-        this_y = row_to_y(box_blocks_height) - j * block_size;
-        add_new_block_above(this_x, this_y)
-      }
-      col_removal_rec[i] = 0; // Reset removal count for this col
-    }
-  }
-}
-
 function swap_positions() {
   b1 = number_blocks[selected_blocks[0]];
   b2 = number_blocks[selected_blocks[1]];
@@ -659,11 +646,31 @@ function swap_positions() {
   } // End of if (swap_proportion <= 1)
 }
 
+function add_new_blocks() {
+  // Add new blocks at the top of cols with blocks removed
+  for (i = 0; i < col_removal_rec.length; i++) {
+    this_col_removal_count = col_removal_rec[i];
+    if (this_col_removal_count > 0) {
+      for (j = 0; j < this_col_removal_count; j++) {
+        this_x = col_to_x(i);
+        this_y = row_to_y(box_blocks_height) - j * block_size;
+        add_new_block_above(this_x, this_y)
+      }
+      col_removal_rec[i] = 0; // Reset removal count for this col
+    }
+  }
+}
+
 function add_new_block_above(x, y) {
   new_block = new number_blocks.Sprite();
   new_block.x = x;
   new_block.y = y;
   new_block.textSize = 20;
+  // Let's make it so that new blocks don't match top-row categories
+  // top_row_categs = get_categories_in_top_two_rows();
+  // available_categs = _.difference(_.range(num_categories), top_row_categs);
+  // shuffled_available = _.shuffle(available_categs);
+  // new_block.category = shuffled_available[0];
   new_block.category = Math.ceil(Math.random() * num_categories);
   new_block.text = make_text_for_this_level(new_block);
   // Turn off any hint, if one is happening
@@ -715,12 +722,12 @@ function make_text_for_this_level(this_block) {
     cat_to_val_list = _.range(3, 3 + 1 + num_categories);
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
-    if (this_display_type == 0) {
-      this_text = this_cat_val;
-    } else {
-      d = Math.ceil(Math.random() * this_cat_val * 0.6);
+    // if (this_display_type == 0) {
+    //  this_text = this_cat_val;
+    // } else {
+      d = Math.ceil(Math.random() * this_cat_val * 0.7);
       this_text = (this_cat_val - d).toString() + ' + ' + d.toString();
-    }
+    // }
   }
   // Level 2: subtraction
   if (level == 2) {
@@ -728,18 +735,18 @@ function make_text_for_this_level(this_block) {
     num_display_types = 2;
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
-    if (this_display_type == 0) {
-      this_text = this_cat_val;
-    } else {
-      d = Math.ceil(Math.random() * this_cat_val * 0.6);
+    // if (this_display_type == 0) {
+    //   this_text = this_cat_val;
+    // } else {
+      d = Math.ceil(Math.random() * this_cat_val * 0.7);
       this_text = (this_cat_val + d).toString() + ' - ' + d.toString();
-    }
+    // }
   }
   // Level 3: multiplication
   if (level == 3) {
     num_display_types = 2;
-    cat_to_val_list = [12, 15, 20, 21, 30, 35,
-      48, 49, 56, 63, 72, 81];
+    cat_to_val_list = [12, 15, 20, 24, 30, 48,
+      56, 60, 64, 72, 81, 90];
     this_cat_val = cat_to_val_list[category - 1];
     // this_cat_string = cat_to_string_list[category - 1];
     prime_factors = numbers.prime.factorization(this_cat_val);
@@ -750,15 +757,15 @@ function make_text_for_this_level(this_block) {
     text_part2 = numbers.basic.product(array2);
     product_text = text_part1.toString() + '×' + text_part2.toString();
     this_display_type = Math.floor(random(num_display_types));
-    if (this_display_type == 0) {
-      this_text = this_cat_val;
-    } else {
+    // if (this_display_type == 0) {
+    //   this_text = this_cat_val;
+    // } else {
       this_text = product_text;
-    }
+    // }
   }
   // Level 4: equivalent fractions and decimals
   if (level == 4) {
-    num_display_types = 2;
+    num_display_types = 3;
     cat_to_val_list = [0.1, 0.2, 0.25, '0.333…', 0.4, 0.5,
       0.6, '0.666…', 0.75, 0.8, 0.9, 1];
     // Unicode fractions made with https://lights0123.com/fractions/
@@ -768,7 +775,7 @@ function make_text_for_this_level(this_block) {
       '⁹⁄₁₅', '⁶⁄₉', '⁶⁄₈', '¹²⁄₁₅', '¹⁸⁄₂₀', '⁷⁄₇'];
     this_cat_val = cat_to_val_list[category - 1];
     this_cat_string1 = cat_to_string_list1[category - 1];
-    // this_cat_string2 = cat_to_string_list2[category - 1];
+    this_cat_string2 = cat_to_string_list2[category - 1];
     this_display_type = Math.floor(random(num_display_types));
     if (this_display_type == 0) {
       this_text = this_cat_val;
@@ -778,28 +785,37 @@ function make_text_for_this_level(this_block) {
       this_text = this_cat_string1;
       this_block.textSize = 28;
     }
-    // if (this_display_type == 2) {
-    //  this_text = this_cat_string2;
-    //  this_block.textSize = 28;
-    // }
+    if (this_display_type == 2) {
+      this_text = this_cat_string2;
+      this_block.textSize = 28;
+    }
   }
   // Level 5: percentage changes
   if (level == 5) {
-    cat_to_val_list = [12, 17, 23, 40, 55, 60,
-      80, 95, 110, 190, 206, 220];
-    cat_to_string_list =
-      ['10 +20%', '20 -15%', '20 +15%', '50 -20%', '50 +10%', '50 +20%',
-        '100 -20%', '100 -5%', '100 +10%', '200 -5%', '200 +3%', '200 +10%'];
-    num_display_types = 2;
+    cat_to_val_list = [12, 17, 25, 40, 54, 60,
+         80,          90,        120,        180,       72,       48];
+    cat_to_string_list1 =
+      ['10 +20%', '20 -15%', '20 +25%',   '50 -20%', '50 +8%', '50 +20%',
+        '100 -20%', '100 -10%','100 +20%', '200 -10%','60 +20%', '40 +20%'];
+    cat_to_string_list2 = 
+       ['20 -40%', '10 +70%', '50% of 50','50% of 80', '60 -10%', '40 +50%',
+        '50 +60%', '60 +50%', '150 -20%', '150 +20%', '80 -10%', '60 -20%'];
+    num_display_types = 3;
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category - 1];
-    this_cat_string = cat_to_string_list[category - 1];
+    this_cat_string1 = cat_to_string_list1[category - 1];
+    this_cat_string2 = cat_to_string_list2[category - 1];
     if (this_display_type == 0) {
       this_text = this_cat_val;
       this_block.textSize = 20;
-    } else {
-      this_text = this_cat_string;
-      this_block.textSize = 14;
+    }
+    if (this_display_type == 1) {
+      this_text = this_cat_string1;
+      this_block.textSize = 13;
+    }
+    if (this_display_type == 2) {
+      this_text = this_cat_string2;
+      this_block.textSize = 13;
     }
   }
   // Level 6: exponents
@@ -1201,4 +1217,24 @@ function look_for_block_at(row, col) {
     }
   }
   return matching_block_ind;
+}
+
+function get_categories_in_top_two_rows() {
+  categs_list_ij = [];
+  top_two_rows = [box_blocks_height-2, box_blocks_height-1];
+  for (ii=0; ii<2; ii++) {
+    row_i = top_two_rows[ii];
+    for (jj=0; jj<box_blocks_width; jj++) {
+      this_block_ind_ij = look_for_block_at(row_i,jj);
+      if (this_block_ind_ij != null) {
+        this_block_ij = number_blocks[this_block_ind_ij];
+        if (this_block_ij != null) {
+          this_categ_ij = this_block_ij.category;
+          categs_list_ij.push(this_categ_ij);
+        }
+      }
+    }
+  }
+  unique_list_ij = _.uniq(categs_list_ij);
+  return unique_list_ij;
 }
