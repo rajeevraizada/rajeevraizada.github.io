@@ -134,7 +134,7 @@ function main_draw_loop() {
 
   total_motion = calculate_total_motion();
   block_count = number_blocks.length;
-  show_debug_info();
+  // show_debug_info();
 
   // Check for matches, and highlight and swap if matches found
   if (block_count > 0 && swaps_remaining > 0 &&
