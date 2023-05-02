@@ -713,7 +713,7 @@ function start_new_level() {
   t0 = millis();
   swaps_remaining = 14;
   needed_to_clear = 30;
-  hints_remaining = 4;
+  hints_remaining = 5;
   number_blocks.remove();
   make_box_walls();
   grid0 = make_non_matching_grid_categs();
