@@ -46,8 +46,8 @@ function congrats_level_cleared() {
   // or it is a longer time
   current_best_time = times_of_levels_list[level - 1];
   if (current_best_time == 0 ||
-    (current_best_time != 0 && seconds_rounded < current_best_time)) {
-    times_of_levels_list[level - 1] = seconds_rounded;
+    (current_best_time != 0 && seconds_elapsed < current_best_time)) {
+    times_of_levels_list[level - 1] = Math.round(seconds_elapsed);
     storeItem('times_of_levels_list', times_of_levels_list);
   }
   level = min(num_levels, level + 1);
@@ -187,7 +187,7 @@ function remove_matching_blocks() {
         // Double points if did math-based matching
         if (show_mathy == 1) {
           // Only one block gets counted as mathy,
-          // so need to give three-times points! 1+3 = 2*2
+          // so need to give 3-times points! 1+3 = 2*2
           score += 3 * level;
         } else {
           score += level;
@@ -204,7 +204,7 @@ function remove_matching_blocks() {
           new_mathy = new confetti.Sprite();
           new_mathy.diameter = 1;
           new_mathy.color = 'white';
-          new_mathy.text = '🎉MATHY!🎉';
+          new_mathy.text = '🎉MATHY!×2🎉';
           r = random(255); g = 50 + random(100); b = 100 + random(150);
           new_mathy.textColor = color(r, g, b);
           new_mathy.textSize = 70;
@@ -622,10 +622,10 @@ function make_box_walls() {
   floor_block.width = right_wall.x - left_wall.x + wall_thickness;
   floor_block.height = wall_thickness;
   floor_block.color = 'blue';
-  floor_y = scale_value*max_y/2 + block_size*box_blocks_height/2 + y_offset;
+  floor_y = scale_value * max_y / 2 + block_size * box_blocks_height / 2 + y_offset;
   floor_block1 = new floor_block.Sprite();
   floor_block1.x = scale_value * max_x / 2 - gap / 4;
-  floor_block1.y = floor_y;  
+  floor_block1.y = floor_y;
   // Reinforce the floor
   floor_block2 = new floor_block.Sprite();
   floor_block2.x = floor_block1.x;
@@ -633,8 +633,12 @@ function make_box_walls() {
   floor_block2.visible = false;
   floor_block3 = new floor_block.Sprite();
   floor_block3.x = floor_block1.x;
-  floor_block3.y = floor_y + 2*wall_thickness;
+  floor_block3.y = floor_y + 2 * wall_thickness;
   floor_block3.visible = false;
+  floor_block4 = new floor_block.Sprite();
+  floor_block4.x = floor_block1.x;
+  floor_block4.y = floor_y + 3 * wall_thickness;
+  floor_block4.visible = false;
 }
 
 function look_for_block_at(row, col) {

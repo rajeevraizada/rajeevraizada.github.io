@@ -121,6 +121,7 @@ function draw() {
       allSprites.remove();
       level = 0;
       score = 0;
+      swaps_remaining = 14;
       intro_screen = 1;
     }
   }
@@ -473,7 +474,7 @@ function setup() {
   number_blocks = new Group();
   number_blocks.collider = 'dynamic';
   number_blocks.color = 'white';
-  number_blocks.stroke = 'coral';
+  // number_blocks.stroke = 'coral';
   number_blocks.width = block_size;
   number_blocks.height = block_size;
   number_blocks.bounciness = 0.05;
@@ -610,7 +611,7 @@ function show_intro_screen() {
     text('Points per block = Level.', text_x, y_start + 9 * y_gap);
     text('Mathy matching: ×2 points!', text_x, y_start + 10 * y_gap);
     text('Select a level below:', text_x, y_start + 11 * y_gap);
-    text('Your fastest\n      times:', text_x + 210, y_start + 10.5 * y_gap);
+    text('Your fastest\n      times:', text_x + 213, y_start + 10.5 * y_gap);
 
     text('Level 1: addition, small numbers', text_x, y_start + 13 * y_gap);
     text('Level 2: subtraction, small numbers', text_x, y_start + 15 * y_gap);
@@ -642,12 +643,15 @@ function show_intro_screen() {
     if (times_of_levels_list != null) {
       textSize(15);
       for (i = 0; i < num_levels; i++) {
-        if (times_of_levels_list[i] != 0) {
+        if (times_of_levels_list[i] != 0 &&
+          times_of_levels_list[i] != null) {
+          // text(times_of_levels_list[i],
           text(seconds_to_min_sec_string(times_of_levels_list[i]),
-            text_x + 238, y_start + (13 + 2 * i) * y_gap);
+            text_x + 235, y_start + (13 + 2 * i) * y_gap);
         }
       }
     }
+    // text(times_of_levels_list, 150, 20);
   } // End of if intro_screen
 }
 
@@ -741,7 +745,7 @@ function seconds_to_min_sec_string(seconds) {
   minutes = Math.floor(seconds / 60);
   seconds_mod_mins = Math.floor(seconds - 60 * minutes);
   time_string = String(minutes) + ':' + String(seconds_mod_mins).padStart(2, '0') + 's';
-  return(time_string);
+  return (time_string);
 }
 
 function show_score_etc() {
