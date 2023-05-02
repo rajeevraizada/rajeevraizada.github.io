@@ -187,8 +187,8 @@ function remove_matching_blocks() {
         // Double points if did math-based matching
         if (show_mathy == 1) {
           // Only one block gets counted as mathy,
-          // so need to give four-times points!
-          score += 4 * level;
+          // so need to give three-times points! 1+3 = 2*2
+          score += 3 * level;
         } else {
           score += level;
         }
