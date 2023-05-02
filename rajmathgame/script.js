@@ -34,7 +34,7 @@ let wall_thickness = 6;
 let gap = 5;
 let scale_value;
 let motion_thresh = 0.01;
-let max_x, max_y;
+let max_x, max_y, floor_y;
 let y_offset = 100;
 let row_rec, col_rec, block_count;
 let total_motion = 0;
@@ -211,8 +211,8 @@ function make_text_for_this_level(this_block) {
     this_text = (this_cat_val - d).toString() + ' + ' + d.toString();
     // }
   }
-  // Level 2: addition, double digits
-  if (level == 2) {
+  // Level 6: addition, double digits
+  if (level == 6) {
     cat_to_val_list = double_digit_vals;
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
@@ -224,8 +224,8 @@ function make_text_for_this_level(this_block) {
     this_block.textSize = 16;
     // }
   }
-  // Level 3: subtraction, small numbers
-  if (level == 3) {
+  // Level 2: subtraction, small numbers
+  if (level == 2) {
     cat_to_val_list = _.range(3, 3 + 1 + num_categories);
     num_display_types = 2;
     this_display_type = Math.floor(random(num_display_types));
@@ -238,8 +238,8 @@ function make_text_for_this_level(this_block) {
     this_block.textSize = 18;
     // }
   }
-  // Level 4: subtraction, double digits
-  if (level == 4) {
+  // Level 7: subtraction, double digits
+  if (level == 7) {
     cat_to_val_list = double_digit_vals;
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
@@ -251,8 +251,8 @@ function make_text_for_this_level(this_block) {
     this_block.textSize = 16;
     // }
   }
-  // Level 5: multiplication
-  if (level == 5) {
+  // Level 3: multiplication
+  if (level == 3) {
     num_display_types = 2;
     cat_to_val_list = [12, 18, 20, 24, 30, 36,
       42, 48, 56, 60, 72, 84, 90, 96];
@@ -268,8 +268,8 @@ function make_text_for_this_level(this_block) {
     this_display_type = Math.floor(random(num_display_types));
     this_text = product_text;
   }
-  // Level 6: division
-  if (level == 6) {
+  // Level 4: division
+  if (level == 4) {
     cat_to_val_list = _.range(2, 2 + 1 + num_categories);
     divisor = 2 + Math.floor(random() * 7);
     this_cat_val = cat_to_val_list[category];
@@ -279,8 +279,8 @@ function make_text_for_this_level(this_block) {
     this_text = quotient_text;
     this_block.textSize = 18;
   }
-  // Level 7: equivalent fractions and decimals
-  if (level == 7) {
+  // Level 5: equivalent fractions and decimals
+  if (level == 5) {
     num_display_types = 3;
     cat_to_val_list = [0.05, 0.1, 0.2, 0.25, '0.333…', 0.4, 0.5,
       0.6, '0.666…', 0.75, 0.8, 0.9, 1];
@@ -473,6 +473,7 @@ function setup() {
   number_blocks = new Group();
   number_blocks.collider = 'dynamic';
   number_blocks.color = 'white';
+  number_blocks.stroke = 'purple';
   number_blocks.width = block_size;
   number_blocks.height = block_size;
   number_blocks.bounciness = 0.05;
@@ -520,7 +521,7 @@ function setup() {
   congrats_button.x = (box_blocks_width + 2) * block_size / 2;
   congrats_button.y = (box_blocks_height + 3) * block_size / 2;
   congrats_button.textSize = 18;
-  congrats_button.text = '🎉 Congrats! 🎉\Click here for next level';
+  congrats_button.text = '🎉 Congrats! 🎉\nClick here for next level';
   congrats_button.collider = 'static';
   congrats_button.width = 4 * block_size;
   congrats_button.height = 2 * block_size;
@@ -595,7 +596,7 @@ function show_intro_screen() {
     font_size = 13;
     textSize(font_size);
     text_x = 50;
-    y_start = -100; // 20;
+    y_start = -80; // 20;
     y_gap = 1.2 * font_size;
     textAlign(LEFT);
 
@@ -604,19 +605,20 @@ function show_intro_screen() {
       rect(text_x - 20, y_start + (12 + 2 * i) * y_gap, 250, 1.5 * y_gap);
     }
     fill('black');
-    text('Score: ' + score, text_x, y_start + 8 * y_gap);
-    text('Your hi-score: ' + hi_score, text_x, y_start + 9 * y_gap);
-    text('Points per block = Level.',text_x, y_start + 10 * y_gap);    
+    text('Score: ' + score, text_x, y_start + 7 * y_gap);
+    text('Your hi-score: ' + hi_score, text_x, y_start + 8 * y_gap);
+    text('Points per block = Level.', text_x, y_start + 9 * y_gap);
+    text('Mathy matching: ×2 points!', text_x, y_start + 10 * y_gap);
     text('Select a level below:', text_x, y_start + 11 * y_gap);
-    text('Your fastest\n      times:', text_x+210, y_start + 10.5 * y_gap);
-    
+    text('Your fastest\n      times:', text_x + 210, y_start + 10.5 * y_gap);
+
     text('Level 1: addition, small numbers', text_x, y_start + 13 * y_gap);
-    text('Level 2: addition, double digits', text_x, y_start + 15 * y_gap);
-    text('Level 3: subtraction, small numbers', text_x, y_start + 17 * y_gap);
-    text('Level 4: subtraction, double digits', text_x, y_start + 19 * y_gap);
-    text('Level 5: multiplication', text_x, y_start + 21 * y_gap);
-    text('Level 6: division', text_x, y_start + 23 * y_gap);
-    text('Level 7: fractions and decimals', text_x, y_start + 25 * y_gap);
+    text('Level 2: subtraction, small numbers', text_x, y_start + 15 * y_gap);
+    text('Level 3: multiplication', text_x, y_start + 17 * y_gap);
+    text('Level 4: division', text_x, y_start + 19 * y_gap);
+    text('Level 5: fractions and decimals', text_x, y_start + 21 * y_gap);
+    text('Level 6: addition, double digits', text_x, y_start + 23 * y_gap);
+    text('Level 7: subtraction, double digits', text_x, y_start + 25 * y_gap);
     text('Level 8: percentage changes', text_x, y_start + 27 * y_gap);
     text('Level 9: exponents', text_x, y_start + 29 * y_gap);
     text('Level 10: logarithms', text_x, y_start + 31 * y_gap);
@@ -637,11 +639,12 @@ function show_intro_screen() {
         }
       }
     }
-    if (times_of_levels_list != null) { 
+    if (times_of_levels_list != null) {
       textSize(15);
       for (i = 0; i < num_levels; i++) {
-        if (times_of_levels_list[i] != 0) { 
-          text(times_of_levels_list[i]+'s', text_x+240, y_start + (13 + 2 * i) * y_gap);
+        if (times_of_levels_list[i] != 0) {
+          text(seconds_to_min_sec_string(times_of_levels_list[i]),
+            text_x + 238, y_start + (13 + 2 * i) * y_gap);
         }
       }
     }
@@ -734,6 +737,13 @@ function start_new_level() {
   }
 }
 
+function seconds_to_min_sec_string(seconds) {
+  minutes = Math.floor(seconds / 60);
+  seconds_mod_mins = Math.floor(seconds - 60 * minutes);
+  time_string = String(minutes) + ':' + String(seconds_mod_mins).padStart(2, '0') + 's';
+  return(time_string);
+}
+
 function show_score_etc() {
   fill('black');
   textFont('Arial')
@@ -742,10 +752,8 @@ function show_score_etc() {
   text('Score: ' + score, 20, 20);
   text('Hi-score: ' + hi_score, 20, 40);
   text('Needed to clear level: ' + needed_to_clear, 20, 60);
-  seconds_rounded = Math.round( (millis()-t0)/1000 );
-  mins_rounded = Math.floor( seconds_rounded/60 );
-  seconds_to_show = String(seconds_rounded - 60*mins_rounded).padStart(2, '0');
-  text('Elapsed time: ' + mins_rounded + ':' + seconds_to_show,20,100);
+  seconds_elapsed = (millis() - t0) / 1000;
+  text('Elapsed time: ' + seconds_to_min_sec_string(seconds_elapsed), 20, 100);
   text('Hints remaining: ' + hints_remaining, 235, 83);
   if (swaps_remaining <= 3) {
     fill('red');

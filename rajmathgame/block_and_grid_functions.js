@@ -44,17 +44,17 @@ function congrats_level_cleared() {
   storeItem('levels_cleared_list', levels_cleared_list);
   // Update best time for this level, if currently unset (zero)
   // or it is a longer time
-  current_best_time = times_of_levels_list[level-1];
-  if ( current_best_time==0 ||
-      (current_best_time!=0 && seconds_rounded<current_best_time) ) {
+  current_best_time = times_of_levels_list[level - 1];
+  if (current_best_time == 0 ||
+    (current_best_time != 0 && seconds_rounded < current_best_time)) {
     times_of_levels_list[level - 1] = seconds_rounded;
-    storeItem('times_of_levels_list', times_of_levels_list);  
-  }  
+    storeItem('times_of_levels_list', times_of_levels_list);
+  }
   level = min(num_levels, level + 1);
   this_level_cleared = 1;
   new congrats_button.Sprite();
   // if (level >= num_levels) {
-  //  congrats_button.text = '🎉 Congrats!\nHighest level completed! 🎉';
+  //  congrats_button.text = '🎉 Congrats! Highest level completed! 🎉';
   // }
 }
 
@@ -71,7 +71,7 @@ function find_matching_pair_for_hint() {
     for (b = 0; b < number_blocks.length; b++) {
       this_block = number_blocks[b];
       if (this_block.category == this_cat) {
-        blocks_with_this_categ.push(b); 
+        blocks_with_this_categ.push(b);
       }
     }
     num_blocks_this_categ = blocks_with_this_categ.length;
@@ -184,6 +184,14 @@ function remove_matching_blocks() {
       this_block = number_blocks[i];
       if (this_block.text == '💥') {
         col_removal_rec[this_block.col] += 1;
+        // Double points if did math-based matching
+        if (show_mathy == 1) {
+          // Only one block gets counted as mathy,
+          // so need to give four-times points!
+          score += 4 * level;
+        } else {
+          score += level;
+        }
         for (j = 0; j < 4; j++) {
           new_confetti = new confetti.Sprite();
           new_confetti.text = emoji_to_use;
@@ -208,7 +216,6 @@ function remove_matching_blocks() {
         }
         this_block.remove();
         needed_to_clear -= 1;
-        score += level;
         if (score > hi_score) {
           hi_score = score;
           storeItem('hi_score', hi_score);
@@ -573,7 +580,7 @@ function col_to_x(this_col) {
 }
 
 function row_to_y(this_row) {
-  this_y = floor_block1.y - block_size * (this_row + 1 / 2) - wall_thickness / 2;
+  this_y = floor_y - block_size * (this_row + 1 / 2) - wall_thickness / 2;
   return this_y;
 }
 
@@ -583,7 +590,7 @@ function x_to_col(this_x) {
 }
 
 function y_to_row(this_y) {
-  this_row = round((floor_block1.y - this_y) / block_size - 1 / 2);
+  this_row = round((floor_y - this_y) / block_size - 1 / 2);
   return this_row;
 }
 
@@ -614,16 +621,20 @@ function make_box_walls() {
   floor_block.overlaps(confetti);
   floor_block.width = right_wall.x - left_wall.x + wall_thickness;
   floor_block.height = wall_thickness;
-  floor_block.color = 'blue'
+  floor_block.color = 'blue';
+  floor_y = scale_value*max_y/2 + block_size*box_blocks_height/2 + y_offset;
   floor_block1 = new floor_block.Sprite();
   floor_block1.x = scale_value * max_x / 2 - gap / 4;
-  floor_block1.y = scale_value * max_y / 2 + block_size * box_blocks_height / 2 + y_offset;
+  floor_block1.y = floor_y;  
   // Reinforce the floor
   floor_block2 = new floor_block.Sprite();
   floor_block2.x = floor_block1.x;
-  floor_block2.y = floor_block1.y + wall_thickness;
+  floor_block2.y = floor_y + wall_thickness;
   floor_block2.visible = false;
-
+  floor_block3 = new floor_block.Sprite();
+  floor_block3.x = floor_block1.x;
+  floor_block3.y = floor_y + 2*wall_thickness;
+  floor_block3.visible = false;
 }
 
 function look_for_block_at(row, col) {
