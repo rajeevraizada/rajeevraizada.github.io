@@ -71,7 +71,7 @@ function find_matching_pair_for_hint() {
     for (b = 0; b < number_blocks.length; b++) {
       this_block = number_blocks[b];
       if (this_block.category == this_cat) {
-        blocks_with_this_categ.push(b);
+        blocks_with_this_categ.push(b); 
       }
     }
     num_blocks_this_categ = blocks_with_this_categ.length;
