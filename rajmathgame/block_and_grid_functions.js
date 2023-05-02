@@ -40,6 +40,16 @@ function check_for_uncleared_overlap() {
 function congrats_level_cleared() {
   highest_level_unlocked = Math.max(level + 1, highest_level_unlocked);
   // storeItem('highest_level_unlocked', highest_level_unlocked);
+  levels_cleared_list[level - 1] = 1;
+  storeItem('levels_cleared_list', levels_cleared_list);
+  // Update best time for this level, if currently unset (zero)
+  // or it is a longer time
+  current_best_time = times_of_levels_list[level-1];
+  if ( current_best_time==0 ||
+      (current_best_time!=0 && seconds_rounded<current_best_time) ) {
+    times_of_levels_list[level - 1] = seconds_rounded;
+    storeItem('times_of_levels_list', times_of_levels_list);  
+  }  
   level = min(num_levels, level + 1);
   this_level_cleared = 1;
   new congrats_button.Sprite();
@@ -99,6 +109,29 @@ function find_matching_pair_for_hint() {
     textSize(20);
     text('✅', this_blockx + 12, this_blocky - 17);
   }
+  /*
+  // Show hands on two blocks to select
+  row_diff = rows_of_smallest_dist_blocks[1] -
+    rows_of_smallest_dist_blocks[0];
+  col_diff = cols_of_smallest_dist_blocks[1] -
+    cols_of_smallest_dist_blocks[0];
+  xval0 = col_to_x(cols_of_smallest_dist_blocks[0] + col_diff / 2);
+  yval0 = row_to_y(rows_of_smallest_dist_blocks[0] + row_diff / 2);
+  textSize(50);
+  if (col_diff == 0) {
+    yval1 = this_blocky;
+    text('🤏', this_blockx, yval0 + 35);
+    text('🤏', this_blockx, yval1 + 35);
+  } else if (row_diff == 0) {
+    xval1 = this_blockx;
+    text('🤏', xval0, this_blocky + 35);
+    text('🤏', xval1, this_blocky + 35);
+  } else {  // Hint blocks in different rows and different cols
+    xval0 = col_to_x(cols_of_smallest_dist_blocks[0] + col_diff);
+    text('🤏', this_blockx, this_blocky + 35);
+    text('🤏', xval0, this_blocky + 35);
+  }
+  */
 }
 
 function highlight_matching_blocks() {
@@ -114,6 +147,16 @@ function highlight_matching_blocks() {
       this_block.color.setAlpha(30);
     }
     match_highlight_started = 1;
+    // Add a big "MATHY!" confetti if user-generated swap,
+    // i.e. if swap_start_time was recent
+    // and if the matching blocks have different text
+    if ((millis() - swap_start_time) < 3 * swap_dur &&
+      (number_blocks[matching_blocks[0]].text !=
+        number_blocks[matching_blocks[1]].text)) {
+      show_mathy = 1;
+    } else {
+      show_mathy = 0;
+    }
   }
 }
 
@@ -149,9 +192,23 @@ function remove_matching_blocks() {
           new_confetti.vel.x = 5 - random(10);
           new_confetti.vel.y = -random(2);
         }
+        if (show_mathy == 1) {
+          new_mathy = new confetti.Sprite();
+          new_mathy.diameter = 1;
+          new_mathy.color = 'white';
+          new_mathy.text = '🎉MATHY!🎉';
+          r = random(255); g = 50 + random(100); b = 100 + random(150);
+          new_mathy.textColor = color(r, g, b);
+          new_mathy.textSize = 70;
+          new_mathy.x = this_block.x;
+          new_mathy.y = this_block.y;
+          new_mathy.vel.x = 0.5 - random();
+          new_mathy.vel.y = -3 - random(2);
+          show_mathy = 0;
+        }
         this_block.remove();
         needed_to_clear -= 1;
-        score += 10;
+        score += level;
         if (score > hi_score) {
           hi_score = score;
           storeItem('hi_score', hi_score);
@@ -162,6 +219,7 @@ function remove_matching_blocks() {
     matches_removed = 1;
     match_highlight_started = 0;
     matching_blocks = [];
+    score_incremented = 1;
   }
 }
 
@@ -515,7 +573,7 @@ function col_to_x(this_col) {
 }
 
 function row_to_y(this_row) {
-  this_y = floor_block.y - block_size * (this_row + 1 / 2) - wall_thickness / 2;
+  this_y = floor_block1.y - block_size * (this_row + 1 / 2) - wall_thickness / 2;
   return this_y;
 }
 
@@ -525,7 +583,7 @@ function x_to_col(this_x) {
 }
 
 function y_to_row(this_y) {
-  this_row = round((floor_block.y - this_y) / block_size - 1 / 2);
+  this_row = round((floor_block1.y - this_y) / block_size - 1 / 2);
   return this_row;
 }
 
@@ -534,7 +592,7 @@ function make_box_walls() {
   left_wall.collider = 'static';
   left_wall.width = wall_thickness;
   left_wall.height = box_blocks_height * block_size;
-  left_wall.color = 'black';
+  left_wall.color = 'blue';
   left_wall.overlaps(confetti);
   left_wall.x = scale_value * max_x / 2 - block_size * box_blocks_width / 2
     - gap * box_blocks_width / 2 - wall_thickness;
@@ -544,21 +602,28 @@ function make_box_walls() {
   right_wall.collider = 'static';
   right_wall.width = wall_thickness;
   right_wall.height = box_blocks_height * block_size;
-  right_wall.color = 'black';
+  right_wall.color = 'blue';
   right_wall.overlaps(confetti);
   right_wall.x = scale_value * max_x / 2 + block_size * box_blocks_width / 2
     + gap * (box_blocks_width - 1) / 2 + wall_thickness;
   right_wall.height = box_blocks_height * block_size;
   right_wall.y = scale_value * max_y / 2 + y_offset;
 
-  floor_block = new Sprite();
+  floor_block = new Group();
   floor_block.collider = 'static';
   floor_block.overlaps(confetti);
   floor_block.width = right_wall.x - left_wall.x + wall_thickness;
   floor_block.height = wall_thickness;
-  floor_block.color = 'black'
-  floor_block.x = scale_value * max_x / 2 - gap / 4;
-  floor_block.y = scale_value * max_y / 2 + block_size * box_blocks_height / 2 + y_offset;
+  floor_block.color = 'blue'
+  floor_block1 = new floor_block.Sprite();
+  floor_block1.x = scale_value * max_x / 2 - gap / 4;
+  floor_block1.y = scale_value * max_y / 2 + block_size * box_blocks_height / 2 + y_offset;
+  // Reinforce the floor
+  floor_block2 = new floor_block.Sprite();
+  floor_block2.x = floor_block1.x;
+  floor_block2.y = floor_block1.y + wall_thickness;
+  floor_block2.visible = false;
+
 }
 
 function look_for_block_at(row, col) {

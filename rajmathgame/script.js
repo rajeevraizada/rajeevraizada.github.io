@@ -6,6 +6,8 @@
 // A bunch of the functions are separated off in the
 // other file that getted sourced in: block_and_grid_functions.js
 
+// Comment out this next part after use for debugging:
+
 // Find out if on touch screen device.
 // Mouse click behaviour will be different
 let user_agent_string = navigator.userAgent;
@@ -63,6 +65,9 @@ let game_has_started = 0;
 let level = 1;
 let this_level_cleared = 0;
 let num_levels = 12;
+let levels_cleared_list;
+let times_of_levels_list;
+let seconds_rounded;
 // People don't seem to like levels being locked. 
 // Next line prevents that:
 let highest_level_unlocked = num_levels;
@@ -91,20 +96,13 @@ let double_digit_vals = _.zipWith(double_digit_anchors, random_offsets, function
   return a + b;
 });
 let top_row_categs_sliced;
+let show_mathy = 0;
+let score_incremented = 0;
 
 function draw() {
   // frameRate(fr);
   clear();
-  if (intro_screen == 1) {
-    show_intro_screen();
-  } else {
-    if (game_has_started == 0) {
-      start_new_level()
-    }
-    if (this_level_cleared == 0) {
-      main_draw_loop();
-    }
-  }
+  score_incremented = 0;
   if (congrats_button != null) {
     congrats_being_pressed = check_for_mouse_click_or_touch(congrats_button);
     if (congrats_being_pressed) {
@@ -125,6 +123,19 @@ function draw() {
       score = 0;
       intro_screen = 1;
     }
+  }
+  if (intro_screen == 1) {
+    show_intro_screen();
+  } else {
+    if (game_has_started == 0) {
+      start_new_level()
+    }
+    if (this_level_cleared == 0) {
+      main_draw_loop();
+    }
+  }
+  if (swaps_remaining <= 0) {
+    new game_over_button.Sprite();
   }
   check_for_uncleared_overlap();
 }
@@ -161,9 +172,6 @@ function main_draw_loop() {
   // Check to see if level has been passed
   if (needed_to_clear <= 0 && this_level_cleared == 0) {
     congrats_level_cleared();
-  }
-  if (swaps_remaining <= 0) {
-    new game_over_button.Sprite();
   }
   show_hint_being_pressed = check_for_mouse_click_or_touch(show_hint_button);
   if (show_hint_being_pressed && hint_happening == 0 &&
@@ -227,6 +235,7 @@ function make_text_for_this_level(this_block) {
     // } else {
     d = Math.ceil(Math.random() * this_cat_val * 0.7);
     this_text = (this_cat_val + d).toString() + ' - ' + d.toString();
+    this_block.textSize = 18;
     // }
   }
   // Level 4: subtraction, double digits
@@ -332,9 +341,9 @@ function make_text_for_this_level(this_block) {
     cat_to_string_list1 =
       ['3⁻²', '2⁻³', '5⁻¹', '7⁰', '(½)²', '5¹ᐟ²',
         '2', '8²ᐟ³', '2³', '9¹ᐟ²', '(⅕)⁻¹', '27¹ᐟ²'];
-    cat_to_string_list2 = 
-    ['3 × 3⁻³', '2² × 2⁻⁵', '5³ ÷ 5⁴', '3¹ × 3⁻¹', '2 × 2⁻³', '25¹ᐟ⁴',
-      '16¹ᐟ⁴', '16¹ᐟ²', '2⁻² × 2⁵', '(√3)²', '125¹ᐟ³', '3³ᐟ²'];
+    cat_to_string_list2 =
+      ['3 × 3⁻³', '2² × 2⁻⁵', '5³ ÷ 5⁴', '3¹ × 3⁻¹', '2 × 2⁻³', '25¹ᐟ⁴',
+        '16¹ᐟ⁴', '16¹ᐟ²', '2⁻² × 2⁵', '(√3)²', '125¹ᐟ³', '3³ᐟ²'];
     num_display_types = 3;
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
@@ -364,8 +373,8 @@ function make_text_for_this_level(this_block) {
         'ln e', 'log₂(¼)', 'log(10⁵)'];
     cat_to_string_list2 =
       ['log₃27', 'log₂(½)', 'log₇(7²)', 'log2+log6', 'log₄2',
-      'log9-log3', '4 log√3', 'log₈2', 'log(2⁻¹)',
-      'log₃3', 'log₃(⅑)', 'log₂32'];
+        'log9-log3', '4 log√3', 'log₈2', 'log(2⁻¹)',
+        'log₃3', 'log₃(⅑)', 'log₂32'];
     num_display_types = 3;
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
@@ -374,7 +383,7 @@ function make_text_for_this_level(this_block) {
     if (this_display_type == 0) {
       this_text = this_cat_val;
       this_block.textSize = 15;
-    } 
+    }
     if (this_display_type == 1) {
       this_text = this_cat_string1;
       this_block.textSize = 14;
@@ -397,7 +406,7 @@ function make_text_for_this_level(this_block) {
     cat_to_string_list2 =
       ['0', '1', '½', '√3 /2', '√2 /2',
         '180°', '-1', '-½', '-√3 /2', '-√2 /2',
-      '-2𝜋 rads', 'sin⁻¹(1)'];
+        '-2𝜋 rads', 'sin⁻¹(1)'];
     num_display_types = 3;
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
@@ -511,7 +520,7 @@ function setup() {
   congrats_button.x = (box_blocks_width + 2) * block_size / 2;
   congrats_button.y = (box_blocks_height + 3) * block_size / 2;
   congrats_button.textSize = 18;
-  congrats_button.text = '🎉 Congrats! 🎉\nClick here for next level';
+  congrats_button.text = '🎉 Congrats! 🎉\Click here for next level';
   congrats_button.collider = 'static';
   congrats_button.width = 4 * block_size;
   congrats_button.height = 2 * block_size;
@@ -537,6 +546,20 @@ function setup() {
   hi_score = getItem('hi_score');
   if (typeof (hi_score) != 'number') {
     hi_score = 0;
+  }
+  // Try to read levels_cleared_list.
+  // Null is of type object, and so is array.
+  // If we didn't read it yet, then it will be a null object
+  levels_cleared_list = getItem('levels_cleared_list');
+  if (levels_cleared_list == null &&
+    typeof (levels_cleared_list) == 'object') {
+    levels_cleared_list = new Array(num_levels).fill(0);
+  }
+  // Same for times_of_levels_list
+  times_of_levels_list = getItem('times_of_levels_list');
+  if (times_of_levels_list == null &&
+    typeof (times_of_levels_list) == 'object') {
+    times_of_levels_list = new Array(num_levels).fill(0);
   }
 }
 
@@ -569,21 +592,24 @@ function show_debug_info() {
 
 function show_intro_screen() {
   if (intro_screen == 1) {
-    font_size = 15;
+    font_size = 13;
     textSize(font_size);
     text_x = 50;
-    y_start = -150; // 20;
+    y_start = -100; // 20;
     y_gap = 1.2 * font_size;
     textAlign(LEFT);
 
     fill('white');
     for (i = 0; i < num_levels; i++) {
-      rect(text_x - 20, y_start + (12 + 2 * i) * y_gap, 300, 1.5 * y_gap);
+      rect(text_x - 20, y_start + (12 + 2 * i) * y_gap, 250, 1.5 * y_gap);
     }
     fill('black');
-    text('Score: ' + score, text_x, y_start + 9 * y_gap);
-    text('Personal hi-score: ' + hi_score, text_x, y_start + 10 * y_gap);
+    text('Score: ' + score, text_x, y_start + 8 * y_gap);
+    text('Your hi-score: ' + hi_score, text_x, y_start + 9 * y_gap);
+    text('Points per block = Level.',text_x, y_start + 10 * y_gap);    
     text('Select a level below:', text_x, y_start + 11 * y_gap);
+    text('Your fastest\n      times:', text_x+210, y_start + 10.5 * y_gap);
+    
     text('Level 1: addition, small numbers', text_x, y_start + 13 * y_gap);
     text('Level 2: addition, double digits', text_x, y_start + 15 * y_gap);
     text('Level 3: subtraction, small numbers', text_x, y_start + 17 * y_gap);
@@ -600,6 +626,24 @@ function show_intro_screen() {
     textSize(30);
     for (i = highest_level_unlocked; i < num_levels; i++) {
       text('🔒', text_x - 30, y_start + (13 + 2 * i) * y_gap + 5);
+    }
+    if (levels_cleared_list != null) {
+      // textSize(15);
+      // text('levels_cleared_list: ' + levels_cleared_list, 20, 70);
+      textSize(35);
+      for (i = 0; i < num_levels; i++) {
+        if (levels_cleared_list[i] == 1) {
+          text('👑', text_x - 40, y_start + (13 + 2 * i) * y_gap + 4);
+        }
+      }
+    }
+    if (times_of_levels_list != null) { 
+      textSize(15);
+      for (i = 0; i < num_levels; i++) {
+        if (times_of_levels_list[i] != 0) { 
+          text(times_of_levels_list[i]+'s', text_x+240, y_start + (13 + 2 * i) * y_gap);
+        }
+      }
     }
   } // End of if intro_screen
 }
@@ -664,7 +708,7 @@ function mousePressed() {
 
 function start_new_level() {
   t0 = millis();
-  swaps_remaining = 12;
+  swaps_remaining = 14;
   needed_to_clear = 30;
   hints_remaining = 4;
   number_blocks.remove();
@@ -698,6 +742,10 @@ function show_score_etc() {
   text('Score: ' + score, 20, 20);
   text('Hi-score: ' + hi_score, 20, 40);
   text('Needed to clear level: ' + needed_to_clear, 20, 60);
+  seconds_rounded = Math.round( (millis()-t0)/1000 );
+  mins_rounded = Math.floor( seconds_rounded/60 );
+  seconds_to_show = String(seconds_rounded - 60*mins_rounded).padStart(2, '0');
+  text('Elapsed time: ' + mins_rounded + ':' + seconds_to_show,20,100);
   text('Hints remaining: ' + hints_remaining, 235, 83);
   if (swaps_remaining <= 3) {
     fill('red');
