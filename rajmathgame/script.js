@@ -473,7 +473,7 @@ function setup() {
   number_blocks = new Group();
   number_blocks.collider = 'dynamic';
   number_blocks.color = 'white';
-  number_blocks.stroke = 'purple';
+  number_blocks.stroke = 'coral';
   number_blocks.width = block_size;
   number_blocks.height = block_size;
   number_blocks.bounciness = 0.05;
