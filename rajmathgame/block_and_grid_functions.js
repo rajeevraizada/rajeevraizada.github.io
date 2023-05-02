@@ -54,7 +54,7 @@ function congrats_level_cleared() {
   this_level_cleared = 1;
   new congrats_button.Sprite();
   // if (level >= num_levels) {
-  //  congrats_button.text = '🎉 Congrats! Highest level completed! 🎉';
+  //  congrats_button.text = '🎉 Congrats!\nHighest level completed! 🎉';
   // }
 }
 
