@@ -207,7 +207,7 @@ function remove_matching_blocks() {
           new_mathy.text = '🎉MATHY!×2🎉';
           r = random(255); g = 50 + random(100); b = 100 + random(150);
           new_mathy.textColor = color(r, g, b);
-          new_mathy.textSize = 40;
+          new_mathy.textSize = 55;
           new_mathy.x = this_block.x;
           new_mathy.y = this_block.y;
           new_mathy.vel.x = 0.5 - random();
