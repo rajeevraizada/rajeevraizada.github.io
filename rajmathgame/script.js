@@ -59,10 +59,16 @@ let cat_to_string_list;
 let col_removal_rec = new Array(box_blocks_width).fill(0);
 let swaps_remaining, needed_to_clear;
 let score = 0;
-let show_hint_button, game_over_button;
+let show_hint_button, game_over_button, congrats_button;
+let help_button, music_button, sound_effects_button;
+let sound_button_press_time = 0;
+let music_button_press_time = 0;
+let music_on = 1;
+let music;
+let sound_effects_on = 1;
 let intro_screen = 1;
 let game_has_started = 0;
-let level = 1;
+let level = 0;
 let this_level_cleared = 0;
 let num_levels = 12;
 let levels_cleared_list;
@@ -98,11 +104,123 @@ let double_digit_vals = _.zipWith(double_digit_anchors, random_offsets, function
 let top_row_categs_sliced;
 let show_mathy = 0;
 let score_incremented = 0;
+let show_new_high_score_confetti = 0;
 
 function draw() {
   // frameRate(fr);
   clear();
-  score_incremented = 0;
+  if (intro_screen == 1) {
+    show_intro_screen();
+  } else {
+    if (game_has_started == 0) {
+      start_new_level()
+    }
+    // if (this_level_cleared == 0) {
+    main_draw_loop();
+    // }
+  }
+  if (swaps_remaining <= 0) {
+    game_over_button = new buttons.Sprite();
+    game_over_button.x = (box_blocks_width + 2) * block_size / 2;
+    game_over_button.y = (box_blocks_height + 3) * block_size / 2;
+    game_over_button.textSize = 24;
+    game_over_button.text = 'GAME OVER\nClick for new game';
+    game_over_button.width = 3.5 * block_size;
+    game_over_button.height = 2 * block_size;
+    game_over_button.textColor = 'red';
+  }
+  check_for_uncleared_overlap();
+}
+
+function main_draw_loop() {
+  show_score_etc();
+
+  total_motion = calculate_total_motion();
+  block_count = number_blocks.length;
+  // show_debug_info();
+
+  // Check for matches, and highlight and swap if matches found
+  if (block_count > 0 && swaps_remaining > 0 &&
+    total_motion < motion_thresh) {
+    update_row_col_recs();
+
+    // Don't do any extra highlighting or swapping 
+    // or block adding if a swap is already underway.
+    // Also, wait for a short time after start of level,
+    // to prevent menu-selection from selecting a block
+    if (swap_started == 0 && (millis() - t0 > 1000) &&
+      this_level_cleared == 0 && swaps_remaining > 0) {
+      check_for_block_selection();
+      color_blocks();
+      matching_blocks = check_neighbor_matches();
+      highlight_matching_blocks();
+      show_bangs();
+      remove_matching_blocks();
+      add_new_blocks();
+    }
+    if (selected_blocks.length == 2) {
+      swap_positions();
+    }
+  }
+  // Check to see if level has been passed
+  if (needed_to_clear <= 0 && this_level_cleared == 0) {
+    congrats_level_cleared();
+  }
+  // Check if any buttons are being pressed, and perform appropriate actions
+  check_for_button_presses();
+
+  // Check for uncleared overlap bug
+  if (block_count > 0 && swaps_remaining > 0 && swap_started == 0) {
+    check_for_uncleared_overlap();
+  }
+}
+
+function check_for_button_presses() {
+  show_hint_being_pressed = check_for_mouse_click_or_touch(show_hint_button);
+  if (show_hint_being_pressed && hint_happening == 0 &&
+    hints_remaining > 0) {
+    hint_happening = 1;
+    hint_start_time = millis();
+    hints_remaining -= 1;
+  }
+  if (millis() - hint_start_time < hint_dur) {
+    find_matching_pair_for_hint();
+  } else {
+    hint_happening = 0;
+  }
+  help_being_pressed = check_for_mouse_click_or_touch(help_button);
+  if (help_being_pressed == 1 && (millis() - help_shown_time) > 3000) {
+    window.alert('Aim: put equal-value blocks next to each other, to make them explode. To move blocks around, click on two that are next to each other to swap their positions.');
+    help_shown_time = millis();
+  }
+  toggle_music_being_pressed = check_for_mouse_click_or_touch(music_button);
+  if (toggle_music_being_pressed == 1 && (millis() - music_button_press_time) > 1000) {
+    music_button_press_time = millis();
+    if (music_on == 0) {
+      music_on = 1;
+      music_button.text = 'Turn off 🎵';
+      music_button.textColor = 'red';
+      music.loop();
+    } else {
+      music_on = 0;
+      music_button.text = 'Turn on 🎵';
+      music_button.textColor = 'green';
+      music.stop();
+    }
+  }
+  toggle_sound_being_pressed = check_for_mouse_click_or_touch(sound_effects_button);
+  if (toggle_sound_being_pressed == 1 && (millis() - sound_button_press_time) > 1000) {
+    sound_button_press_time = millis();
+    if (sound_effects_on == 0) {
+      sound_effects_on = 1;
+      sound_effects_button.text = ' Turn off sound effects 🔊';
+      sound_effects_button.textColor = 'red';
+    } else {
+      sound_effects_on = 0;
+      sound_effects_button.text = ' Turn on sound effects 🔊';
+      sound_effects_button.textColor = 'green';
+    }
+  }
   if (congrats_button != null) {
     congrats_being_pressed = check_for_mouse_click_or_touch(congrats_button);
     if (congrats_being_pressed) {
@@ -124,76 +242,6 @@ function draw() {
       swaps_remaining = 14;
       intro_screen = 1;
     }
-  }
-  if (intro_screen == 1) {
-    show_intro_screen();
-  } else {
-    if (game_has_started == 0) {
-      start_new_level()
-    }
-    if (this_level_cleared == 0) {
-      main_draw_loop();
-    }
-  }
-  if (swaps_remaining <= 0) {
-    new game_over_button.Sprite();
-  }
-  check_for_uncleared_overlap();
-}
-
-function main_draw_loop() {
-  show_score_etc();
-
-  total_motion = calculate_total_motion();
-  block_count = number_blocks.length;
-  // show_debug_info();
-
-  // Check for matches, and highlight and swap if matches found
-  if (block_count > 0 && swaps_remaining > 0 &&
-    total_motion < motion_thresh) {
-    update_row_col_recs();
-
-    // Don't do any extra highlighting or swapping 
-    // or block adding if a swap is already underway.
-    // Also, wait for a short time after start of level,
-    // to prevent menu-selection from selecting a block
-    if (swap_started == 0 && millis() - t0 > 500) {
-      check_for_block_selection();
-      color_blocks();
-      matching_blocks = check_neighbor_matches();
-      highlight_matching_blocks();
-      show_bangs();
-      remove_matching_blocks();
-      add_new_blocks();
-    }
-    if (selected_blocks.length == 2) {
-      swap_positions();
-    }
-  }
-  // Check to see if level has been passed
-  if (needed_to_clear <= 0 && this_level_cleared == 0) {
-    congrats_level_cleared();
-  }
-  show_hint_being_pressed = check_for_mouse_click_or_touch(show_hint_button);
-  if (show_hint_being_pressed && hint_happening == 0 &&
-    hints_remaining > 0) {
-    hint_happening = 1;
-    hint_start_time = millis();
-    hints_remaining -= 1;
-  }
-  help_being_pressed = check_for_mouse_click_or_touch(help_button);
-  if (help_being_pressed == 1 && (millis() - help_shown_time) > 3000) {
-    window.alert('Aim: put equal-value blocks next to each other, to make them explode. To move blocks around, click on two that are next to each other to swap their positions.');
-    help_shown_time = millis();
-  }
-  if (millis() - hint_start_time < hint_dur) {
-    find_matching_pair_for_hint();
-  } else {
-    hint_happening = 0;
-  }
-  // Check for uncleared overlap bug
-  if (block_count > 0 && swaps_remaining > 0 && swap_started == 0) {
-    check_for_uncleared_overlap();
   }
 }
 
@@ -452,6 +500,7 @@ function make_text_for_this_level(this_block) {
 }
 
 function setup() {
+  // clearStorage();
   new Canvas(displayWidth, displayHeight);
   world.gravity.y = g; // to_remove
   max_x = min(displayWidth, 800);
@@ -482,53 +531,13 @@ function setup() {
   number_blocks.textSize = 20;
   number_blocks.rotationLock = true; // Prevent lopsided blocks
 
-  show_hint_button = new Group();
-  show_hint_button.x = 300;
-  show_hint_button.y = 55;
-  show_hint_button.textSize = 15;
-  show_hint_button.text = 'Show hint';
-  show_hint_button.collider = 'static';
-  show_hint_button.width = 2 * block_size;
-  show_hint_button.height = 0.35 * block_size;
-  show_hint_button.color = 'white';
-  show_hint_button.textColor = 'blue';
-  show_hint_button.overlaps(number_blocks);
-
-  help_button = new Group();
-  help_button.x = 300;
-  help_button.y = 15;
-  help_button.textSize = 15;
-  help_button.text = 'How to play';
-  help_button.collider = 'static';
-  help_button.width = 2 * block_size;
-  help_button.height = 0.35 * block_size;
-  help_button.color = 'white';
-  help_button.textColor = 'purple';
-  help_button.overlaps(number_blocks);
-
-  game_over_button = new Group();
-  game_over_button.x = (box_blocks_width + 2) * block_size / 2;
-  game_over_button.y = (box_blocks_height + 3) * block_size / 2;
-  game_over_button.textSize = 24;
-  game_over_button.text = 'GAME OVER\nClick for new game';
-  game_over_button.collider = 'static';
-  game_over_button.width = 3.5 * block_size;
-  game_over_button.height = 2 * block_size;
-  game_over_button.color = 'white';
-  game_over_button.textColor = 'red';
-  game_over_button.overlaps(number_blocks);
-
-  congrats_button = new Group();
-  congrats_button.x = (box_blocks_width + 2) * block_size / 2;
-  congrats_button.y = (box_blocks_height + 3) * block_size / 2;
-  congrats_button.textSize = 18;
-  congrats_button.text = '🎉 Congrats! 🎉\nClick here for next level';
-  congrats_button.collider = 'static';
-  congrats_button.width = 4 * block_size;
-  congrats_button.height = 2 * block_size;
-  congrats_button.color = 'white';
-  congrats_button.textColor = 'blue';
-  congrats_button.overlaps(number_blocks);
+  buttons = new Group();
+  buttons.textSize = 15;
+  buttons.collider = 'static';
+  buttons.width = 2 * block_size;
+  buttons.height = 0.35 * block_size;
+  buttons.color = 'white';
+  buttons.overlaps(number_blocks);
 
   confetti = new Group();
   confetti.textSize = 30;
@@ -538,7 +547,7 @@ function setup() {
   // confetti.drag = 3;
   confetti.overlaps(number_blocks);
   confetti.overlaps(confetti);
-  // confetti.overlaps(game_over_button);
+  confetti.overlaps(buttons);
 
   // Try to retrieve highest-level unlocked and hi-score
   // highest_level_unlocked = getItem('highest_level_unlocked');
@@ -579,7 +588,7 @@ function show_debug_info() {
 
   // text('Gravity ' + round(g, 2), 300, 60)
   // text('Time since selected ' + round((millis()-first_selection_time)/1000, 1), 300, 60)
-  text('Double digit vals: ' + double_digit_vals, 20, 100);
+  // text('Double digit vals: ' + double_digit_vals, 20, 100);
   top_row_categs = get_categories_in_top_two_rows();
   // text('Categs in top two rows: ' + top_row_categs, 20, 100);
   text('Top row categs, sliced: ' + top_row_categs_sliced, 20, 120);
@@ -594,16 +603,16 @@ function show_debug_info() {
 
 function show_intro_screen() {
   if (intro_screen == 1) {
-    font_size = 13;
+    font_size = 14;
     textSize(font_size);
-    text_x = 50;
+    text_x = 45;
     y_start = -80; // 20;
     y_gap = 1.2 * font_size;
     textAlign(LEFT);
 
     fill('white');
     for (i = 0; i < num_levels; i++) {
-      rect(text_x - 20, y_start + (12 + 2 * i) * y_gap, 250, 1.5 * y_gap);
+      rect(text_x - 20, y_start + (12 + 2 * i) * y_gap, 280, 1.5 * y_gap);
     }
     fill('black');
     text('Score: ' + score, text_x, y_start + 7 * y_gap);
@@ -611,7 +620,7 @@ function show_intro_screen() {
     text('Points per block = Level.', text_x, y_start + 9 * y_gap);
     text('Mathy matching: ×2 points!', text_x, y_start + 10 * y_gap);
     text('Select a level below:', text_x, y_start + 11 * y_gap);
-    text('Your fastest\n      times:', text_x + 213, y_start + 10.5 * y_gap);
+    text('Your fastest\n      times:', text_x + 243, y_start + 10.5 * y_gap);
 
     text('Level 1: addition, small numbers', text_x, y_start + 13 * y_gap);
     text('Level 2: subtraction, small numbers', text_x, y_start + 15 * y_gap);
@@ -647,7 +656,7 @@ function show_intro_screen() {
           times_of_levels_list[i] != null) {
           // text(times_of_levels_list[i],
           text(seconds_to_min_sec_string(times_of_levels_list[i]),
-            text_x + 235, y_start + (13 + 2 * i) * y_gap);
+            text_x + 265, y_start + (13 + 2 * i) * y_gap);
         }
       }
     }
@@ -665,6 +674,7 @@ function mousePressed() {
     click_sound.play()
     mouse_has_been_pressed = 1;
   }
+  // Detect which level is being selected
   if (intro_screen == 1) {
     if (y_start + 12 * y_gap < mouseY && mouseY < y_start + 14 * y_gap) {
       level = 1;
@@ -727,12 +737,44 @@ function start_new_level() {
   game_has_started = 1;
   this_level_cleared = 0;
   hint_happening = 0;
-  if (show_hint_button != null) {
-    new show_hint_button.Sprite();
+  music.loop();
+
+  show_hint_button = new buttons.Sprite();
+  show_hint_button.x = 300;
+  show_hint_button.y = 55;
+  show_hint_button.text = 'Show hint';
+  show_hint_button.textColor = 'blue';
+
+  help_button = new buttons.Sprite();
+  help_button.x = 300;
+  help_button.y = 15;
+  help_button.text = 'How to play';
+  help_button.textColor = 'purple';
+
+  music_button = new buttons.Sprite();
+  music_button.x = 70;
+  music_button.width = 120;
+  music_button.y = floor_y + 40;
+  if (music_on == 1) {
+    music_button.text = 'Turn off 🎵';
+    music_button.textColor = 'red';
+  } else {
+    music_button.text = 'Turn on 🎵';
+    music_button.textColor = 'green';
   }
-  if (help_button != null) {
-    new help_button.Sprite();
+
+  sound_effects_button = new buttons.Sprite();
+  sound_effects_button.x = 270;
+  sound_effects_button.y = floor_y + 40;
+  sound_effects_button.width = 210;
+  if (sound_effects_on == 1) {
+    sound_effects_button.text = ' Turn off sound effects 🔊';
+    sound_effects_button.textColor = 'red';
+  } else {
+    sound_effects_button.text = ' Turn on sound effects 🔊';
+    sound_effects_button.textColor = 'green';
   }
+
   if (game_over_button != null) {
     game_over_button.remove();
   }
@@ -753,8 +795,17 @@ function show_score_etc() {
   textFont('Arial')
   textAlign(LEFT);
   textSize(15);
-  text('Score: ' + score, 20, 20);
-  text('Hi-score: ' + hi_score, 20, 40);
+  if (score == hi_score && score > 0) {
+    fill('blue');
+    text('🎉 Score: ' + score + ' 🎉', 20, 20);
+    text('🎉 Hi-score: ' + hi_score + ' 🎉', 20, 40);
+    fill('black');
+  } else {
+    fill('black');
+    text('Score: ' + score, 20, 20);
+    text('Hi-score: ' + hi_score, 20, 40);
+  }
+
   text('Needed to clear level: ' + needed_to_clear, 20, 60);
   seconds_elapsed = (millis() - t0) / 1000;
   text('Elapsed time: ' + seconds_to_min_sec_string(seconds_elapsed), 20, 100);

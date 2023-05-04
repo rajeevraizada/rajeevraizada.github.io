@@ -38,8 +38,21 @@ function check_for_uncleared_overlap() {
 }
 
 function congrats_level_cleared() {
-  highest_level_unlocked = Math.max(level + 1, highest_level_unlocked);
+  congrats_button = new buttons.Sprite();
+  congrats_button.x = (box_blocks_width + 2) * block_size / 2;
+  congrats_button.y = (box_blocks_height + 3) * block_size / 2;
+  congrats_button.textSize = 18;
+  congrats_button.width = 4 * block_size;
+  congrats_button.height = 2.5 * block_size;
+  congrats_button.textColor = 'blue';
+  // highest_level_unlocked = Math.max(level + 1, highest_level_unlocked);
   // storeItem('highest_level_unlocked', highest_level_unlocked);
+  if (levels_cleared_list[level-1]==0) {
+    congrats_button.text = 
+      '👑 Congrats! 👑\nFirst time clearing this level!\nClick here for next level';  
+  } else {
+    congrats_button.text = '🎉 Congrats! 🎉\nClick here for next level';
+  }
   levels_cleared_list[level - 1] = 1;
   storeItem('levels_cleared_list', levels_cleared_list);
   // Update best time for this level, if currently unset (zero)
@@ -52,10 +65,11 @@ function congrats_level_cleared() {
   }
   level = min(num_levels, level + 1);
   this_level_cleared = 1;
-  new congrats_button.Sprite();
-  // if (level >= num_levels) {
-  //  congrats_button.text = '🎉 Congrats! Highest level completed! 🎉';
-  // }
+  if ( current_best_time != 0 && 
+       seconds_elapsed < current_best_time ) {
+    congrats_button.text = 
+      '🎉 Congrats! 🎉\nFastest time for this level!\nClick here for next level';
+}
 }
 
 function find_matching_pair_for_hint() {
@@ -171,6 +185,20 @@ function show_bangs() {
   }
 }
 
+function make_new_text_confetti(message) {
+  new_text_confetti = new confetti.Sprite();
+  new_text_confetti.diameter = 1;
+  new_text_confetti.color = 'white';
+  new_text_confetti.text = message;
+  r = random(255); g = 50 + random(100); b = 100 + random(150);
+  new_text_confetti.textColor = color(r, g, b);
+  new_text_confetti.textSize = 50;
+  new_text_confetti.x = this_block.x;
+  new_text_confetti.y = this_block.y;
+  new_text_confetti.vel.x = 0.5 - random();
+  new_text_confetti.vel.y = -3 - random(2);
+}
+
 function remove_matching_blocks() {
   // Stop the match highlighting after its duration
   // and remove the matching blocks.
@@ -201,28 +229,20 @@ function remove_matching_blocks() {
           new_confetti.vel.y = -random(2);
         }
         if (show_mathy == 1) {
-          new_mathy = new confetti.Sprite();
-          new_mathy.diameter = 1;
-          new_mathy.color = 'white';
-          new_mathy.text = '🎉MATHY!×2🎉';
-          r = random(255); g = 50 + random(100); b = 100 + random(150);
-          new_mathy.textColor = color(r, g, b);
-          new_mathy.textSize = 55;
-          new_mathy.x = this_block.x;
-          new_mathy.y = this_block.y;
-          new_mathy.vel.x = 0.5 - random();
-          new_mathy.vel.y = -3 - random(2);
+          make_new_text_confetti('🎉MATHY!×2🎉');
           show_mathy = 0;
         }
-        this_block.remove();
         needed_to_clear -= 1;
-        if (score > hi_score) {
+        if (score>hi_score) {
           hi_score = score;
           storeItem('hi_score', hi_score);
-        }
+        } 
+        this_block.remove();
       }
     }
-    pop_sound.play();
+    if (sound_effects_on==1) {
+      pop_sound.play();
+    }
     matches_removed = 1;
     match_highlight_started = 0;
     matching_blocks = [];
@@ -281,8 +301,9 @@ function add_new_block_above(x, y) {
   top_row_categs = get_categories_in_top_two_rows();
   // Ok, let's allow a bit of top row matching, 
   // because the chain reactions are fun.
-  if (top_row_categs.length > 4) {
-    top_row_categs_sliced = top_row_categs.slice(0, 4);
+  num_categs_to_exclude = 5;
+  if (top_row_categs.length > num_categs_to_exclude) {
+    top_row_categs_sliced = top_row_categs.slice(0, num_categs_to_exclude);
   } else {
     top_row_categs_sliced = top_row_categs;
   }
@@ -359,6 +380,8 @@ function preload() {
   wrong_sound = loadSound('Sounds/wrong.mp3');
   wrong_sound.setVolume(0.3);
   pop_sound = loadSound('Sounds/pop.mp3');
+  music = createAudio('Sounds/Thats_Mathematics_smaller_file_quieter.mp3') 
+  music.loop();
 }
 
 function start_swap() {
@@ -372,7 +395,9 @@ function start_swap() {
   b2.overlaps(b1);
   // Temporarily make number_blocks static
   number_blocks.collider = 'static';
-  sliding_sound.play();
+  if (sound_effects_on==1) {
+    sliding_sound.play();
+  }
 }
 
 function check_for_block_selection() {
@@ -391,7 +416,9 @@ function check_for_block_selection() {
         selected_blocks.push(i);
         selected_categs.push(this_block.category);
         first_selection_time = millis();
-        click_sound.play();
+        if (sound_effects_on==1) {
+          click_sound.play();
+        }
       } else {
         // If not first selection...
         // If this block is already selected,
@@ -416,12 +443,16 @@ function check_for_block_selection() {
           if (selections_are_adjacent) {
             selected_blocks.push(i);
             selected_categs.push(this_block.category);
-            click_sound.play();
+            if (sound_effects_on==1) {
+              click_sound.play();
+            }
           } else {
             // Wiggle an invalidly selected non-adjacent block
             // Do a smaller jump if on higher row
             this_block.vel.y = this_block.row - box_blocks_height;
-            wrong_sound.play();
+            if (sound_effects_on==1) {
+              wrong_sound.play();
+            }
           }
         } // End of if checking for adjacency
       } // End of else for when selected_blocks.length != 0
