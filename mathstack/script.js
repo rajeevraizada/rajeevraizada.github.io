@@ -3,9 +3,10 @@
 // Released under Creative Commons license: Attribution-NonCommercial
 // https://creativecommons.org/licenses/by-nc/2.0/
 
-let intro_screen = 0;
+let intro_screen = 1;
 let level = 1;
 let num_categories = 6;
+let num_levels = 7;
 
 // Find out if on touch screen device.
 // Mouse click behaviour will be different
@@ -32,7 +33,7 @@ let max_blocks = box_blocks_width * box_blocks_height;
 let wall_thickness = 6;
 let gap = 10;
 let scale_value;
-let motion_thresh = 0.01;
+let motion_thresh = 0.001;
 let max_x, max_y, floor_y;
 let y_offset = 100;
 let row_rec, col_rec, block_count;
@@ -50,9 +51,9 @@ let num_display_types = 2;
 let cat_to_val_list; // = _.range(3, 3 + 1 + num_categories);
 let cat_to_string_list;
 let col_removal_rec = new Array(box_blocks_width).fill(0);
-let swaps_remaining, needed_to_clear, num_cleared_on_this_level;
+let needed_to_clear, num_cleared_on_this_level;
 let score = 0;
-let show_hint_button, game_over_button, congrats_button;
+let game_over_button, congrats_button;
 let help_button, music_button, sound_effects_button;
 let sound_button_press_time = 0;
 let music_button_press_time = 0;
@@ -62,7 +63,6 @@ let sound_effects_on = 0;
 let game_has_started = 0;
 let game_over = 0;
 let this_level_cleared = 0;
-let num_levels = 12;
 let levels_cleared_list;
 let times_of_levels_list;
 let seconds_elapsed;
@@ -79,20 +79,14 @@ let this_categ_rows, this_categ_cols;
 let smallest_dist_so_far;
 let rows_of_smallest_dist_blocks, cols_of_smallest_dist_blocks;
 let congrats_being_pressed = 0;
-let hint_happening = 0;
-let hint_dur = 5000;
-let hint_start_time;
-let hints_remaining;
 let hi_score = 0;
 let help_shown_time = 0;
-hint_start_time = -hint_dur; // Prevent any initial hint on start
 let double_digit_anchors = _.range(20, 108, 7);
 let random_offsets = Array.from({ length: 13 }, () => Math.floor(Math.random() * 6));
 let double_digit_vals = _.zipWith(double_digit_anchors, random_offsets, function(a, b) {
   return a + b;
 });
 let top_row_categs_sliced;
-let show_mathy = 0;
 let score_incremented = 0;
 let show_new_high_score_confetti = 0;
 let superscripts_string = '⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻';
@@ -107,6 +101,14 @@ let in_post_motion_delay_period = 0;
 let next_block_delay = 1000;
 let wall_height_scale_factor = 0.8;
 let mouse_ydiff_history = new Array(3).fill(0);
+let boxtop_y;
+let game_paused = 0;
+let pause_button_press_time = 0;
+let paused_button;
+let mouse_x_val;
+let every_block_is_in_collision = 0;
+let total_motion_tally = 0;
+let categs_to_use;
 
 function draw() {
   // frameRate(fr);
@@ -118,15 +120,16 @@ function draw() {
       start_new_level()
     }
     // if (this_level_cleared == 0) {
+    if (game_paused == 1 || game_over == 1) {
+      world.step(0.0000001);
+    }
     main_draw_loop();
-    // }
   }
-  // Let the matching process complete, and let level get cleared
-  // before announcing game over
-  // total_motion = calculate_total_motion();
-  if (swaps_remaining <= 0 && this_level_cleared == 0 &&
-    millis() - swap_start_time > 2000 && total_motion < motion_thresh &&
-    game_over == 0 && matches_removed == 1) {
+  // Check for pause/music/etc buttons being pressed 
+  if (intro_screen==0) {
+    check_for_button_presses_and_act()
+  }
+  if (game_over == 1) {
     game_over_button = new buttons.Sprite();
     game_over_button.x = (box_blocks_width + 2) * block_size / 2;
     game_over_button.y = (box_blocks_height + 3) * block_size / 2;
@@ -135,12 +138,9 @@ function draw() {
     game_over_button.width = 3.5 * block_size;
     game_over_button.height = 2 * block_size;
     game_over_button.textColor = 'red';
-    game_over = 1;
+    game_over = 0;
   }
-  // Keep on checking for overlap bug, even if game over!
-  // if (game_over == 1) {
-  //   check_for_uncleared_overlap();
-  // }
+
 }
 
 function main_draw_loop() {
@@ -150,52 +150,88 @@ function main_draw_loop() {
   // move than next_block_delay ago
 
   if (falling_block != null) {
-    falling_block_motion = abs(falling_block.vel.x) + abs(falling_block.vel.y);
+    total_motion_tally = calculate_total_motion();
+    steer_falling_block();
+
+    // Check that blocks are not touching the red line, when still
+    for (i = 0; i < number_blocks.length; i++) {
+      this_block = number_blocks[i];
+      if (this_block.overlapping(top_line)) {
+        if (abs(this_block.vel.y) < motion_thresh) {
+          this_block.color = 'red';
+          game_over = 1;
+        }
+      }
+    }
   } else {
-    falling_block_motion = 0;
+    total_motion_tally = 0;
   }
-  if (falling_block_motion < motion_thresh && in_post_motion_delay_period == 0) {
-    motion_ceased_time = millis();
-    in_post_motion_delay_period = 1;
-  }
-  if (in_post_motion_delay_period == 1 &&
-    millis() - motion_ceased_time > next_block_delay) {
-    drop_new_block();
-    in_post_motion_delay_period = 0;
+
+  if (new_block_should_be_dropped_now() == 1) {
+    if (game_over_button==null) {
+      drop_new_block();
+    }
   }
 
   // show_debug_info();
 
-  if (falling_block != null) {
-    steer_falling_block();
-  }
-
   block_count = number_blocks.length;
-  if (block_count > 0) {
+  if (block_count > 1) {
     check_for_matching_collisions();
     highlight_matching_blocks();
     remove_matching_blocks();
   }
 
   current_drag = max(drag0 - 0.1 * num_cleared_on_this_level, 0);
-  current_gravity = min(gravity0 + 0.1 * num_cleared_on_this_level, 15);
+  current_gravity = min(gravity0 + 0.1 * num_cleared_on_this_level, 10);
   world.gravity.y = current_gravity;
 
   check_for_downswipe();
 
-  /*
-  // Check to see if level has been passed
-  if (needed_to_clear <= 0 && this_level_cleared == 0) {
-    congrats_level_cleared();
-    
-  // Check if any buttons are being pressed, and perform appropriate actions
-  // check_for_button_presses();
-  
-  // Check for uncleared overlap bug
-  if (block_count > 0 && swaps_remaining > 0 && swap_started == 0) {
-    check_for_uncleared_overlap();
-    
-  */
+}
+
+function new_block_should_be_dropped_now() {
+  drop_a_block_now = 0;
+  if (total_motion_tally < motion_thresh &&
+    in_post_motion_delay_period == 0) {
+    motion_ceased_time = millis();
+    in_post_motion_delay_period = 1;
+  }
+  if (total_motion_tally < motion_thresh &&
+    in_post_motion_delay_period == 1 &&
+    millis() - motion_ceased_time > next_block_delay) {
+    drop_a_block_now = 1;
+    in_post_motion_delay_period = 0;
+  }
+  if (total_motion_tally < motion_thresh &&
+    every_block_is_in_collision == 1 &&
+    in_post_motion_delay_period == 1) {
+    drop_a_block_now = 1;
+    in_post_motion_delay_period = 1;
+  }
+  return drop_a_block_now;
+}
+
+function check_for_stasis() {
+  total_motion_tally = calculate_total_motion();
+  block_count = number_blocks.length;
+  if (block_count > 1) {
+    // See if all the blocks are touching something
+    every_block_is_in_collision = 1;
+    for (i = 0; i < block_count; i++) {
+      this_block = number_blocks[i];
+      if (!this_block.colliding(number_blocks) && !this_block.colliding(floor_block)) {
+        every_block_is_in_collision = 0;
+      }
+    }
+  }
+  if (total_motion_tally < motion_thresh &&
+    every_block_is_in_collision == 1) {
+    in_stasis = 1;
+  } else {
+    in_stasis = 0;
+  }
+  return in_stasis;
 }
 
 function check_for_downswipe() {
@@ -234,12 +270,13 @@ function steer_falling_block() {
   if (mouse_can_move_falling_block == 1) {
     mouse_x_val = check_for_mouse_x_pos();
     if (mouse_x_val != null) {
+      falling_block.vel.x = 0.02 * (mouse_x_val - falling_block.x)
       // Move if the mouse is not underneath block
-      if (mouse_x_val < falling_block.x - block_size / 2) {
-        falling_block.x -= 1.5
-      } else if (mouse_x_val > falling_block.x + block_size / 2) {
-        falling_block.x += 1.5
-      }
+      // if (mouse_x_val < falling_block.x - block_size / 2) {
+      //   falling_block.x.vel = -1.5
+      // } else if (mouse_x_val > falling_block.x + block_size / 2) {
+      //   falling_block.x.vec = 1.5
+      // }
     }
   }
 }
@@ -264,11 +301,13 @@ function check_for_matching_collisions() {
 
 function start_new_level() {
   t0 = millis();
-  swaps_remaining = 14;
   needed_to_clear = 30;
   num_cleared_on_this_level = 0;
   current_drag = drag0;
-  hints_remaining = 5;
+
+  shuffled_12_categs = _.shuffle(_.range(0,12));
+  categs_to_use = shuffled_12_categs.slice(0,num_categories);
+  
   number_blocks.remove();
   make_box_walls();
   // grid0 = make_non_matching_grid_categs();
@@ -277,16 +316,15 @@ function start_new_level() {
   // matching_blocks = check_neighbor_matches();
   game_has_started = 1;
   this_level_cleared = 0;
-  hint_happening = 0;
   if (music_on == 1) {
     music.loop();
   }
 
-  // show_hint_button = new buttons.Sprite();
-  // show_hint_button.x = 300;
-  // show_hint_button.y = 55;
-  // show_hint_button.text = 'Show hint';
-  // show_hint_button.textColor = 'blue';
+  pause_button = new buttons.Sprite();
+  pause_button.x = 300;
+  pause_button.y = 55;
+  pause_button.text = 'Pause game';
+  pause_button.textColor = 'red';
 
   help_button = new buttons.Sprite();
   help_button.x = 300;
@@ -327,34 +365,33 @@ function start_new_level() {
 }
 
 function drop_new_block() {
-  new_category = Math.floor(random(num_categories));
   falling_block = new number_blocks.Sprite();
   falling_block.x = col_to_x((0.2 + 0.6 * Math.random()) * (box_blocks_width - 1));
-  falling_block.y = (1 - wall_height_scale_factor) * floor_y - block_size;
+  falling_block.y = (1 - wall_height_scale_factor) * floor_y;
   falling_block.drag = current_drag;
-  falling_block.category = new_category;
-  falling_block.text = make_text_for_this_level(falling_block);
-}
 
-function check_for_button_presses() {
-  show_hint_being_pressed = check_for_mouse_click_or_touch(show_hint_button);
-  if (show_hint_being_pressed && hint_happening == 0 &&
-    hints_remaining > 0) {
-    hint_happening = 1;
-    hint_start_time = millis();
-    hints_remaining -= 1;
-    if (hints_remaining == 0) {
-      show_hint_button.textColor = 'grey'
+  // Let's make sure to add text that isn't already there
+  new_text_is_already_there = 1;
+  while (new_text_is_already_there == 1) {
+    new_category = Math.floor(random(num_categories));
+    falling_block.category = new_category;
+    new_text = make_text_for_this_level(falling_block);
+    new_text_is_already_there = 0;
+    for (i = 0; i < number_blocks.length; i++) {
+      this_block = number_blocks[i];
+      this_block_text = this_block.text;
+      if (this_block_text == new_text) {
+        new_text_is_already_there = 1;
+      }
     }
   }
-  if (millis() - hint_start_time < hint_dur) {
-    find_matching_pair_for_hint();
-  } else {
-    hint_happening = 0;
-  }
+  falling_block.text = new_text;
+}
+
+function check_for_button_presses_and_act() {
   help_being_pressed = check_for_mouse_click_or_touch(help_button);
   if (help_being_pressed == 1 && (millis() - help_shown_time) > 3000) {
-    window.alert('Aim: put equal-value blocks next to each other, to make them explode. To move blocks around, click on two that are next to each other to swap their positions.');
+    window.alert('Aim: stop blocks from piling up to the level of the red line. Make blocks explode by putting equal-value blocks next to each other.');
     help_shown_time = millis();
   }
   toggle_music_being_pressed = check_for_mouse_click_or_touch(music_button);
@@ -385,6 +422,19 @@ function check_for_button_presses() {
       sound_effects_button.textColor = 'green';
     }
   }
+  pause_being_pressed = check_for_mouse_click_or_touch(pause_button);
+  if (pause_being_pressed == 1 && (millis() - pause_button_press_time) > 1000) {
+    pause_button_press_time = millis();
+    if (game_paused == 0) {
+      game_paused = 1;
+      pause_button.text = 'Resume game';
+      pause_button.textColor = 'Green';
+    } else {
+      game_paused = 0;
+      pause_button.text = 'Pause game';
+      pause_button.textColor = 'red';
+    }
+  }
   if (congrats_button != null) {
     congrats_being_pressed = check_for_mouse_click_or_touch(congrats_button);
     if (congrats_being_pressed) {
@@ -403,7 +453,6 @@ function check_for_button_presses() {
       allSprites.remove();
       level = 0;
       score = 0;
-      swaps_remaining = 14;
       intro_screen = 1;
     }
   }
@@ -467,8 +516,7 @@ function make_text_for_this_level(this_block) {
   // Level 3: multiplication
   if (level == 3) {
     num_display_types = 2;
-    cat_to_val_list = [12, 18, 20, 24, 30, 36,
-      42, 48, 56, 60, 72, 84, 90, 96];
+    cat_to_val_list = [12, 18, 20, 24, 30, 36, 42, 48, 56, 60, 72, 84, 90, 96];
     this_cat_val = cat_to_val_list[category];
     prime_factors = numbers.prime.factorization(this_cat_val);
     prime_factors = _.shuffle(prime_factors);
@@ -494,16 +542,21 @@ function make_text_for_this_level(this_block) {
   // Level 5: equivalent fractions and decimals
   if (level == 5) {
     num_display_types = 3;
-    cat_to_val_list = [0.05, 0.1, 0.2, 0.25, '0.333…', 0.4, 0.5,
-      0.6, '0.666…', 0.75, 0.8, 0.9, 1];
+    cat_to_val_list = [0.05, 0.1, 0.2, 0.25, '0.333…', 0.4, 0.5, 0.6, '0.666…', 0.75, 0.8, 0.9, 1];
+    cat_to_val_list = cat_to_val_list.filter((val,ind) => categs_to_use.includes(ind)];
     // Unicode fractions made with https://lights0123.com/fractions/
     cat_to_string_list1 = ['¹⁄₂₀', '⅒', '⅕', '¼', '⅓', '⅖', '½',
       '⅗', '⅔', '¾', '⅘', '⁹⁄₁₀', '⁴⁄₄'];
+    cat_to_string_list1 = cat_to_string_list1[categs_to_use];
     numerator_list = [1, 1, 1, 1, 1, 2, 1, 3, 2, 3, 4, 9, 4];
+    numerator_list = numerator_list[categs_to_use];
     denominator_list = [0, 0, 5, 4, 3, 5, 2, 5, 3, 4, 4, 10, 4];
-
+    denominator_list = denominator_list[categs_to_use];
+    
     cat_to_string_list2 = ['²⁄₄₀', '²⁄₂₀', '³⁄₁₅', '²⁄₈', '³⁄₉', '⁶⁄₁₅', '⁴⁄₈',
       '⁹⁄₁₅', '⁶⁄₉', '⁶⁄₈', '¹²⁄₁₅', '¹⁸⁄₂₀', '⁷⁄₇'];
+    cat_to_string_list2 = cat_to_string_list2[categs_to_use];
+    
     this_cat_val = cat_to_val_list[category];
     this_cat_string1 = cat_to_string_list1[category];
     this_cat_string2 = cat_to_string_list2[category];
@@ -764,7 +817,7 @@ function show_debug_info() {
   // t_since_swap = Math.round((millis() - swap_start_time) / 1000);
   // text('Time since swap: ' + t_since_swap, 20, 120);
   // text('swap_start_time: ' + swap_start_time, 220, 120)
-  text('falling_block_motion: ' + Math.round(10 * falling_block_motion) / 10, 20, 60);
+  // text('falling_block_motion: ' + Math.round(10 * falling_block_motion) / 10, 20, 60);
   text('matching_blocks: ' + matching_blocks, 200, 60);
   text('motion_ceased_time: ' + Math.floor(motion_ceased_time / 1000), 20, 80);
   text('in_post_motion_delay_period: ' + in_post_motion_delay_period, 200, 80);
@@ -784,6 +837,10 @@ function show_debug_info() {
 
 function show_intro_screen() {
   if (intro_screen == 1) {
+    if (game_over_button != null) {
+      game_over_button.remove()
+    }
+    
     font_size = 14;
     textSize(font_size);
     text_x = 45;
@@ -810,11 +867,11 @@ function show_intro_screen() {
     text('Level 5: fractions and decimals', text_x, y_start + 21 * y_gap);
     text('Level 6: addition, double digits', text_x, y_start + 23 * y_gap);
     text('Level 7: subtraction, double digits', text_x, y_start + 25 * y_gap);
-    text('Level 8: percentage changes', text_x, y_start + 27 * y_gap);
-    text('Level 9: exponents', text_x, y_start + 29 * y_gap);
-    text('Level 10: logarithms', text_x, y_start + 31 * y_gap);
-    text('Level 11: trigonometry', text_x, y_start + 33 * y_gap);
-    text('Level 12: calculus', text_x, y_start + 35 * y_gap);
+//    text('Level 8: percentage changes', text_x, y_start + 27 * y_gap);
+//    text('Level 9: exponents', text_x, y_start + 29 * y_gap);
+//    text('Level 10: logarithms', text_x, y_start + 31 * y_gap);
+//    text('Level 11: trigonometry', text_x, y_start + 33 * y_gap);
+//    text('Level 12: calculus', text_x, y_start + 35 * y_gap);
 
     textSize(30);
     for (i = highest_level_unlocked; i < num_levels; i++) {
@@ -878,6 +935,7 @@ function mousePressed() {
     if (y_start + 24 * y_gap < mouseY && mouseY < y_start + 26 * y_gap) {
       level = 7;
     }
+    /*
     if (y_start + 26 * y_gap < mouseY && mouseY < y_start + 28 * y_gap) {
       level = 8;
     }
@@ -893,7 +951,8 @@ function mousePressed() {
     if (y_start + 34 * y_gap < mouseY && mouseY < y_start + 36 * y_gap) {
       level = 12;
     }
-
+    */
+    
     if (level > highest_level_unlocked) {
       level = 0;
     }
@@ -927,31 +986,21 @@ function show_score_etc() {
     text('Hi-score: ' + hi_score, 20, 40);
   }
 
-  // text('💥 Needed to clear level: ' + needed_to_clear, 20, 60);
+  text('💥 Needed to clear level: ' + needed_to_clear, 20, 80);
   seconds_elapsed = (millis() - t0) / 1000;
   text('Elapsed time: ' + seconds_to_min_sec_string(seconds_elapsed), 20, 60);
-  text('Drag0: ' + drag0, 20, 80);
-  text('Current drag: ' + Math.round(current_drag * 100) / 100, 100, 80);
-  text('gavity0: ' + gravity0, 20, 100);
-  text('Current gravity: ' + current_gravity, 100, 100);
-
-  // text('Hints remaining: ' + hints_remaining, 235, 83);
-  if (swaps_remaining <= 3) {
-    fill('red');
-  } else {
-    fill('black');
-  }
-  // text('🔂 Swaps remaining: ' + swaps_remaining, 20, 80);
-  // Show columns of icons for needed_to_clear and swaps_remaining
+  // text('Drag0: ' + drag0, 20, 80);
+  // text('Current drag: ' + Math.round(current_drag * 100) / 100, 100, 80);
+  // text('gavity0: ' + gravity0, 20, 100);
+  // text('Current gravity: ' + current_gravity, 100, 100);
+  // text('In post-motion delay: ' + in_post_motion_delay_period, 20, 120);
+  // text('Total motion: ' + Math.round(10 * total_motion_tally) / 10, 200, 120);
+  // text('every_block_is_in_collision: ' + every_block_is_in_collision, 20, 140);
+  // Show columns of icons for needed_to_clear
   x_pos = left_wall.x - 25;
   for (i = 0; i < needed_to_clear; i++) {
     y_pos = floor_y - i * 12;
     text('💥', x_pos, y_pos)
-  }
-  x_pos = right_wall.x + 10;
-  for (i = 0; i < swaps_remaining; i++) {
-    y_pos = floor_y - i * 20;
-    text('🔂', x_pos, y_pos)
   }
 }
 
@@ -1117,40 +1166,6 @@ function remove_matching_blocks() {
   }
 }
 
-function add_new_blocks() {
-  // Add new blocks at the top of cols with blocks removed
-  top_row_categs = get_categories_in_top_two_rows();
-  // Ok, let's allow a bit of top row matching, 
-  // because the chain reactions are fun.
-  num_categs_to_exclude = 4;
-  if (top_row_categs.length > num_categs_to_exclude) {
-    top_row_categs_sliced = top_row_categs.slice(0, num_categs_to_exclude);
-  } else {
-    top_row_categs_sliced = top_row_categs;
-  }
-  available_categs = _.difference(_.range(num_categories), top_row_categs_sliced);
-  shuffled_available = _.shuffle(available_categs);
-  for (i = 0; i < col_removal_rec.length; i++) {
-    this_col_removal_count = col_removal_rec[i];
-    if (this_col_removal_count > 0) {
-      for (j = 0; j < this_col_removal_count; j++) {
-        this_x = col_to_x(i);
-        this_y = row_to_y(box_blocks_height) - j * block_size;
-        // Pick a block that doesn't match top two rows,
-        // and that we have not used yet in this block-adding round
-        if (shuffled_available.length > 0) {
-          new_category = shuffled_available[0];
-          shuffled_available.shift(); // Remove that first element. We've used it
-        } else { // If we have used up all non-matching cats, simply use random
-          new_category = Math.floor(random(num_categories));
-        }
-        add_new_block_above(this_x, this_y, new_category)
-      }
-      col_removal_rec[i] = 0; // Reset removal count for this col
-    }
-  }
-}
-
 function preload() {
   soundFormats('mp3');
   click_sound = loadSound('Sounds/click.mp3');
@@ -1170,8 +1185,10 @@ function preload() {
 function check_for_mouse_click_or_touch(this_block) {
   selection_action_happening = 0;
   if (isMobileDevice == 0) {  // Normal mouse click
-    if (this_block.mouse.pressing()) {
-      selection_action_happening = 1;
+    if (this_block != null) {
+      if (this_block.mouse.pressing()) {
+        selection_action_happening = 1;
+      }
     }
   } else { // Touch screeen mobile: no click required
     if (touches.length > 0 && touch_has_ended) {
@@ -1187,7 +1204,6 @@ function check_for_mouse_click_or_touch(this_block) {
 }
 
 function check_for_mouse_x_pos() {
-  selection_action_happening = 0;
   if (isMobileDevice == 0) {  // Normal mouse click
     mouse_x_val = mouse.x
   } else { // Touch screeen mobile: only return a val if touch happeninv
@@ -1205,8 +1221,8 @@ function touchEnded() {
 }
 
 function calculate_total_motion() {
-  block_count = number_blocks.length
-  motion_tally = 0
+  block_count = number_blocks.length;
+  motion_tally = 0;
   if (block_count > 0) {
     for (i = 0; i < block_count; i++) {
       this_block = number_blocks[i];
@@ -1240,6 +1256,7 @@ function y_to_row(this_y) {
 
 function make_box_walls() {
   floor_y = scale_value * max_y / 2 + block_size * box_blocks_height / 2 + y_offset;
+  boxtop_y = floor_y * (1 - wall_height_scale_factor);
 
   left_wall = new Sprite();
   left_wall.collider = 'static';
@@ -1250,6 +1267,7 @@ function make_box_walls() {
   left_wall.x = scale_value * max_x / 2 - block_size * box_blocks_width / 2
     - gap * box_blocks_width / 2 - wall_thickness;
   left_wall.y = floor_y - left_wall.height / 2;
+  left_wall.friction = 0;
 
   right_wall = new Sprite();
   right_wall.collider = 'static';
@@ -1260,6 +1278,7 @@ function make_box_walls() {
   right_wall.x = scale_value * max_x / 2 + block_size * box_blocks_width / 2
     + gap * (box_blocks_width - 1) / 2 + wall_thickness;
   right_wall.y = floor_y - right_wall.height / 2;
+  right_wall.friction = 0;
 
   floor_block = new Group();
   floor_block.collider = 'static';
@@ -1288,6 +1307,18 @@ function make_box_walls() {
   floor_block5.x = floor_block1.x;
   floor_block5.y = floor_y + 4 * wall_thickness + 1;
   floor_block5.visible = false;
+
+  // Draw a thin red line across top of box
+  top_line = new Sprite();
+  top_line.collider = 'static';
+  top_line.width = right_wall.x - left_wall.x;
+  top_line.height = 1;
+  top_line.stroke = 'red';
+  top_line.color = 'red';
+  top_line.x = (right_wall.x + left_wall.x) / 2;
+  top_line.y = boxtop_y;
+  top_line.overlaps(number_blocks)
+  top_line.overlaps(confetti)
 }
 
 function look_for_block_at(row, col) {
@@ -1310,22 +1341,3 @@ function look_for_block_at(row, col) {
   return matching_block_ind;
 }
 
-function get_categories_in_top_two_rows() {
-  categs_list_ij = [];
-  top_two_rows = [box_blocks_height - 2, box_blocks_height - 1];
-  for (ii = 0; ii < 2; ii++) {
-    row_i = top_two_rows[ii];
-    for (jj = 0; jj < box_blocks_width; jj++) {
-      this_block_ind_ij = look_for_block_at(row_i, jj);
-      if (this_block_ind_ij != null) {
-        this_block_ij = number_blocks[this_block_ind_ij];
-        if (this_block_ij != null) {
-          this_categ_ij = this_block_ij.category;
-          categs_list_ij.push(this_categ_ij);
-        }
-      }
-    }
-  }
-  unique_list_ij = _.uniq(categs_list_ij);
-  return unique_list_ij;
-}
