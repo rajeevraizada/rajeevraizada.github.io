@@ -543,7 +543,7 @@ function make_text_for_this_level(this_block) {
   if (level == 5) {
     num_display_types = 3;
     cat_to_val_list = [0.05, 0.1, 0.2, 0.25, '0.333…', 0.4, 0.5, 0.6, '0.666…', 0.75, 0.8, 0.9, 1];
-    cat_to_val_list = cat_to_val_list.filter((val,ind) => categs_to_use.includes(ind)];
+    cat_to_val_list = cat_to_val_list.filter((val,ind) => categs_to_use.includes(ind));
     // Unicode fractions made with https://lights0123.com/fractions/
     cat_to_string_list1 = ['¹⁄₂₀', '⅒', '⅕', '¼', '⅓', '⅖', '½',
       '⅗', '⅔', '¾', '⅘', '⁹⁄₁₀', '⁴⁄₄'];
