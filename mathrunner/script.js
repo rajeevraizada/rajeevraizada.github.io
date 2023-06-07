@@ -3,6 +3,7 @@
 let user_agent_string = navigator.userAgent;
 let mobile_regexp = /android|iphone|kindle|ipad/i;
 let isMobileDevice = mobile_regexp.test(user_agent_string);
+// let isMobileDevice = 1; // to_remove
 let chromebook_regexp = /CrOS/;
 let isChromebook = chromebook_regexp.test(user_agent_string);
 // Click on a desktop seems to last longer than screen touch event
@@ -86,20 +87,25 @@ let help_button, music_button, sound_effects_button;
 let sound_button_press_time = 0;
 let music_button_press_time = 0;
 let help_shown_time = 0;
-let music_on = 1;
+let music_on = 0;    // to_change
 let music;
 let sound_effects_on = 1;
+let touch_has_ended = 1;
+let y_gap, y_start;
 
 function draw() {
   clear();
   if (intro_screen == 1) {
+    // click_sound.play();
     show_intro_screen();
-  } 
+    // if (touches.length > 0) {
+    // }  
+  }
   if (intro_screen == 0) {
     if (game_has_started == 0) {
       start_new_level();
-    } 
-    if (game_paused==0 && game_over==0 && this_level_cleared==0) { 
+    }
+    if (game_paused == 0 && game_over == 0 && this_level_cleared == 0) {
       main_draw_loop();
     }
   }
@@ -111,13 +117,12 @@ function draw() {
     game_over = 1;
   }
   // Check if any buttons are being pressed, and perform appropriate actions
-  if (intro_screen==0) {
+  if (intro_screen == 0) {
     check_for_button_presses();
   }
 }
 
 function main_draw_loop() {
-  // clear();
   check_for_swipes();
   make_puppy_run_or_stand();
   show_score_etc();
@@ -148,7 +153,7 @@ function preload() {  // Free sounds from PixaBay
   wrong_sound.setVolume(0.3);
   click_sound = loadSound('assets/click.mp3');
   click_sound.setVolume(0.4);
-  music = createAudio('assets/Thats_Mathematics_smaller_file_quieter.mp3') 
+  music = createAudio('assets/Thats_Mathematics_smaller_file_quieter.mp3')
   // music.loop();
 }
 
@@ -197,11 +202,11 @@ function setup() {
   message_button.y = 2 * number_block_xsize;
   message_button.textSize = 24;
   message_button.width = 3.5 * number_block_xsize;
-  message_button.height = 2 *number_block_xsize;
+  message_button.height = 2 * number_block_xsize;
   message_button.textColor = 'red';
   message_button.color = 'white';
   message_button.collider = 'static';
-  
+
   hi_score = getItem('hi_score');
   if (typeof (hi_score) != 'number') {
     hi_score = 0;
@@ -236,7 +241,7 @@ function make_terrain_number_blocks_and_puppy() {
   puppy.display_text = make_text_for_this_level(puppy);
   puppy_categ_text_list.push(puppy.display_text);
   puppy.overlaps(confetti);
-  
+
   // We will have a num_target_blocks target blocks,
   // and then one each of all the other categories
   targets_list = new Array(num_target_blocks - 1).fill(puppy.category);
@@ -322,15 +327,15 @@ function check_for_number_block_collisions() {
           message_colour = 'blue';
           make_new_text_confetti(message);
           this_block.remove();
-          if (sound_effects_on==1) {
+          if (sound_effects_on == 1) {
             target_hit_sound.play();
           }
           num_targets_left_to_find -= 1;
           score += 100;
-          if (score>hi_score) {
+          if (score > hi_score) {
             hi_score = score;
             storeItem('hi_score', hi_score);
-          } 
+          }
         } else {
           emoji_to_use = bad_emoji_list[Math.floor(random(num_bad_emojis))];
           message = emoji_to_use + ' Not equal! ' + emoji_to_use;
@@ -339,7 +344,7 @@ function check_for_number_block_collisions() {
           message_colour = 'red';
           make_new_text_confetti(message);
           this_block.remove();
-          if (sound_effects_on==1) {
+          if (sound_effects_on == 1) {
             wrong_sound.play();
           }
           lives_remaining -= 1;
@@ -416,7 +421,7 @@ function make_puppy_run_or_stand() {
   }
   if (puppy_direction != 0 && running_sound_playing == 0 &&
     puppy.colliding(floor_blocks)) {
-    if (sound_effects_on==1) {
+    if (sound_effects_on == 1) {
       running_sound.play();
     }
     running_sound_start_time = millis();
@@ -463,7 +468,9 @@ function mousePressed() {
     }
   }
   if (intro_screen == 1) {
+    click_sound.play();
     detect_level_selection();
+
   }
 }
 
@@ -475,7 +482,7 @@ function mouseReleased() {
     // && puppy.vel.y >= 0
   ) {
     puppy.vel.y = jump_vel;
-    if (sound_effects_on==1) {
+    if (sound_effects_on == 1) {
       jump_sound.play();
     }
   }
@@ -489,16 +496,84 @@ function keyPressed() {
     // && puppy.vel.y >= 0
   ) {
     puppy.vel.y = jump_vel;
-    if (sound_effects_on==1) {
+    if (sound_effects_on == 1) {
       jump_sound.play();
     }
   }
 }
 
+function show_intro_screen() {
+  if (intro_screen == 1) {
+    font_size = 16;
+    textSize(font_size);
+    text_x = 45;
+    y_start = -80; // 20;
+    y_gap = 1.2 * font_size;
+    textAlign(LEFT);
+
+    fill('white');
+    for (i = 0; i < num_levels; i++) {
+      rect(text_x - 20, y_start + (12 + 2 * i) * y_gap, 280, 1.5 * y_gap);
+    }
+    fill('black');
+
+    if (touches.length > 0) {
+      detect_level_selection();
+    }
+
+    text('Score: ' + score, text_x, y_start + 7 * y_gap);
+    text('Your hi-score: ' + hi_score, text_x, y_start + 9 * y_gap);
+    // text('Points per block = Level.', text_x, y_start + 9 * y_gap);
+    // text('Mathy matching: ×2 points!', text_x, y_start + 10 * y_gap);
+    text('Select a level below:', text_x, y_start + 11 * y_gap);
+    // text('Your fastest\n      times:', text_x + 243, y_start + 10.5 * y_gap);
+
+    text('Level 1: addition, small numbers', text_x, y_start + 13 * y_gap);
+    text('Level 2: subtraction, small numbers', text_x, y_start + 15 * y_gap);
+    text('Level 3: multiplication', text_x, y_start + 17 * y_gap);
+    text('Level 4: division', text_x, y_start + 19 * y_gap);
+    text('Level 5: fractions and decimals', text_x, y_start + 21 * y_gap);
+    text('Level 6: addition, double digits', text_x, y_start + 23 * y_gap);
+    text('Level 7: subtraction, double digits', text_x, y_start + 25 * y_gap);
+    text('Level 8: percentage changes', text_x, y_start + 27 * y_gap);
+    // text('Level 9: exponents', text_x, y_start + 29 * y_gap);
+    // text('Level 10: logarithms', text_x, y_start + 31 * y_gap);
+    // text('Level 11: trigonometry', text_x, y_start + 33 * y_gap);
+    // text('Level 12: calculus', text_x, y_start + 35 * y_gap);
+
+    textSize(30);
+    if (levels_cleared_list != null) {
+      // textSize(15);
+      // text('levels_cleared_list: ' + levels_cleared_list, 20, 70);
+      textSize(35);
+      for (i = 0; i < num_levels; i++) {
+        if (levels_cleared_list[i] == 1) {
+          text('👑', text_x - 40, y_start + (13 + 2 * i) * y_gap + 4);
+        }
+      }
+    }
+    if (times_of_levels_list != null) {
+      textSize(15);
+      for (i = 0; i < num_levels; i++) {
+        if (times_of_levels_list[i] != 0 &&
+          times_of_levels_list[i] != null) {
+          // text(times_of_levels_list[i],
+          text(seconds_to_min_sec_string(times_of_levels_list[i]),
+            text_x + 265, y_start + (13 + 2 * i) * y_gap);
+        }
+      }
+    }
+    // text(times_of_levels_list, 150, 20);
+  } // End of if intro_screen
+}
+
 function detect_level_selection() {
   // Detect which level is being selected
+  // text('level detected: ' + level, 200, 120);
+  // jump_sound.play();
+
   if (intro_screen == 1) {
-    if (y_start + 12 * y_gap < mouseY && mouseY < y_start + 14 * y_gap) {
+    if ((y_start + 12 * y_gap < mouseY) && (mouseY < y_start + 14 * y_gap)) {
       level = 1;
     }
     if (y_start + 14 * y_gap < mouseY && mouseY < y_start + 16 * y_gap) {
@@ -633,7 +708,8 @@ function make_text_for_this_level(this_block) {
       product_text = text_part1.toString() + '×' + text_part2.toString();
       this_text = product_text;
     }
-    if (this_block.category == puppy.category) {
+    if (this_block.category == puppy.category &&
+      puppy_categ_text_list.length < 4) {
       puppy_categ_text_list.push(this_text);
     }
     this_block.textSize = 18;
@@ -652,9 +728,10 @@ function make_text_for_this_level(this_block) {
       quotient_text = text_part1.toString() + ' ÷ ' + text_part2.toString();
       this_text = quotient_text;
     }
-    if (this_block.category == puppy.category) {
-      puppy_categ_text_list.push(this_text);
-    }
+    // if (this_block.category == puppy.category // &&
+    // puppy_categ_text_list.length < 1) {
+    // puppy_categ_text_list.push(this_text);
+    // }
     this_block.textSize = 18;
   }
   // Level 5: equivalent fractions and decimals
@@ -915,69 +992,6 @@ function make_new_text_confetti(message) {
   new_text_confetti.vel.y = -7 - random(2);
 }
 
-function show_intro_screen() {
-  if (intro_screen == 1) {
-    font_size = 16;
-    textSize(font_size);
-    text_x = 45;
-    y_start = -80; // 20;
-    y_gap = 1.2 * font_size;
-    textAlign(LEFT);
-
-    fill('white');
-    for (i = 0; i < num_levels; i++) {
-      rect(text_x - 20, y_start + (12 + 2 * i) * y_gap, 280, 1.5 * y_gap);
-    }
-    fill('black');
-    // text('game_has_started: ' + game_has_started,20,20);
-    // text('intro_screen: ' + intro_screen,20,40);
-    
-    text('Score: ' + score, text_x, y_start + 7 * y_gap);
-    text('Your hi-score: ' + hi_score, text_x, y_start + 9 * y_gap);
-    // text('Points per block = Level.', text_x, y_start + 9 * y_gap);
-    // text('Mathy matching: ×2 points!', text_x, y_start + 10 * y_gap);
-    text('Select a level below:', text_x, y_start + 11 * y_gap);
-    // text('Your fastest\n      times:', text_x + 243, y_start + 10.5 * y_gap);
-
-    text('Level 1: addition, small numbers', text_x, y_start + 13 * y_gap);
-    text('Level 2: subtraction, small numbers', text_x, y_start + 15 * y_gap);
-    text('Level 3: multiplication', text_x, y_start + 17 * y_gap);
-    text('Level 4: division', text_x, y_start + 19 * y_gap);
-    text('Level 5: fractions and decimals', text_x, y_start + 21 * y_gap);
-    text('Level 6: addition, double digits', text_x, y_start + 23 * y_gap);
-    text('Level 7: subtraction, double digits', text_x, y_start + 25 * y_gap);
-    text('Level 8: percentage changes', text_x, y_start + 27 * y_gap);
-    // text('Level 9: exponents', text_x, y_start + 29 * y_gap);
-    // text('Level 10: logarithms', text_x, y_start + 31 * y_gap);
-    // text('Level 11: trigonometry', text_x, y_start + 33 * y_gap);
-    // text('Level 12: calculus', text_x, y_start + 35 * y_gap);
-
-    textSize(30);
-    if (levels_cleared_list != null) {
-      // textSize(15);
-      // text('levels_cleared_list: ' + levels_cleared_list, 20, 70);
-      textSize(35);
-      for (i = 0; i < num_levels; i++) {
-        if (levels_cleared_list[i] == 1) {
-          text('👑', text_x - 40, y_start + (13 + 2 * i) * y_gap + 4);
-        }
-      }
-    }
-    if (times_of_levels_list != null) {
-      textSize(15);
-      for (i = 0; i < num_levels; i++) {
-        if (times_of_levels_list[i] != 0 &&
-          times_of_levels_list[i] != null) {
-          // text(times_of_levels_list[i],
-          text(seconds_to_min_sec_string(times_of_levels_list[i]),
-            text_x + 265, y_start + (13 + 2 * i) * y_gap);
-        }
-      }
-    }
-    // text(times_of_levels_list, 150, 20);
-  } // End of if intro_screen
-}
-
 function start_new_level() {
   t0 = millis();
   // level = 0;
@@ -987,8 +1001,9 @@ function start_new_level() {
   game_has_started = 1;
   this_level_cleared = 0;
   game_over = 0;
+  puppy_categ_text_list = [];
   make_terrain_number_blocks_and_puppy();
-  
+
   if (music_on == 1) {
     music.loop();
   }
@@ -1035,11 +1050,11 @@ function show_how_to_play() {
   textSize(16);
   y_text_start = 500;
   text('Collect matching blocks, but jump over non-matching ones.', 20, y_text_start)
-  text('Swipe left or right to move puppy.', 20, y_text_start+20);
-  text('Tap screen, click mouse or press space to jump.', 20, y_text_start+40);
-  text('Stop left/right motions with short swipe in opposite direction.', 20, y_text_start+60);  
-  text('Puppy can be swiped left or right in mid-jump!', 20, y_text_start+80);
-  text('That is useful if standing close to a block.', 20, y_text_start+100);
+  text('Swipe left or right to move puppy.', 20, y_text_start + 20);
+  text('Tap screen, click mouse or press space to jump.', 20, y_text_start + 40);
+  text('Stop left/right motions with short swipe in opposite direction.', 20, y_text_start + 60);
+  text('Puppy can be swiped left or right in mid-jump!', 20, y_text_start + 80);
+  text('That is useful if standing close to a block.', 20, y_text_start + 100);
 
 }
 
@@ -1048,9 +1063,9 @@ function congrats_level_cleared() {
   congrats_button = new message_button.Sprite();
   congrats_button.textSize = 18;
   congrats_button.textColor = 'blue';
-  if (levels_cleared_list[level-1]==0) {
-    congrats_button.text = 
-      '👑 Congrats! 👑\nFirst time clearing this level!\nClick here for next level';  
+  if (levels_cleared_list[level - 1] == 0) {
+    congrats_button.text =
+      '👑 Congrats! 👑\nFirst time clearing this level!\nClick here for next level';
   } else {
     congrats_button.text = '🎉 Congrats! 🎉\nClick here for next level';
   }
@@ -1065,9 +1080,9 @@ function congrats_level_cleared() {
     storeItem('times_of_levels_list', times_of_levels_list);
   }
   // level = min(num_levels, level + 1);
-  if ( current_best_time != 0 && 
-       seconds_elapsed < current_best_time ) {
-    congrats_button.text = 
+  if (current_best_time != 0 &&
+    seconds_elapsed < current_best_time) {
+    congrats_button.text =
       '🎉 Congrats! 🎉\nFastest time for this level!\nClick here for next level';
   }
 }
@@ -1153,5 +1168,9 @@ function seconds_to_min_sec_string(seconds) {
   minutes = Math.floor(seconds / 60);
   seconds_mod_mins = Math.floor(seconds - 60 * minutes);
   time_string = String(minutes) + ':' + String(seconds_mod_mins).padStart(2, '0') + 's';
-  return (time_string);
+  return time_string;
+}
+
+function touchEnded() {
+  touch_has_ended = 1;
 }
