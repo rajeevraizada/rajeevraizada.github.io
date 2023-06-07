@@ -18,7 +18,7 @@ if (isMobileDevice) {
 // Also, touches on Firefox on Android don't seem to register at all!
 
 let puppy_step = 2.5;
-let jump_vel = -7;
+let jump_vel = -3;
 let level = 0;
 let lives_remaining = 5;
 let num_target_blocks = 5;
