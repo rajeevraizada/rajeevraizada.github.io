@@ -476,7 +476,7 @@ function mouseReleased() {
   // Make a jump if it's a short touch or click, i.e. a tap
   // and if the puppy is not already in mid-air
   if (millis() - click_start_time < tap_dur_thresh
-    && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
+   // && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
   ) {
     puppy.vel.y = jump_vel;
     if (sound_effects_on == 1) {
