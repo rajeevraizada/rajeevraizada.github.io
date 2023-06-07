@@ -27,6 +27,8 @@ let num_levels = 8;
 let intro_screen = 1;
 let game_has_started = 0;
 let mouse_has_been_pressed = 0;
+let game_paused = 0;
+let game_over = 0;
 let this_level_cleared = 0;
 
 let puppy_animation, puppy;
@@ -55,7 +57,7 @@ let terrain = new Array(terrain_length).fill(floor_baseline_y);
 let terrain_x_start = -300;
 let score = 0;
 let number_block_xsize = 80;
-let number_block_ysize = 0.5 * number_block_xsize;
+let number_block_ysize = 0.6 * number_block_xsize;
 let num_categories = 12;
 let blocks_categ_list;
 let display_types_not_to_use;
@@ -78,16 +80,15 @@ let levels_cleared_list;
 let times_of_levels_list;
 let seconds_elapsed;
 let this_text, click_start_time, hi_score;
-let game_paused = 0;
-let game_over = 0;
 let pause_button_press_time = 0;
 let paused_button;
 let show_hint_button, game_over_button, congrats_button;
 let help_button, music_button, sound_effects_button;
-let sound_button_press_time = 0;
-let music_button_press_time = 0;
+// let sound_button_press_time = 0;
+// let music_button_press_time = 0;
+let button_press_time = 0;
 let help_shown_time = 0;
-let music_on = 0;    // to_change
+let music_on = 1;
 let music;
 let sound_effects_on = 1;
 let touch_has_ended = 1;
@@ -96,13 +97,11 @@ let y_gap, y_start;
 function draw() {
   clear();
   if (intro_screen == 1) {
-    // click_sound.play();
     show_intro_screen();
-    // if (touches.length > 0) {
-    // }  
   }
   if (intro_screen == 0) {
     if (game_has_started == 0) {
+      clear();
       start_new_level();
     }
     if (game_paused == 0 && game_over == 0 && this_level_cleared == 0) {
@@ -198,8 +197,8 @@ function setup() {
   // confetti.overlaps(puppy);
 
   message_button = new Group();
-  message_button.x = 3 * number_block_xsize;
-  message_button.y = 2 * number_block_xsize;
+  message_button.x = 2.5 * number_block_xsize;
+  message_button.y = 3 * number_block_xsize;
   message_button.textSize = 24;
   message_button.width = 3.5 * number_block_xsize;
   message_button.height = 2 * number_block_xsize;
@@ -396,7 +395,7 @@ function show_score_etc() {
   }
   seconds_elapsed = (millis() - t0) / 1000;
   text('Elapsed time: ' + seconds_to_min_sec_string(seconds_elapsed), 20, 95);
-  // text('this_level_cleared: ' + this_level_cleared, 100, 20);
+  // text('click_start_time: ' + Math.round(click_start_time), 20, 120);
   // text('puppy.course_x: ' + Math.round(puppy.course_x), puppy.x - 50, puppy.y - 50);
 }
 
@@ -470,7 +469,6 @@ function mousePressed() {
   if (intro_screen == 1) {
     click_sound.play();
     detect_level_selection();
-
   }
 }
 
@@ -479,7 +477,6 @@ function mouseReleased() {
   // and if the puppy is not already in mid-air
   if (millis() - click_start_time < tap_dur_thresh
     && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
-    // && puppy.vel.y >= 0
   ) {
     puppy.vel.y = jump_vel;
     if (sound_effects_on == 1) {
@@ -487,6 +484,7 @@ function mouseReleased() {
     }
   }
   mouse_down_or_touch = 0;
+  touch_has_ended = 1;
 }
 
 function keyPressed() {
@@ -517,7 +515,7 @@ function show_intro_screen() {
     }
     fill('black');
 
-    if (touches.length > 0) {
+    if (touches.length > 0 && (millis() - button_press_time) > 1000) {
       detect_level_selection();
     }
 
@@ -564,14 +562,12 @@ function show_intro_screen() {
       }
     }
     // text(times_of_levels_list, 150, 20);
+    show_how_to_play();
   } // End of if intro_screen
 }
 
 function detect_level_selection() {
   // Detect which level is being selected
-  // text('level detected: ' + level, 200, 120);
-  // jump_sound.play();
-
   if (intro_screen == 1) {
     if ((y_start + 12 * y_gap < mouseY) && (mouseY < y_start + 14 * y_gap)) {
       level = 1;
@@ -611,11 +607,10 @@ function detect_level_selection() {
       level = 12;
     }
     */
-
-    if (level > 0) {
-      intro_screen = 0;
-      start_new_level();
-    }
+  }
+  if (level > 0) {
+    intro_screen = 0;
+    start_new_level();
   }
 }
 
@@ -1009,15 +1004,16 @@ function start_new_level() {
   }
 
   help_button = new buttons.Sprite();
-  help_button.x = 90;
-  help_button.y = floor_baseline_y + 250;
+  help_button.x = 70;
+  help_button.y = floor_baseline_y + 300;
+  help_button.width = 120;
   help_button.text = 'How to play';
   help_button.textColor = 'purple';
 
   music_button = new buttons.Sprite();
   music_button.x = 70;
   music_button.width = 120;
-  music_button.y = floor_baseline_y + 200;
+  music_button.y = floor_baseline_y + 250;
   if (music_on == 1) {
     music_button.text = 'Turn off 🎵';
     music_button.textColor = 'red';
@@ -1028,7 +1024,7 @@ function start_new_level() {
 
   sound_effects_button = new buttons.Sprite();
   sound_effects_button.x = 270;
-  sound_effects_button.y = floor_baseline_y + 200;
+  sound_effects_button.y = floor_baseline_y + 250;
   sound_effects_button.width = 210;
   if (sound_effects_on == 1) {
     sound_effects_button.text = ' Turn off sound effects 🔊';
@@ -1047,14 +1043,14 @@ function start_new_level() {
 }
 
 function show_how_to_play() {
-  textSize(16);
+  textSize(14);
   y_text_start = 500;
   text('Collect matching blocks, but jump over non-matching ones.', 20, y_text_start)
   text('Swipe left or right to move puppy.', 20, y_text_start + 20);
   text('Tap screen, click mouse or press space to jump.', 20, y_text_start + 40);
-  text('Stop left/right motions with short swipe in opposite direction.', 20, y_text_start + 60);
+  text('A short swipe opposite to running direction stops it.', 20, y_text_start + 60);
   text('Puppy can be swiped left or right in mid-jump!', 20, y_text_start + 80);
-  text('That is useful if standing close to a block.', 20, y_text_start + 100);
+  text('That is useful for jumping over a block you are close to!', 20, y_text_start + 100);
 
 }
 
@@ -1090,12 +1086,12 @@ function congrats_level_cleared() {
 function check_for_button_presses() {
   help_being_pressed = check_for_mouse_click_or_touch(help_button);
   if (help_being_pressed == 1 && (millis() - help_shown_time) > 3000) {
-    window.alert('Collect matching blocks, but jump over non-matching ones. Swipe left or right to move puppy. Stop left/right motions with short swipe in opposite direction. Tap screen, click mouse or press space to jump. Puppy can be swiped left or right in mid-jump, which is useful if standing close to a block.');
+    window.alert('Collect matching blocks, but jump over non-matching ones.\n\nSwipe left or right to make puppy run.\n\nA short swipe opposite to running direction stops it.\n\nTap screen, click mouse or press space to jump.\n\nPuppy can be swiped left or right in mid-jump, which is useful for jumping over a block you are close to!');
     help_shown_time = millis();
   }
   toggle_music_being_pressed = check_for_mouse_click_or_touch(music_button);
-  if (toggle_music_being_pressed == 1 && (millis() - music_button_press_time) > 1000) {
-    music_button_press_time = millis();
+  if (toggle_music_being_pressed == 1 && (millis() - button_press_time) > 1000) {
+    button_press_time = millis();
     if (music_on == 0) {
       music_on = 1;
       music_button.text = 'Turn off 🎵';
@@ -1109,8 +1105,8 @@ function check_for_button_presses() {
     }
   }
   toggle_sound_being_pressed = check_for_mouse_click_or_touch(sound_effects_button);
-  if (toggle_sound_being_pressed == 1 && (millis() - sound_button_press_time) > 1000) {
-    sound_button_press_time = millis();
+  if (toggle_sound_being_pressed == 1 && (millis() - button_press_time) > 1000) {
+    button_press_time = millis();
     if (sound_effects_on == 0) {
       sound_effects_on = 1;
       sound_effects_button.text = ' Turn off sound effects 🔊';
@@ -1129,6 +1125,7 @@ function check_for_button_presses() {
       allSprites.remove();
       level = 0;
       intro_screen = 1;
+      button_press_time = millis();
     }
   }
   if (game_over_button != null) {
@@ -1141,6 +1138,7 @@ function check_for_button_presses() {
       score = 0;
       swaps_remaining = 14;
       intro_screen = 1;
+      button_press_time = millis();
     }
   }
 }
@@ -1151,14 +1149,12 @@ function check_for_mouse_click_or_touch(this_block) {
     if (this_block.mouse.pressing()) {
       selection_action_happening = 1;
     }
-  } else { // Touch screeen mobile: no click required
-    if (touches.length > 0 && touch_has_ended) {
-      if (_.inRange(touches[0].x, this_block.x - block_size / 2, this_block.x + block_size / 2) &&
-        _.inRange(touches[0].y, this_block.y - block_size / 2, this_block.y + block_size / 2)) {
-        selection_action_happening = 1;
-        // Reset the touch_has_ended var, so that we don't get repeated calls
-        touch_has_ended = 0;
-      }
+  }
+  else { // Touch screen: no click required. Hover is enough
+    if (this_block.mouse.hovering() && touch_has_ended) {
+      selection_action_happening = 1;
+      // Reset the touch_has_ended var, so that we don't get repeated calls
+      touch_has_ended = 0;
     }
   }
   return selection_action_happening;
@@ -1172,5 +1168,14 @@ function seconds_to_min_sec_string(seconds) {
 }
 
 function touchEnded() {
+  if (millis() - click_start_time < tap_dur_thresh
+    && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
+  ) {
+    puppy.vel.y = jump_vel;
+    if (sound_effects_on == 1) {
+      jump_sound.play();
+    }
+  }
   touch_has_ended = 1;
+  mouse_down_or_touch = 0;
 }
