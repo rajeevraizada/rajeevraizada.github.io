@@ -6,19 +6,21 @@ let isMobileDevice = mobile_regexp.test(user_agent_string);
 // let isMobileDevice = 1; // to_remove
 let chromebook_regexp = /CrOS/;
 let isChromebook = chromebook_regexp.test(user_agent_string);
-// Click on a desktop seems to last longer than screen touch event
+// To count as a tap, rather than a swipe, click or tap
+// has to be shorter than the threshold below.
+// Click on a desktop seems to last longer than screen touch event.
 let tap_dur_thresh;
 if (isMobileDevice) {
-  tap_dur_thresh = 0; // 100;
+  tap_dur_thresh = 150;
 } else {
-  tap_dur_thresh = 0; // 100;
+  tap_dur_thresh = 400;
 }
 // Note: Chromebook touchscreen seems to require different treatment.
 // If on a Chromebook, only the trackpad mouse works properly for now.
 // Also, touches on Firefox on Android don't seem to register at all!
 
 let puppy_step = 2.5;
-let jump_vel = -3;
+let jump_vel = -7;
 let level = 0;
 let lives_remaining = 5;
 let num_target_blocks = 5;
@@ -42,13 +44,13 @@ let puppy_direction = 0;
 let running_sound_playing = 0;
 let running_sound_start_time = 0;
 let mouse_down_or_touch = 0;
-let left_x_min = 150;
-let right_x_max = 200;
+let left_x_min = 200;
+let right_x_max = 250;
 let floor_block_xsize = 40;
 let floor_block_ysize = 20;
 let floor_baseline_y = 350;
 let step_height = floor_block_ysize * 1.8;
-let puppy_x0 = 100;
+let puppy_x0 = 205;
 let puppy_y0 = 200;
 let terrain_length = 500;
 let num_blocks_per_feature = 7;
@@ -300,6 +302,14 @@ function make_terrain_number_blocks_and_puppy() {
       }
     }
   } // End of loop through terrain features
+  // Now put in the right-end wall
+  x = terrain_x_start + (num_terrain_features + 1) * num_blocks_per_feature * floor_block_xsize;
+  y = floor_baseline_y;
+  for (i = 0; i < 6; i++) {
+    this_floor_block = new floor_blocks.Sprite();
+    this_floor_block.x = x;
+    this_floor_block.y = floor_baseline_y - i * floor_block_ysize;
+  }
   // Now make the blocks
   total_num_blocks = num_blocks_per_feature * num_terrain_features;
   x = terrain_x_start;
@@ -446,11 +456,15 @@ function check_for_swipes() {
     _.sum(mouse_xdiff_history) > stop_thresh) {
     puppy_direction = 0;
   }
-
-  if (_.sum(mouse_xdiff_history) > swipe_thresh) {
+  if (kb.pressing('down')) {
+    puppy_direction = 0;
+  }
+  if ((_.sum(mouse_xdiff_history) > swipe_thresh) ||
+    kb.pressing('right')) {
     puppy_direction = 1;
   }
-  if (_.sum(mouse_xdiff_history) < -swipe_thresh) {
+  if ((_.sum(mouse_xdiff_history) < -swipe_thresh) ||
+    kb.pressing('left')) {
     puppy_direction = -1;
   }
 }
@@ -475,23 +489,22 @@ function mousePressed() {
 function mouseReleased() {
   // Make a jump if it's a short touch or click, i.e. a tap
   // and if the puppy is not already in mid-air
-  // if (millis() - click_start_time < tap_dur_thresh
-  // && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
-  // ) {
+  if (millis() - click_start_time < tap_dur_thresh
+    && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
+  ) {
     puppy.vel.y = jump_vel;
     if (sound_effects_on == 1) {
       jump_sound.play();
     }
-  // }
+  }
   mouse_down_or_touch = 0;
   touch_has_ended = 1;
 }
 
 function keyPressed() {
-  // We'll allow spacebar also to trigger a jump
-  if (keyCode == 32
-   //  && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
-    // && puppy.vel.y >= 0
+  // We'll allow spacebar and up-arrow also to trigger a jump
+  if ((keyCode == 32 || keyCode == 38)
+    && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
   ) {
     puppy.vel.y = jump_vel;
     if (sound_effects_on == 1) {
@@ -997,8 +1010,8 @@ function start_new_level() {
   this_level_cleared = 0;
   game_over = 0;
   puppy_categ_text_list = [];
+  button_y_offset = 200;
   make_terrain_number_blocks_and_puppy();
-  button_y_offset = 220;
 
   if (music_on == 1) {
     music.loop();
@@ -1006,7 +1019,7 @@ function start_new_level() {
 
   help_button = new buttons.Sprite();
   help_button.x = 70;
-  help_button.y = floor_baseline_y + button_y_offset + 40;
+  help_button.y = floor_baseline_y + button_y_offset + 50;
   help_button.width = 120;
   help_button.text = 'How to play';
   help_button.textColor = 'purple';
@@ -1047,9 +1060,9 @@ function show_how_to_play() {
   textSize(14);
   y_text_start = 500;
   text('Collect matching blocks, but jump over non-matching ones.', 20, y_text_start)
-  text('Swipe left or right to move puppy.', 20, y_text_start + 20);
-  text('Tap screen, click mouse or press space to jump.', 20, y_text_start + 40);
-  text('A short swipe opposite to running direction stops it.', 20, y_text_start + 60);
+  text('Swipe left or right or use arrow keys to move puppy.', 20, y_text_start + 20);
+  text('Tap screen, click mouse or press space or up-arrow to jump.', 20, y_text_start + 40);
+  text('Short swipe opposite to run direction, or down-arrow, stop it.', 20, y_text_start + 60);
   text('Puppy can be swiped left or right in mid-jump!', 20, y_text_start + 80);
   text('That is useful for jumping over a block you are close to!', 20, y_text_start + 100);
 
@@ -1087,7 +1100,7 @@ function congrats_level_cleared() {
 function check_for_button_presses() {
   help_being_pressed = check_for_mouse_click_or_touch(help_button);
   if (help_being_pressed == 1 && (millis() - help_shown_time) > 3000) {
-    window.alert('Collect matching blocks, but jump over non-matching ones.\n\nSwipe left or right to make puppy run.\n\nA short swipe opposite to running direction stops it.\n\nTap screen, click mouse or press space to jump.\n\nPuppy can be swiped left or right in mid-jump, which is useful for jumping over a block you are close to!');
+    window.alert('Collect matching blocks, but jump over non-matching ones.\n\nSwipe left or right or use arrow keys to make puppy run.\n\nA short swipe opposite to running direction, or down-arrow, stop it.\n\nTap screen, click mouse or press space or up-arrow to jump.\n\nPuppy can be swiped left or right in mid-jump, which is useful for jumping over a block you are close to!');
     help_shown_time = millis();
   }
   toggle_music_being_pressed = check_for_mouse_click_or_touch(music_button);
@@ -1169,14 +1182,14 @@ function seconds_to_min_sec_string(seconds) {
 }
 
 function touchEnded() {
-  // if (millis() - click_start_time < tap_dur_thresh
-  //  && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
-  // ) {
+  if (millis() - click_start_time < tap_dur_thresh
+    && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
+  ) {
     puppy.vel.y = jump_vel;
     if (sound_effects_on == 1) {
       jump_sound.play();
     }
-  // }
+  }
   touch_has_ended = 1;
   mouse_down_or_touch = 0;
 }
