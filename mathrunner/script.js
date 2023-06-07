@@ -1169,14 +1169,14 @@ function seconds_to_min_sec_string(seconds) {
 }
 
 function touchEnded() {
-  if (millis() - click_start_time < tap_dur_thresh
-    && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
-  ) {
+  // if (millis() - click_start_time < tap_dur_thresh
+  //  && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
+  // ) {
     puppy.vel.y = jump_vel;
     if (sound_effects_on == 1) {
       jump_sound.play();
     }
-  }
+  // }
   touch_has_ended = 1;
   mouse_down_or_touch = 0;
 }
