@@ -998,6 +998,7 @@ function start_new_level() {
   game_over = 0;
   puppy_categ_text_list = [];
   make_terrain_number_blocks_and_puppy();
+  button_y_offset = 220;
 
   if (music_on == 1) {
     music.loop();
@@ -1005,7 +1006,7 @@ function start_new_level() {
 
   help_button = new buttons.Sprite();
   help_button.x = 70;
-  help_button.y = floor_baseline_y + 300;
+  help_button.y = floor_baseline_y + button_y_offset + 40;
   help_button.width = 120;
   help_button.text = 'How to play';
   help_button.textColor = 'purple';
@@ -1013,7 +1014,7 @@ function start_new_level() {
   music_button = new buttons.Sprite();
   music_button.x = 70;
   music_button.width = 120;
-  music_button.y = floor_baseline_y + 250;
+  music_button.y = floor_baseline_y + button_y_offset;
   if (music_on == 1) {
     music_button.text = 'Turn off 🎵';
     music_button.textColor = 'red';
@@ -1024,7 +1025,7 @@ function start_new_level() {
 
   sound_effects_button = new buttons.Sprite();
   sound_effects_button.x = 270;
-  sound_effects_button.y = floor_baseline_y + 250;
+  sound_effects_button.y = floor_baseline_y + button_y_offset;
   sound_effects_button.width = 210;
   if (sound_effects_on == 1) {
     sound_effects_button.text = ' Turn off sound effects 🔊';
