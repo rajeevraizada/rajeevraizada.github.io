@@ -475,14 +475,14 @@ function mousePressed() {
 function mouseReleased() {
   // Make a jump if it's a short touch or click, i.e. a tap
   // and if the puppy is not already in mid-air
-  if (millis() - click_start_time < tap_dur_thresh
-   // && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
-  ) {
+  // if (millis() - click_start_time < tap_dur_thresh
+  // && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
+  // ) {
     puppy.vel.y = jump_vel;
     if (sound_effects_on == 1) {
       jump_sound.play();
     }
-  }
+  // }
   mouse_down_or_touch = 0;
   touch_has_ended = 1;
 }
@@ -490,7 +490,7 @@ function mouseReleased() {
 function keyPressed() {
   // We'll allow spacebar also to trigger a jump
   if (keyCode == 32
-    && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
+   //  && (puppy.colliding(floor_blocks) || puppy.colliding(number_blocks))
     // && puppy.vel.y >= 0
   ) {
     puppy.vel.y = jump_vel;
