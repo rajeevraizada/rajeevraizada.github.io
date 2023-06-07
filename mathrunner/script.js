@@ -9,9 +9,9 @@ let isChromebook = chromebook_regexp.test(user_agent_string);
 // Click on a desktop seems to last longer than screen touch event
 let tap_dur_thresh;
 if (isMobileDevice) {
-  tap_dur_thresh = 100;
+  tap_dur_thresh = 0; // 100;
 } else {
-  tap_dur_thresh = 100;
+  tap_dur_thresh = 0; // 100;
 }
 // Note: Chromebook touchscreen seems to require different treatment.
 // If on a Chromebook, only the trackpad mouse works properly for now.
