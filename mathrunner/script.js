@@ -25,7 +25,7 @@ let level = 0;
 let lives_remaining = 5;
 let num_target_blocks = 5;
 let num_targets_left_to_find = num_target_blocks;
-let num_levels = 8;
+let num_levels = 9;
 let intro_screen = 1;
 let game_has_started = 0;
 let mouse_has_been_pressed = 0;
@@ -207,6 +207,7 @@ function setup() {
   message_button.textColor = 'red';
   message_button.color = 'white';
   message_button.collider = 'static';
+  message_button.overlaps(confetti);
 
   hi_score = getItem('hi_score');
   if (typeof (hi_score) != 'number') {
@@ -242,6 +243,7 @@ function make_terrain_number_blocks_and_puppy() {
   puppy.display_text = make_text_for_this_level(puppy);
   puppy_categ_text_list.push(puppy.display_text);
   puppy.overlaps(confetti);
+  puppy.overlaps(buttons);
 
   // We will have a num_target_blocks target blocks,
   // and then one each of all the other categories
@@ -303,7 +305,9 @@ function make_terrain_number_blocks_and_puppy() {
     }
   } // End of loop through terrain features
   // Now put in the right-end wall
-  x = terrain_x_start + (num_terrain_features + 1) * num_blocks_per_feature * floor_block_xsize;
+  // x = terrain_x_start + num_terrain_features * num_blocks_per_feature * floor_block_xsize;
+  x = terrain_x_start + 0.55 * terrain_length * floor_block_xsize;
+
   y = floor_baseline_y;
   for (i = 0; i < 6; i++) {
     this_floor_block = new floor_blocks.Sprite();
@@ -400,12 +404,13 @@ function show_score_etc() {
     text('❤️', 170 + 20 * i, 47);
   }
   text('Targets left to find: ', 20, 70);
+  num_targets_left_to_find = count_targets_left_to_find();
   for (i = 0; i < num_targets_left_to_find; i++) {
     text('🎯', 170 + 20 * i, 70);
   }
   seconds_elapsed = (millis() - t0) / 1000;
   text('Elapsed time: ' + seconds_to_min_sec_string(seconds_elapsed), 20, 95);
-  // text('click_start_time: ' + Math.round(click_start_time), 20, 120);
+  // text('puppy_categ_text_list: ' + puppy_categ_text_list, 20, 120);
   // text('puppy.course_x: ' + Math.round(puppy.course_x), puppy.x - 50, puppy.y - 50);
 }
 
@@ -515,10 +520,10 @@ function keyPressed() {
 
 function show_intro_screen() {
   if (intro_screen == 1) {
-    font_size = 16;
+    font_size = 15;
     textSize(font_size);
     text_x = 45;
-    y_start = -80; // 20;
+    y_start = -130; // 20;
     y_gap = 1.2 * font_size;
     textAlign(LEFT);
 
@@ -532,7 +537,7 @@ function show_intro_screen() {
       detect_level_selection();
     }
 
-    text('Score: ' + score, text_x, y_start + 7 * y_gap);
+    text('Score: ' + score, text_x, y_start + 8 * y_gap);
     text('Your hi-score: ' + hi_score, text_x, y_start + 9 * y_gap);
     // text('Points per block = Level.', text_x, y_start + 9 * y_gap);
     // text('Mathy matching: ×2 points!', text_x, y_start + 10 * y_gap);
@@ -547,7 +552,7 @@ function show_intro_screen() {
     text('Level 6: addition, double digits', text_x, y_start + 23 * y_gap);
     text('Level 7: subtraction, double digits', text_x, y_start + 25 * y_gap);
     text('Level 8: percentage changes', text_x, y_start + 27 * y_gap);
-    // text('Level 9: exponents', text_x, y_start + 29 * y_gap);
+    text('Level 9: exponents', text_x, y_start + 29 * y_gap);
     // text('Level 10: logarithms', text_x, y_start + 31 * y_gap);
     // text('Level 11: trigonometry', text_x, y_start + 33 * y_gap);
     // text('Level 12: calculus', text_x, y_start + 35 * y_gap);
@@ -606,10 +611,10 @@ function detect_level_selection() {
     if (y_start + 26 * y_gap < mouseY && mouseY < y_start + 28 * y_gap) {
       level = 8;
     }
-    /*
     if (y_start + 28 * y_gap < mouseY && mouseY < y_start + 30 * y_gap) {
       level = 9;
     }
+    /*
     if (y_start + 30 * y_gap < mouseY && mouseY < y_start + 32 * y_gap) {
       level = 10;
     }
@@ -636,8 +641,7 @@ function make_text_for_this_level(this_block) {
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
     this_text = puppy.display_text;
-    while (this_block.this_is_not_the_puppy ||
-      this_text == puppy.display_text ||
+    while (this_text == puppy.display_text ||
       puppy_categ_text_list.includes(this_text)) {
       d = Math.ceil(Math.random() * this_cat_val * 0.8);
       this_text = (this_cat_val - d).toString() + ' + ' + d.toString();
@@ -652,8 +656,7 @@ function make_text_for_this_level(this_block) {
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
     this_text = puppy.display_text;
-    while (this_block.this_is_not_the_puppy ||
-      this_text == puppy.display_text ||
+    while (this_text == puppy.display_text ||
       puppy_categ_text_list.includes(this_text)) {
       d = Math.ceil(Math.random() * this_cat_val * 0.8);
       this_text = (this_cat_val - d).toString() + ' + ' + d.toString();
@@ -671,11 +674,13 @@ function make_text_for_this_level(this_block) {
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
     this_text = puppy.display_text;
-    while (this_block.this_is_not_the_puppy ||
-      this_text == puppy.display_text ||
+    while (this_text == puppy.display_text ||
       puppy_categ_text_list.includes(this_text)) {
       d = Math.ceil(Math.random() * this_cat_val * 0.8);
       this_text = (this_cat_val + d).toString() + ' - ' + d.toString();
+    }
+    if (this_block.category == puppy.category) {
+      puppy_categ_text_list.push(this_text);
     }
     this_block.textSize = 18;
   }
@@ -685,8 +690,7 @@ function make_text_for_this_level(this_block) {
     this_display_type = Math.floor(random(num_display_types));
     this_cat_val = cat_to_val_list[category];
     this_text = puppy.display_text;
-    while (this_block.this_is_not_the_puppy ||
-      this_text == puppy.display_text ||
+    while (this_text == puppy.display_text ||
       puppy_categ_text_list.includes(this_text)) {
       d = Math.ceil(Math.random() * this_cat_val * 0.8);
       this_text = (this_cat_val + d).toString() + ' - ' + d.toString();
@@ -705,8 +709,7 @@ function make_text_for_this_level(this_block) {
     prime_factors = numbers.prime.factorization(this_cat_val);
     prime_factors = _.shuffle(prime_factors);
     this_text = puppy.display_text;
-    while (this_block.this_is_not_the_puppy ||
-      this_text == puppy.display_text ||
+    while (this_text == puppy.display_text ||
       puppy_categ_text_list.includes(this_text)) {
       slice_point = 1 + Math.floor(random(prime_factors.length - 1));
       array1 = prime_factors.slice(0, slice_point);
@@ -725,21 +728,20 @@ function make_text_for_this_level(this_block) {
   // Level 4: division
   if (level == 4) {
     cat_to_val_list = _.range(2, 2 + 1 + num_categories);
-    divisor = 2 + Math.floor(random() * 9);
     this_cat_val = cat_to_val_list[category];
     this_text = puppy.display_text;
-    while (this_block.this_is_not_the_puppy ||
-      this_text == puppy.display_text ||
+    while (this_text == puppy.display_text ||
       puppy_categ_text_list.includes(this_text)) {
+      divisor = 2 + Math.floor(random() * 9);
       text_part1 = this_cat_val * divisor;
       text_part2 = divisor;
       quotient_text = text_part1.toString() + ' ÷ ' + text_part2.toString();
       this_text = quotient_text;
     }
-    // if (this_block.category == puppy.category // &&
-    // puppy_categ_text_list.length < 1) {
-    // puppy_categ_text_list.push(this_text);
-    // }
+    if (this_block.category == puppy.category &&
+      puppy_categ_text_list.length < 5) {
+      puppy_categ_text_list.push(this_text);
+    }
     this_block.textSize = 18;
   }
   // Level 5: equivalent fractions and decimals
@@ -755,8 +757,7 @@ function make_text_for_this_level(this_block) {
     this_cat_val = cat_to_val_list[category];
     this_cat_string1 = cat_to_string_list1[category];
     this_text = puppy.display_text;
-    while (this_block.this_is_not_the_puppy ||
-      this_text == puppy.display_text ||
+    while (this_text == puppy.display_text ||
       puppy_categ_text_list.includes(this_text)) {
       this_display_type = Math.floor(random(num_display_types));
       if (this_display_type == 0) {
@@ -802,32 +803,35 @@ function make_text_for_this_level(this_block) {
       ['50% of 50', '80% of 50', '20% of 250', '75% of 80', '50% of 160', '80% of 125',
         '75% of 160', '75% of 200', '80% of 250', '80% of 300', '75% of 400', '80% of 500'];
     num_display_types = 6;
-    this_display_type = Math.floor(random(num_display_types));
-    this_cat_val = cat_to_val_list[category];
-    if (this_display_type == 0) {
-      this_text = this_cat_val;
-      this_block.textSize = 20;
-    }
-    if (this_display_type == 1) {
-      this_text = cat_to_string_list1[category];
-      this_block.textSize = 14;
-    }
-    if (this_display_type == 2) {
-      this_text = cat_to_string_list2[category];
-      this_block.textSize = 14;
-    }
-    if (this_display_type == 3) {
-      this_text = cat_to_string_list3[category];
-      this_block.textSize = 14;
-    }
-    if (this_display_type == 4) {
-      this_text = cat_to_string_list4[category];
-      this_block.textSize = 14;
-    }
-    if (this_display_type == 5) {
-      this_text = cat_to_string_list5[category];
-      this_block.textSize = 14;
-    }
+    this_text = puppy.display_text;
+    while (this_text == puppy.display_text ||
+      puppy_categ_text_list.includes(this_text)) {
+      this_display_type = Math.floor(random(num_display_types));
+      this_cat_val = cat_to_val_list[category];
+      if (this_display_type == 0) {
+        this_text = this_cat_val;
+      }
+      if (this_display_type == 1) {
+        this_text = cat_to_string_list1[category];
+      }
+      if (this_display_type == 2) {
+        this_text = cat_to_string_list2[category];
+      }
+      if (this_display_type == 3) {
+        this_text = cat_to_string_list3[category];
+      }
+      if (this_display_type == 4) {
+        this_text = cat_to_string_list4[category];
+      }
+      if (this_display_type == 5) {
+        this_text = cat_to_string_list5[category];
+      }
+    } 
+    this_block.textSize = 15;
+    if (this_block.category == puppy.category &&
+      puppy_categ_text_list.length < 4) {
+      puppy_categ_text_list.push(this_text);
+    } 
   }
   // Level 9: exponents
   if (level == 9) {
@@ -839,23 +843,47 @@ function make_text_for_this_level(this_block) {
     cat_to_string_list2 =
       ['3 × 3⁻³', '2² × 2⁻⁵', '5³ ÷ 5⁴', '3¹ × 3⁻¹', '2 × 2⁻³', '25¹ᐟ⁴',
         '16¹ᐟ⁴', '16¹ᐟ²', '2⁻² × 2⁵', '(√3)²', '125¹ᐟ³', '3³ᐟ²'];
-    num_display_types = 3;
-    this_display_type = Math.floor(random(num_display_types));
-    this_cat_val = cat_to_val_list[category];
-    this_cat_string1 = cat_to_string_list1[category];
-    this_cat_string2 = cat_to_string_list2[category];
-    if (this_display_type == 0) {
-      this_text = this_cat_val;
-      this_block.textSize = 20;
-    }
-    if (this_display_type == 1) {
-      this_text = this_cat_string1;
-      this_block.textSize = 20;
-    }
-    if (this_display_type == 2) {
-      this_text = this_cat_string2;
+    cat_to_string_list3 =
+      ['3² × 3⁻⁴', '2³ × 2⁻⁶', '5⁴ ÷ 5⁵', '3² × 3⁻²', '2² × 2⁻⁴', '125¹ᐟ⁶',
+        '32¹ᐟ⁵', '64¹ᐟ³', '2⁻³ × 2⁶', '27¹ᐟ³', '5⁵ ÷ 5⁴', '9 ÷ 3¹ᐟ²'];
+    cat_to_string_list4 =
+      ['3³ × 3⁻⁵', '2⁴ × 2⁻⁷', '5⁵ ÷ 5⁶', '3³ × 3⁻³', '2³ × 2⁻⁵', '5¹ ÷ 5¹ᐟ²',
+        '64¹ᐟ⁶', '2⁻⁴ × 2⁶', '2⁻⁴ × 2⁵', '3⁻⁴ × 3⁵', '5⁻⁴ × 5⁵', '(√3)³'];
+    cat_to_string_list5 =
+      ['3⁴ × 3⁻⁶', '2⁵ × 2⁻⁸', '5⁶ ÷ 5⁷', '3⁴ × 3⁻⁴', '2⁴ × 2⁻⁶', '(5³ᐟ²)¹ᐟ³',
+        '(½)⁻¹', '(¼)⁻¹', '(⅛)⁻¹', '(⅓)⁻¹', '(⅕)⁻¹', '3² ÷ √3'];
+
+    // ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
+    num_display_types = 6;
+    this_text = puppy.display_text;
+    while (this_text == puppy.display_text ||
+      puppy_categ_text_list.includes(this_text)) {
+      this_display_type = Math.floor(random(num_display_types));
+      this_cat_val = cat_to_val_list[category];
+      if (this_display_type == 0) {
+        this_text = this_cat_val;
+      }
+      if (this_display_type == 1) {
+        this_text = cat_to_string_list1[category];
+      }
+      if (this_display_type == 2) {
+        this_text = cat_to_string_list2[category];
+      }
+      if (this_display_type == 3) {
+        this_text = cat_to_string_list3[category];
+      }
+      if (this_display_type == 4) {
+        this_text = cat_to_string_list4[category];
+      }
+      if (this_display_type == 5) {
+        this_text = cat_to_string_list5[category];
+      }
       this_block.textSize = 17;
-    }
+    }  
+    if (this_block.category == puppy.category &&
+      puppy_categ_text_list.length < 4) {
+      puppy_categ_text_list.push(this_text);
+    } 
   }
   // Level 10: logs
   if (level == 10) {
@@ -1018,8 +1046,8 @@ function start_new_level() {
   }
 
   help_button = new buttons.Sprite();
-  help_button.x = 70;
-  help_button.y = floor_baseline_y + button_y_offset + 50;
+  help_button.x = 470;
+  help_button.y = floor_baseline_y + button_y_offset;
   help_button.width = 120;
   help_button.text = 'How to play';
   help_button.textColor = 'purple';
@@ -1058,12 +1086,12 @@ function start_new_level() {
 
 function show_how_to_play() {
   textSize(14);
-  y_text_start = 500;
+  y_text_start = 430;
   text('Collect matching blocks, but jump over non-matching ones.', 20, y_text_start)
   text('Swipe left or right or use arrow keys to move puppy.', 20, y_text_start + 20);
   text('Tap screen, click mouse or press space or up-arrow to jump.', 20, y_text_start + 40);
-  text('Short swipe opposite to run direction, or down-arrow, stop it.', 20, y_text_start + 60);
-  text('Puppy can be swiped left or right in mid-jump!', 20, y_text_start + 80);
+  text('Stop running with short swipe opposite to run direction, or down-arrow.', 20, y_text_start + 60);
+  text('Puppy can be moved left or right in mid-jump!', 20, y_text_start + 80);
   text('That is useful for jumping over a block you are close to!', 20, y_text_start + 100);
 
 }
@@ -1100,7 +1128,7 @@ function congrats_level_cleared() {
 function check_for_button_presses() {
   help_being_pressed = check_for_mouse_click_or_touch(help_button);
   if (help_being_pressed == 1 && (millis() - help_shown_time) > 3000) {
-    window.alert('Collect matching blocks, but jump over non-matching ones.\n\nSwipe left or right or use arrow keys to make puppy run.\n\nA short swipe opposite to running direction, or down-arrow, stop it.\n\nTap screen, click mouse or press space or up-arrow to jump.\n\nPuppy can be swiped left or right in mid-jump, which is useful for jumping over a block you are close to!');
+    window.alert('Collect matching blocks, but jump over non-matching ones.\n\nSwipe left or right or use arrow keys to make puppy run.\nStop running with short swipe opposite to running direction, or down-arrow.\nTap screen, click mouse or press space or up-arrow to jump.\nPuppy can be moved left or right in mid-jump, which is useful for jumping over a block you are close to!');
     help_shown_time = millis();
   }
   toggle_music_being_pressed = check_for_mouse_click_or_touch(music_button);
@@ -1192,4 +1220,15 @@ function touchEnded() {
   }
   touch_has_ended = 1;
   mouse_down_or_touch = 0;
+}
+
+function count_targets_left_to_find() {
+  num_targets_left_to_find = 0;
+  for (i=0; i<number_blocks.length; i++) {
+    this_block = number_blocks[i];
+    if (this_block.category == puppy.category) {
+      num_targets_left_to_find += 1;
+    }
+  }
+  return num_targets_left_to_find;
 }
