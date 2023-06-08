@@ -1246,16 +1246,16 @@ function count_targets_left_to_find() {
 function show_credits() {
   tS = 12
   textSize(tS);
-  y_gap = 1.2 * tS;
+  this_y_gap = 1.2 * tS;
   y_text_start = 530;
   text('Music: "Thats Mathematics", written and performed by Tom Lehrer,', 20, y_text_start)
-  text('generously made public domain by him: https://tomlehrersongs.com/.', 20, y_text_start + y_gap);
-  text('Game written by Raj Raizada: rajeev dot raizada at gmail dot com ', 20, y_text_start + 2*y_gap);
-  text('Released under Creative Commons license: Attribution-NonCommercial.', 20, y_text_start + 3*y_gap);
-  text('https://creativecommons.org/licenses/by-nc/2.0/', 20, y_text_start + 4*y_gap);
-  text('Source code available on Github:', 20, y_text_start + 5*y_gap);
-  text('https://github.com/rajeevraizada/rajeevraizada.github.io/tree/master/mathrunner', 20, y_text_start + 6*y_gap);
-  text('Using libraries: p5play.org, p5js.org, lodash.com and numbers.github.io', 20, y_text_start + 7*y_gap);
+  text('generously made public domain by him: https://tomlehrersongs.com/.', 20, y_text_start + this_y_gap);
+  text('Game written by Raj Raizada: rajeev dot raizada at gmail dot com ', 20, y_text_start + 2 * this_y_gap);
+  text('Released under Creative Commons license: Attribution-NonCommercial.', 20, y_text_start + 3 * this_y_gap);
+  text('https://creativecommons.org/licenses/by-nc/2.0/', 20, y_text_start + 4 * this_y_gap);
+  text('Source code available on Github:', 20, y_text_start + 5 * this_y_gap);
+  text('https://github.com/rajeevraizada/rajeevraizada.github.io/tree/master/mathrunner', 20, y_text_start + 6 * this_y_gap);
+  text('Using libraries: p5play.org, p5js.org, lodash.com and numbers.github.io', 20, y_text_start + 7 * this_y_gap);
 }
 
 
