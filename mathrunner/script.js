@@ -1,12 +1,23 @@
+/* 
+Written by Raj Raizada: rajeev dot raizada at gmail dot com 
+Released under Creative Commons license: Attribution-NonCommercial 
+https://creativecommons.org/licenses/by-nc/2.0/
+Source code available on Github:
+https://github.com/rajeevraizada/rajeevraizada.github.io/tree/master/mathrunner
+Using libraries: p5play.org, p5js.org, lodash.com and numbers.github.io
+
+Music: "That's Mathematics", written and performed by Tom Lehrer,
+generously made public domain by him: https://tomlehrersongs.com/
+*/
+
 // Find out if on touch screen device.
 // Mouse click behaviour will be different
 let user_agent_string = navigator.userAgent;
 let mobile_regexp = /android|iphone|kindle|ipad/i;
 let isMobileDevice = mobile_regexp.test(user_agent_string);
-// let isMobileDevice = 1; // to_remove
 let chromebook_regexp = /CrOS/;
 let isChromebook = chromebook_regexp.test(user_agent_string);
-// To count as a tap, rather than a swipe, click or tap
+// To count as a tap, rather than a swipe, the click or tap
 // has to be shorter than the threshold below.
 // Click on a desktop seems to last longer than screen touch event.
 let tap_dur_thresh;
@@ -520,10 +531,10 @@ function keyPressed() {
 
 function show_intro_screen() {
   if (intro_screen == 1) {
-    font_size = 15;
+    font_size = 14;
     textSize(font_size);
     text_x = 45;
-    y_start = -130; // 20;
+    y_start = -120; // 20;
     y_gap = 1.2 * font_size;
     textAlign(LEFT);
 
@@ -579,8 +590,8 @@ function show_intro_screen() {
         }
       }
     }
-    // text(times_of_levels_list, 150, 20);
     show_how_to_play();
+    show_credits();
   } // End of if intro_screen
 }
 
@@ -1086,14 +1097,13 @@ function start_new_level() {
 
 function show_how_to_play() {
   textSize(14);
-  y_text_start = 430;
+  y_text_start = 400;
   text('Collect matching blocks, but jump over non-matching ones.', 20, y_text_start)
   text('Swipe left or right or use arrow keys to move puppy.', 20, y_text_start + 20);
   text('Tap screen, click mouse or press space or up-arrow to jump.', 20, y_text_start + 40);
   text('Stop running with a short opposite swipe, or down-arrow.', 20, y_text_start + 60);
   text('Puppy can be moved left or right in mid-jump!', 20, y_text_start + 80);
   text('That is useful for jumping over a block you are close to!', 20, y_text_start + 100);
-
 }
 
 function congrats_level_cleared() {
@@ -1232,3 +1242,23 @@ function count_targets_left_to_find() {
   }
   return num_targets_left_to_find;
 }
+
+function show_credits() {
+  tS = 12
+  textSize(tS);
+  y_gap = 1.2 * tS;
+  y_text_start = 530;
+  text('Music: "Thats Mathematics", written and performed by Tom Lehrer,', 20, y_text_start)
+  text('generously made public domain by him: https://tomlehrersongs.com/.', 20, y_text_start + y_gap);
+  text('Game written by Raj Raizada: rajeev dot raizada at gmail dot com ', 20, y_text_start + 2*y_gap);
+  text('Released under Creative Commons license: Attribution-NonCommercial.', 20, y_text_start + 3*y_gap);
+  text('https://creativecommons.org/licenses/by-nc/2.0/', 20, y_text_start + 4*y_gap);
+  text('Source code available on Github:', 20, y_text_start + 5*y_gap);
+  text('https://github.com/rajeevraizada/rajeevraizada.github.io/tree/master/mathrunner', 20, y_text_start + 6*y_gap);
+  text('Using libraries: p5play.org, p5js.org, lodash.com and numbers.github.io', 20, y_text_start + 7*y_gap);
+}
+
+
+
+
+
