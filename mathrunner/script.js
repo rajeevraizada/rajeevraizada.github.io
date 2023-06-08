@@ -44,13 +44,13 @@ let puppy_direction = 0;
 let running_sound_playing = 0;
 let running_sound_start_time = 0;
 let mouse_down_or_touch = 0;
-let left_x_min = 180;
-let right_x_max = 180;
+let left_x_min = 160;
+let right_x_max = 160;
 let floor_block_xsize = 40;
 let floor_block_ysize = 20;
 let floor_baseline_y = 350;
 let step_height = floor_block_ysize * 1.8;
-let puppy_x0 = 205;
+let puppy_x0 = 160;
 let puppy_y0 = 200;
 let terrain_length = 500;
 let num_blocks_per_feature = 7;
@@ -1046,8 +1046,8 @@ function start_new_level() {
   }
 
   help_button = new buttons.Sprite();
-  help_button.x = 470;
-  help_button.y = floor_baseline_y + button_y_offset;
+  help_button.x = 70;
+  help_button.y = floor_baseline_y + button_y_offset + 40;
   help_button.width = 120;
   help_button.text = 'How to play';
   help_button.textColor = 'purple';
