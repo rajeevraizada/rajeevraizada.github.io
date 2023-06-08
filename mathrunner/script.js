@@ -542,7 +542,7 @@ function show_intro_screen() {
     // text('Points per block = Level.', text_x, y_start + 9 * y_gap);
     // text('Mathy matching: ×2 points!', text_x, y_start + 10 * y_gap);
     text('Select a level below:', text_x, y_start + 11 * y_gap);
-    // text('Your fastest\n      times:', text_x + 243, y_start + 10.5 * y_gap);
+    text('Your fastest\n      times:', text_x + 243, y_start + 10.5 * y_gap);
 
     text('Level 1: addition, small numbers', text_x, y_start + 13 * y_gap);
     text('Level 2: subtraction, small numbers', text_x, y_start + 15 * y_gap);
@@ -826,12 +826,12 @@ function make_text_for_this_level(this_block) {
       if (this_display_type == 5) {
         this_text = cat_to_string_list5[category];
       }
-    } 
+    }
     this_block.textSize = 15;
     if (this_block.category == puppy.category &&
       puppy_categ_text_list.length < 4) {
       puppy_categ_text_list.push(this_text);
-    } 
+    }
   }
   // Level 9: exponents
   if (level == 9) {
@@ -879,11 +879,11 @@ function make_text_for_this_level(this_block) {
         this_text = cat_to_string_list5[category];
       }
       this_block.textSize = 17;
-    }  
+    }
     if (this_block.category == puppy.category &&
       puppy_categ_text_list.length < 4) {
       puppy_categ_text_list.push(this_text);
-    } 
+    }
   }
   // Level 10: logs
   if (level == 10) {
@@ -1090,7 +1090,7 @@ function show_how_to_play() {
   text('Collect matching blocks, but jump over non-matching ones.', 20, y_text_start)
   text('Swipe left or right or use arrow keys to move puppy.', 20, y_text_start + 20);
   text('Tap screen, click mouse or press space or up-arrow to jump.', 20, y_text_start + 40);
-  text('Stop running with short swipe opposite to run direction, or down-arrow.', 20, y_text_start + 60);
+  text('Stop running with a short opposite swipe, or down-arrow.', 20, y_text_start + 60);
   text('Puppy can be moved left or right in mid-jump!', 20, y_text_start + 80);
   text('That is useful for jumping over a block you are close to!', 20, y_text_start + 100);
 
@@ -1224,7 +1224,7 @@ function touchEnded() {
 
 function count_targets_left_to_find() {
   num_targets_left_to_find = 0;
-  for (i=0; i<number_blocks.length; i++) {
+  for (i = 0; i < number_blocks.length; i++) {
     this_block = number_blocks[i];
     if (this_block.category == puppy.category) {
       num_targets_left_to_find += 1;
