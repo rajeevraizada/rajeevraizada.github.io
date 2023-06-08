@@ -26,10 +26,10 @@ if (isMobileDevice) {
 } else {
   tap_dur_thresh = 400;
 }
-// Note: Chromebook touchscreen seems to require different treatment.
-// If on a Chromebook, only the trackpad mouse works properly for now.
-// Also, touches on Firefox on Android don't seem to register at all!
 
+// Lots of global variables below. I know, I know, this isn't good practice.
+// Hey, I'm new to javascript, an am more used to Python with its different scope rules.
+// Better-constructed code in future. For now, just trying to make it work!
 let puppy_step = 2.5;
 let jump_vel = -7;
 let level = 0;
