@@ -140,6 +140,8 @@ function main_draw_loop() {
   show_score_etc();
   scroll_terrain();
   check_for_number_block_collisions();
+  check_for_falling_off_edge();
+
   // Check to see if level has been passed
   if (num_targets_left_to_find <= 0 && this_level_cleared == 0) {
     congrats_level_cleared();
@@ -1258,7 +1260,17 @@ function show_credits() {
   text('Using libraries: p5play.org, p5js.org, lodash.com and numbers.github.io', 20, y_text_start + 7 * this_y_gap);
 }
 
-
-
-
-
+function check_for_falling_off_edge() {
+  if (puppy.y > 2 * floor_baseline_y) {
+    message = '☠️ AAARGH!!! ☠️\nOne life lost!';
+    message_colour = 'red';
+    this_block = puppy;
+    puppy.x = puppy_x0;
+    puppy.y = puppy_y0;
+    make_new_text_confetti(message);
+    if (sound_effects_on == 1) {
+      wrong_sound.play();
+    }
+    lives_remaining = 0;
+  }
+}
