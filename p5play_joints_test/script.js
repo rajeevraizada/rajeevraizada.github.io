@@ -44,7 +44,9 @@ function setup() {
   platform.x = x0;
   platform.y = y0 + (num_chain_links-1)*distance_step;
   platform.friction = 10;
-  
+  platform.color = 'white';
+  platform.text  = 'Click and drag on this to move it';
+	
   chain_links = new Group();
   chain_links.diameter = 10;
   chain_links.collider = 'dynamic';
