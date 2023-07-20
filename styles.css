@@ -120,5 +120,15 @@ img {
 
 figure {
     display: inline-block;
+    text-align: center;
 }
 
+figure {
+    display: inline-block;
+    margin: 20px;
+    /* adjust as needed */
+}
+
+figure img {
+    vertical-align: top;
+}
