@@ -42,7 +42,7 @@ text-align:right;
 }
 
 .menuhaut {
-font-size:1em;
+font-size: clamp(0.75rem, 2vw, 1rem);
 list-style-type:none;
 margin:0;
 padding:0;
@@ -64,7 +64,7 @@ border-right:1px solid #fff;
 display:inline;
 float:left;
 margin:0;
-padding:0.6em 10px;
+padding:1em 5px; 
 }
 
 a {
@@ -75,7 +75,7 @@ text-decoration:underline;
 body {
 background-color:white;
 font-family: Helvetica, Arial, sans-serif; 
-font-size: clamp(1.5rem, 2.5vw, 4rem);
+font-size: clamp(1rem, 2.5vw, 1.25rem); 
 line-height: 1.25;
 }
 
