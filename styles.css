@@ -1,6 +1,6 @@
 /* The main magic is here, rem refers to the font-size specified by html */
 html {
-    font-size: min(4vw, 1rem);
+    font-size: clamp(1.5rem, 2.5vw, 4rem);
 }
 
 #centre {
