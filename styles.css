@@ -1,3 +1,36 @@
+/* if device has no touch screen */
+@media (any-pointer: fine) {
+    body {
+        background-color: white;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: clamp(1rem, 1.5vw, 1.75rem);
+        line-height: 1.25;
+    }
+
+    .menuhaut {
+        font-size: clamp(1rem, 1.5vw, 2rem);
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+/* if device does have a touch screen, use bigger font */
+@media (any-pointer: coarse) {
+    body {
+        background-color: white;
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: clamp(3rem, 3vw, 4rem);
+        line-height: 1.25;
+    }
+
+    .menuhaut {
+        font-size: clamp(3rem, 3vw, 4rem);
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+}
 
 #centre {
 border:1px solid #202020;
@@ -41,12 +74,6 @@ font-size:0.7em;
 text-align:right;
 }
 
-.menuhaut {
-font-size: clamp(1rem, 1.5vw, 2rem);
-list-style-type:none;
-margin:0;
-padding:0;
-}
 
 .menuhaut a {
 color:#fafafa;
@@ -72,12 +99,6 @@ color:#000;
 text-decoration:underline;
 }
 
-body {
-background-color:white;
-font-family: Helvetica, Arial, sans-serif; 
-font-size: clamp(1rem, 1.5vw, 1.75rem); 
-line-height: 1.25;
-}
 
 h1 {
 font-size:1.6em;
