@@ -18,8 +18,8 @@ width:80%;
 
 #haut {
 background-color:#202020;
-height:2em;
-max-height:2em;
+height:2.4em;
+max-height:2.4em;
 }
 
 #header {
@@ -64,7 +64,7 @@ border-right:1px solid #fff;
 display:inline;
 float:left;
 margin:0;
-padding:0.5em; 
+padding:0.5em 0.5em; 
 }
 
 a {
