@@ -18,8 +18,8 @@ width:80%;
 
 #haut {
 background-color:#202020;
-height:2.4em;
-max-height:2.4em;
+height:2em;
+max-height:2em;
 }
 
 #header {
@@ -42,7 +42,7 @@ text-align:right;
 }
 
 .menuhaut {
-font-size: clamp(1rem, 2vw, 2rem);
+font-size: clamp(1rem, 1.5vw, 2rem);
 list-style-type:none;
 margin:0;
 padding:0;
@@ -64,7 +64,7 @@ border-right:1px solid #fff;
 display:inline;
 float:left;
 margin:0;
-padding:1em 5px; 
+padding:0.5em; 
 }
 
 a {
