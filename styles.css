@@ -20,12 +20,12 @@
     body {
         background-color: white;
         font-family: Helvetica, Arial, sans-serif;
-        font-size: clamp(5rem, 5vw, 8rem);
+        font-size: clamp(3rem, 3vw, 4rem);
         line-height: 1.25;
     }
 
     .menuhaut {
-        font-size: clamp(5rem, 5vw, 8rem);
+        font-size: clamp(3rem, 3vw, 4rem);
         list-style-type: none;
         margin: 0;
         padding: 0;
