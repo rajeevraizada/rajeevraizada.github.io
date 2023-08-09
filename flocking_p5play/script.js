@@ -18,8 +18,8 @@ let obst_diam = 150;
 let user_agent_string = navigator.userAgent;
 let mobile_regexp = /android|iphone|kindle|ipad/i;
 let isMobileDevice = mobile_regexp.test(user_agent_string);
-let xmax = 400;
-let ymax = 700;
+let xmax = 350;
+let ymax = 600;
 
 function setup() {
   new Canvas(displayWidth, displayHeight);
