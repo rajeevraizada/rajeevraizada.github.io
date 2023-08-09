@@ -13,11 +13,16 @@ let keep_position_in_box_factor = 1;
 let margin_size = 20;
 let obstacle;
 let obst_diam = 150;
-let xmax = 600;
-let ymax = 500;
+// Find out if on touch screen device.
+// Mouse click behaviour will be different
+let user_agent_string = navigator.userAgent;
+let mobile_regexp = /android|iphone|kindle|ipad/i;
+let isMobileDevice = mobile_regexp.test(user_agent_string);
+let xmax = 400;
+let ymax = 700;
 
 function setup() {
-  new Canvas(xmax, ymax);
+  new Canvas(displayWidth, displayHeight);
   world.gravity.y = 0;
   obstacle = new Sprite(xmax / 2, ymax / 2);
   obstacle.diameter = obst_diam;
@@ -53,8 +58,8 @@ function setup() {
     this_x = 100 + 250 * random();
     this_y = 100 + 250 * random();
     let boid = new boids.Sprite(this_x, this_y,
-      [ [20, -5], [-20, -5], [0, 10] ]);
-    boid.addSensor(50,0,100);
+      [[20, -5], [-20, -5], [0, 10]]);
+    boid.addSensor(50, 0, 100);
     boid.vel.x = -3 + 6 * random();
     boid.vel.y = -3 + 6 * random();
   }
@@ -76,7 +81,7 @@ function draw() {
   }
   xvel_mean = xvel_sum / num_boids;
   yvel_mean = yvel_sum / num_boids;
-  direction_mean = Math.atan2(yvel_mean,xvel_mean);
+  direction_mean = Math.atan2(yvel_mean, xvel_mean);
   xpos_mean = xpos_sum / num_boids;
   ypos_mean = ypos_sum / num_boids;
 
@@ -84,7 +89,7 @@ function draw() {
   for (i = 0; i < num_boids; i++) {
     this_boid = boids[i];
     // Alignment: Make direction of each boid approach average
-    this_boid.rotateTowards(direction_mean,rotation_alignment_factor);
+    this_boid.rotateTowards(direction_mean, rotation_alignment_factor);
     // Cohesion: make each boid steer towards center of mass
     this_boid.vel.x += (xpos_mean - this_boid.x) * centering_factor;
     this_boid.vel.y += (ypos_mean - this_boid.y) * centering_factor;
@@ -93,24 +98,24 @@ function draw() {
       this_boid.x += keep_position_in_box_factor;
       this_boid.direction += direction_change_factor;
     }
-    if (this_boid.x > xmax-margin_size) {
+    if (this_boid.x > xmax - margin_size) {
       this_boid.x -= keep_position_in_box_factor;
       this_boid.direction += direction_change_factor;
-    }  
+    }
     if (this_boid.y < margin_size) {
       this_boid.y += keep_position_in_box_factor;
       this_boid.direction += direction_change_factor;
     }
-    if (this_boid.y > ymax-margin_size) {
+    if (this_boid.y > ymax - margin_size) {
       this_boid.y -= keep_position_in_box_factor;
       this_boid.direction += direction_change_factor;
-    }  
+    }
     // Ensure speed stays within max-min range
     if (this_boid.speed < min_speed) {
       this_boid.speed *= speed_control_factor;
     }
     if (this_boid.speed > max_speed) {
-      this_boid.speed *= (1-speed_control_factor);
+      this_boid.speed *= (1 - speed_control_factor);
     }
     // Make the boid face towards direction of movement
     this_boid.rotateTowards(this_boid.direction, 1);
@@ -120,18 +125,29 @@ function draw() {
     }
     // Give boids a slight tendency to accelerate
     this_boid.speed *= acceleration_factor;
-    
+
   }
 
-  
+
   // Make the obstacle draggable
-  if (obstacle.mouse.dragging()) {
-    obstacle.moveTowards(
-      mouse.x + this_boid.mouse.x,
-      mouse.y + this_boid.mouse.y,
-      1 // full tracking
-    );
+  if (isMobileDevice == 0) {  // Normal mouse click
+    if (obstacle.mouse.dragging()) {
+      obstacle.moveTowards(
+        mouse.x + obstacle.mouse.x,
+        mouse.y + obstacle.mouse.y,
+        1 // full tracking
+      );
+    }
+  } else { // Touch screen: no click required. Hover is enough
+    if (obstacle.mouse.hovering()) {
+      obstacle.moveTowards(
+        mouse.x + obstacle.mouse.x,
+        mouse.y + obstacle.mouse.y,
+        1 // full tracking
+      );
+    }
   }
+
   // If obstacle isn't set to collide box, ensure it stays inside box
   obstacle.x = Math.min(obstacle.x, xmax);
   obstacle.x = Math.max(obstacle.x, 1);
