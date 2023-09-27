@@ -39,6 +39,7 @@ let new_target_num_needed = 0;
 let level = 1;
 let solution_set = [];
 let highest_disc_y = 0;
+let mouse_has_been_pressed = 0;
 
 function draw() {
   clear();
@@ -111,6 +112,17 @@ function draw() {
   }
 }
 
+function mousePressed() {
+  // This function gets the mouse-press location for 
+  // selecting a level on the intro screen.
+  // It also helps to get sound to play on iOS
+  // by making thr first click play a sound.
+  // iOS needs sound-on to be triggered by a user action
+  if (mouse_has_been_pressed == 0) {
+    quiet_click_sound.play()
+    mouse_has_been_pressed = 1;
+  }
+}
 function get_nums_list() {
   nums_list = [];
   for (i = 0; i < discs.length; i++) {
@@ -716,6 +728,8 @@ function preload() {  // Free sounds from PixaBay
   wrong_sound.setVolume(0.3);
   click_sound = loadSound('Sounds/click.mp3');
   click_sound.setVolume(0.4);
+  quiet_click_sound = loadSound('Sounds/click.mp3');
+  quiet_click_sound.setVolume(0.05);
   pop_sound = loadSound('Sounds/pop.mp3');
   pop_sound.setVolume(0.4);
   drop_sound = loadSound('Sounds/drop.mp3');
