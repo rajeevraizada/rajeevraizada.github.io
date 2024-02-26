@@ -155,7 +155,7 @@ function draw() {
         bounceSound.play();
       }
     }
-    if ( bounceSound.isPlaying() && correctSound.isPlaying ) {
+    if ( bounceSound.isPlaying() || correctSound.isPlaying ) {
       soundPlayingString = "🔈";
     } else {
       soundPlayingString = "No";
@@ -175,6 +175,11 @@ function mousePressed() {
   // Make an initial sound, triggered by this user action
   // iPhone requires this in order for sounds to play
   if (mouseHasBeenPressed == 0) {
+    // It seems that stopping any silent sounds is important?
+    if (soundPlayingString == "🔈") {
+      correctSound.stop();
+      bounceSound.stop();
+    }
     bounceSound.setVolume(0.01);
     bounceSound.play();
   }
