@@ -186,13 +186,5 @@ function mousePressed() {
   mouseHasBeenPressed = 1;
 }
 
-function touchStarted() {
-  // Make an initial sound, triggered by this user action
-  // iPhone requires this in order for sounds to play
-  if (mouseHasBeenPressed == 0) {
-    bounceSound.setVolume(0.01);
-    bounceSound.play();
-  }
-  mouseHasBeenPressed = 1;
-}
+
 
