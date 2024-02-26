@@ -17,7 +17,7 @@ let dropTime;
 let dropInterval = 3000;
 // Move mouse after initial mouse click or touch
 let mouseHasBeenPressed = 0;
-let soundPlayingString = "No";
+let soundPlayingString = "Not";
 
 // p5js has two essential functions: setup and draw.
 // The setup function gets called once at the beginning.
@@ -158,7 +158,7 @@ function draw() {
     if ( bounceSound.isPlaying() || correctSound.isPlaying ) {
       soundPlayingString = "🔈";
     } else {
-      soundPlayingString = " ";
+      soundPlayingString = "No";
     }  
   }
 }
