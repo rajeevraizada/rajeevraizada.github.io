@@ -155,7 +155,7 @@ function draw() {
         bounceSound.play();
       }
     }
-    if ( bounceSound.isPlaying() || correctSound.isPlaying ) {
+    if ( bounceSound.isPlaying() && correctSound.isPlaying ) {
       soundPlayingString = "🔈";
     } else {
       soundPlayingString = "No";
