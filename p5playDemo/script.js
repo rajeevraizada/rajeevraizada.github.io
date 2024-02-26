@@ -17,7 +17,7 @@ let dropTime;
 let dropInterval = 3000;
 // Move mouse after initial mouse click or touch
 let mouseHasBeenPressed = 0;
-let soundPlayingString = " ";
+let soundPlayingString = "No";
 
 // p5js has two essential functions: setup and draw.
 // The setup function gets called once at the beginning.
