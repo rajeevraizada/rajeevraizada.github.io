@@ -19,6 +19,10 @@ let dropInterval = 3000;
 let mouseHasBeenPressed = 0;
 let soundPlayingString = "Not";
 
+// Try adding in this javascript call to mousePressed, which plays audio,
+// to see if it helps with the problem of starting audio on mobile 
+document.addEventListener("click", mousePressed);
+
 // p5js has two essential functions: setup and draw.
 // The setup function gets called once at the beginning.
 // You use it to define your canvas and sprites.
