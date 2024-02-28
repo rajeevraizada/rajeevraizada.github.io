@@ -17,19 +17,6 @@ let dropTime;
 let dropInterval = 3000;
 // Move mouse after initial mouse click or touch
 let mouseHasBeenPressed = 0;
-let soundPlayingString = "Not";
-
-// Try adding in this javascript, which plays audio,
-// to see if it helps with the problem of starting audio on mobile.
-// Adapted from https://stackoverflow.com/questions/71462733/play-sound-on-click-anywhere
-window.onclick = () => {
-  if (mouseHasBeenPressed == 0) {
-    let soundSource = 'Sounds/bounce.mp3';
-    let thisSound = new Audio(soundSource);
-    thisSound.play();
-    mouseHasBeenPressed = 1;
-  }
-}
 
 // p5js has two essential functions: setup and draw.
 // The setup function gets called once at the beginning.
@@ -141,9 +128,6 @@ function draw() {
     text('Remaining: ' + numRemaining, 100, 20);
     text('Score: ' + score, netLeftX + netWidth / 2, 20);
 
-    // For debugging: show if sound is meant to be playing 
-    text(soundPlayingString, 20, 20);
-    
     // Loop through any basketballs that are present.
     // There will often be only one, but might sometimes me more than one
     // if the previous one is still getting bounced around
@@ -167,11 +151,6 @@ function draw() {
         bounceSound.play();
       }
     }
-    if ( bounceSound.isPlaying() || correctSound.isPlaying ) {
-      soundPlayingString = "🔈";
-    } else {
-      soundPlayingString = "No";
-    }  
   }
 }
 
@@ -187,16 +166,9 @@ function mousePressed() {
   // Make an initial sound, triggered by this user action
   // iPhone requires this in order for sounds to play
   if (mouseHasBeenPressed == 0) {
-    // It seems that stopping any silent sounds is important?
-    if (soundPlayingString == "🔈") {
-      correctSound.stop();
-      bounceSound.stop();
-    }
     bounceSound.setVolume(0.01);
     bounceSound.play();
   }
   mouseHasBeenPressed = 1;
 }
-
-
 
