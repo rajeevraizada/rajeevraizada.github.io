@@ -5,11 +5,10 @@ let yMax = 500;
 let netLeftX = 250;
 let netWidth = 75;
 let netY = 200;
-let ballHasHitscoreDetector = 0;
+let ballRadius = 35;
 let score = 0;
 // How many balls will drop before game over
-let numRemaining = 21;
-let ballCount = 0; // Keep track of how many dropped
+let numRemaining = 10;
 // Declare the time variable dropTime
 // We will give it an initial value in setup()
 let dropTime;
@@ -22,8 +21,11 @@ let gameStarted = 0;
 function startGame() {
   // Make an initial sound, triggered by this user action
   // iPhone requires this in order for sounds to play
-  bounceSound.play();
+  correctSound.play();
   gameStarted = 1;
+  numRemaining = 10;
+  score = 0;
+  dropTime = 0;
 }
 
 // p5js has two essential functions: setup and draw.
@@ -38,7 +40,7 @@ function setup() {
   dropTime = millis() - dropInterval;
 
   ballGroup = new Group();
-  ballGroup.diameter = 70;
+  ballGroup.diameter = 2 * ballRadius;
   ballGroup.collider = 'dynamic'; // Dynamic sprites get pulled by gravity
   ballGroup.img = 'Images/basketball.png';
   ballGroup.y = 0;  // In p5js (and in web coordinates in general) y=0 is at top of screen
@@ -98,8 +100,9 @@ function setup() {
   textConfetti.diameter = 5;
   textConfetti.vel.y = -5;  // Make text jump upwards a bit
   textConfetti.color = 'white';
-  textConfetti.textSize = 40;
-  textConfetti.text = '🎉Basket!🎉';
+  textConfetti.stroke = 'white';
+  textConfetti.textSize = 30;
+  textConfetti.text = '🎉Basket!🎉\n🎉 +1 drop! 🎉';
   textConfetti.textColor = 'red';
   textConfetti.overlaps(scoreDetector);
   textConfetti.overlaps(ballGroup);
@@ -115,6 +118,8 @@ function draw() {
   if (numRemaining <= 0) {
     textSize(40);
     text('Game over', xMax / 2, 50);
+    ballGroup.removeAll();
+
   } else if (gameStarted == 1) {
     // Move the the striker towards the mouse position
     // after the initial click
@@ -122,14 +127,12 @@ function draw() {
       striker.moveTowards(mouse.x, mouse.y, 1);
     }
 
-    // At fixed intervals, drop in a new ball, and reset the timer
+    // At fixed intervals, put in a new ball, and reset the timer
     if (millis() - dropTime > dropInterval) {
       newBall = new ballGroup.Sprite();
       newBall.x = 50 + random(100);  // Randomly vary the drop position a bit
       newBall.vel.x = 2 * (1 - random(2)); // Give a small amount of random sideway motion
       newBall.hasHitScoreDetector = 0;
-      ballCount += 1;       // Keep track of how many dropped
-      numRemaining -= 1;
       dropTime = millis();  // Reset the timer
     }
 
@@ -137,7 +140,7 @@ function draw() {
     textSize(20);
     textAlign('center');
     // text('Ball number: ' + ballCount, 100, 20);
-    text('Remaining: ' + numRemaining, 100, 20);
+    text('Drops remaining: ' + numRemaining, 100, 20);
     text('Score: ' + score, netLeftX + netWidth / 2, 20);
 
     // Loop through any basketballs that are present.
@@ -148,11 +151,22 @@ function draw() {
       // Check if this ball is hitting the score detector for the first time
       if (thisBall.overlaps(scoreDetector) && thisBall.hasHitScoreDetector == 0) {
         score += 1;
+        numRemaining += 1;
         correctSound.play();
         thisConfetti = new textConfetti.Sprite();
         thisConfetti.x = thisBall.x;
         thisConfetti.y = thisBall.y;
         thisBall.hasHitScoreDetector = 1; // This ball won't trigger a score any more after this
+      }
+      // See if the ball has dropped off the bottom of screen
+      if (((thisBall.y > yMax + ballRadius) ||
+        (thisBall.x > xMax + ballRadius) ||
+        (thisBall.x < -ballRadius)
+      ) &&
+        (thisBall.hasHitScoreDetector == 0)
+      ) {
+        numRemaining -= 1;
+        thisBall.remove();
       }
       // The next part is not really essential. 
       // It just makes the bounce sound-effect a bit more realistic,
