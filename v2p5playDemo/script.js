@@ -21,11 +21,15 @@ let gameStarted = 0;
 function startGame() {
   // Make an initial sound, triggered by this user action
   // iPhone requires this in order for sounds to play
-  correctSound.play();
+  letsGoSound.play();
   gameStarted = 1;
   numRemaining = 10;
   score = 0;
   dropTime = 0;
+  ballGroup.removeAll();
+  striker.hasBeenClicked = 0;
+  striker.x = 100;
+  striker.y = 350;
 }
 
 // p5js has two essential functions: setup and draw.
@@ -121,6 +125,16 @@ function draw() {
     ballGroup.removeAll();
 
   } else if (gameStarted == 1) {
+    // Loop through any basketballs that are present.
+    // There will often be only one, but might sometimes me more than one
+    // if the previous one is still getting bounced around
+    for (i = 0; i < ballGroup.length; i++) {
+      thisBall = ballGroup[i];
+      checkForScoringBasket(thisBall);
+      checkForDrops(thisBall);
+      makeBounceSounds(thisBall);
+    }
+
     // Move the the striker towards the mouse position
     // after the initial click
     if (striker.hasBeenClicked == 1) {
@@ -139,50 +153,53 @@ function draw() {
     // Display the score at the top of the screen, above the basket
     textSize(20);
     textAlign('center');
-    // text('Ball number: ' + ballCount, 100, 20);
     text('Drops remaining: ' + numRemaining, 100, 20);
     text('Score: ' + score, netLeftX + netWidth / 2, 20);
+  }
+}
 
-    // Loop through any basketballs that are present.
-    // There will often be only one, but might sometimes me more than one
-    // if the previous one is still getting bounced around
-    for (i = 0; i < ballGroup.length; i++) {
-      thisBall = ballGroup[i];
-      // Check if this ball is hitting the score detector for the first time
-      if (thisBall.overlaps(scoreDetector) && thisBall.hasHitScoreDetector == 0) {
-        score += 1;
-        numRemaining += 1;
-        correctSound.play();
-        thisConfetti = new textConfetti.Sprite();
-        thisConfetti.x = thisBall.x;
-        thisConfetti.y = thisBall.y;
-        thisBall.hasHitScoreDetector = 1; // This ball won't trigger a score any more after this
-      }
-      // See if the ball has dropped off the bottom of screen
-      if (((thisBall.y > yMax + ballRadius) ||
-        (thisBall.x > xMax + ballRadius) ||
-        (thisBall.x < -ballRadius)
-      ) &&
-        (thisBall.hasHitScoreDetector == 0)
-      ) {
-        numRemaining -= 1;
-        thisBall.remove();
-      }
-      // The next part is not really essential. 
-      // It just makes the bounce sound-effect a bit more realistic,
-      // by making it louder when the ball is moving faster, and quieter if slower
-      if (thisBall.collides(bars) || thisBall.collides(striker)) {
-        thisVel = Math.sqrt((thisBall.vel.x) ** 2 + (thisBall.vel.y) ** 2)
-        bounceSound.setVolume(min(thisVel / 10, 0.5));
-        bounceSound.play();
-      }
-    }
+function checkForScoringBasket(thisBall) {
+  // Check if this ball is hitting the score detector for the first time
+  if (thisBall.overlaps(scoreDetector) && thisBall.hasHitScoreDetector == 0) {
+    score += 1;
+    numRemaining += 1;
+    correctSound.play();
+    thisConfetti = new textConfetti.Sprite();
+    thisConfetti.x = thisBall.x;
+    thisConfetti.y = thisBall.y;
+    thisBall.hasHitScoreDetector = 1; // This ball won't trigger a score any more after this
+  }
+}
+
+function checkForDrops(thisBall) {
+  // See if the ball has dropped off the bottom of screen
+  if (((thisBall.y > yMax + ballRadius) ||
+    (thisBall.x > xMax + ballRadius) ||
+    (thisBall.x < -ballRadius)
+  ) &&
+    (thisBall.hasHitScoreDetector == 0)
+  ) {
+    numRemaining -= 1;
+    thisBall.remove();
+  }
+}
+
+function makeBounceSounds(thisBall) {
+  // The next part is not really essential. 
+  // It just makes the bounce sound-effect a bit more realistic,
+  // by making it louder when the ball is moving faster, and quieter if slower
+  if (thisBall.collides(bars) || thisBall.collides(striker)) {
+    thisVel = Math.sqrt((thisBall.vel.x) ** 2 + (thisBall.vel.y) ** 2)
+    bounceSound.setVolume(min(thisVel / 10, 0.5));
+    bounceSound.play();
   }
 }
 
 // This next function just preloads the sounds, so that they play quicker
 function preload() {
   soundFormats('mp3');
+  letsGoSound = loadSound('Sounds/lets_go.mp3');
+  letsGoSound.setVolume(0.5);
   correctSound = loadSound('Sounds/correct.mp3');
   correctSound.setVolume(0.7);
   bounceSound = loadSound('Sounds/bounce.mp3');
