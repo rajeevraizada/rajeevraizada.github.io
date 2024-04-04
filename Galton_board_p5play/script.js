@@ -43,7 +43,7 @@ function setup() {
 
   static_balls = new Group();
   static_balls.diameter = ball_diameter;
-  static_balls.color = 'limegreen'; // 'red';
+  static_balls.color = 'lime'; // 'red';
   static_balls.collider = 'static';
 
   reset_button = new Sprite(xmax - 50, 25, 80, 30);
@@ -69,7 +69,8 @@ function draw() {
 }
 
 function main_draw_loop() {
-  clear();
+  background('white');
+  // clear();
   if (frameCount % 2 == 0 && count < max_count) {
     drop_new_ball();
   }
