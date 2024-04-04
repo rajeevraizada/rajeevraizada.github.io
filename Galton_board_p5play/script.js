@@ -39,7 +39,7 @@ function setup() {
   balls.diameter = ball_diameter;
   balls.friction = 0;
   // balls.bounciness = 0;
-  balls.color = 'limegreen';
+  balls.color = 'lime';
 
   static_balls = new Group();
   static_balls.diameter = ball_diameter;
