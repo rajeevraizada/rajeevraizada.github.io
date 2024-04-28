@@ -14,6 +14,7 @@ let somethingIsSelected = 0;
 
 function setup() {
   new Canvas(xMax, yMax);
+  world.autoStep = false
 
   A0 = makeSquircle(xMax / 6, 0.75 * yMax, 65, 50, 'Answer 1');
   A1 = makeSquircle(xMax / 2, 0.75 * yMax, 65, 50, 'Answer 2');
