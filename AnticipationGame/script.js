@@ -10,6 +10,7 @@ let numMax = 1;
 let leftPadding = 10;
 let rightPadding = 2 * leftPadding;
 let thisFrac;
+let value = 1;
 let lastValue = 1;
 let missileIsInFlight = 0;
 
@@ -61,7 +62,6 @@ function draw() {
 }
 
 function makeFractionVal() {
-  value = 1;
   // Make sure we get a different value from previous one
   while (value==lastValue) {
     numerator = 1 + Math.floor(9 * Math.random());
