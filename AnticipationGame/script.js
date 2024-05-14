@@ -71,6 +71,7 @@ function makeFractionVal() {
     value = numerator / denominator;
   }
   thisFrac = new fraction(numerator, denominator, value);
+  lastValue = thisFrac.value;
   return (thisFrac);
 }
 
