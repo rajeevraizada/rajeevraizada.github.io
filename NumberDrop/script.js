@@ -1,3 +1,12 @@
+/* 
+Written by Raj Raizada: rajeev dot raizada at gmail dot com 
+Released under Creative Commons license: Attribution-NonCommercial 
+https://creativecommons.org/licenses/by-nc/2.0/
+Source code available on Github:
+https://github.com/rajeevraizada/rajeevraizada.github.io/tree/master/NumberDrop
+Using libraries: p5play.org and p5js.org
+*/
+
 let details = navigator.userAgent;
 let regexp_touchscreen = /android|iphone|kindle|ipad/i;
 let regexp_smallscreen = /android|iphone/i;
@@ -28,6 +37,7 @@ let unselection_time = 0;
 let num_selected_discs = 0;
 let game_has_started = 0;
 let score = 0;
+let hi_score = 0;
 let start_time = 0;
 let game_over = 0;
 let game_over_sound_has_played = 0;
@@ -182,8 +192,8 @@ function check_if_danger_line_touched() {
     if (danger_disc_motion > -1 && danger_disc_motion < 0.1) {
       game_over_button.visible = true;
       game_over = 1;
-      if (game_over_sound_has_played==0) {
-        sad_trombone_sound.play();
+      if (game_over_sound_has_played == 0) {
+        //  sad_trombone_sound.play();
       }
       game_over_sound_has_played = 1;
     }
@@ -213,10 +223,11 @@ function display_target() {
 function display_score_and_level() {
   fill('black');
   noStroke();
-  textSize(16);
+  textSize(14);
   textAlign(RIGHT);
   text('Difficulty level: ' + level, xmax - 20, 20);
-  text('Score: ' + score, xmax - 20, 44);
+  text('Personal hi-score: ' + hi_score, xmax - 20, 40);
+  text('Score: ' + score, xmax - 20, 60);
 }
 
 function setup_new_level() {
@@ -304,6 +315,10 @@ function check_submission() {
         this_disc.life = 1;
         make_confetti(this_disc);
         score += 10;
+        if (score > hi_score) {
+          hi_score = score;
+          storeItem('hi_score', hi_score);
+        }
       }
     }
     // We'll need a new target number, after this correct submission
@@ -356,7 +371,7 @@ function display_submitted_nums() {
   noStroke();
   textSize(20);
   textAlign(CENTER);
-  text(display_string, xmax / 2, highest_disc_y - 70);
+  text(display_string, xmax / 2, danger_line.y + 50);
 }
 
 function reset_selection_state() {
@@ -645,10 +660,10 @@ function setup() {
   discs.rotationLock = true;
   discs.friction = 0;
 
-  submit_button = makeSquircle(xmax / 2, ymax / 2, 120, 40, 'Submit');
-  submit_button.width = 120;
+  submit_button = makeSquircle(xmax / 2, ymax / 2, 200, 40, 'Submit');
+  submit_button.width = 200;
   submit_button.height = 40;
-  submit_button.textSize = 20;
+  submit_button.textSize = 25;
   submit_button.text = 'Submit';
   submit_button.y = ymax - below_box_buffer
     + submit_button.height / 2 + 4;
@@ -733,6 +748,11 @@ function setup() {
   confetti.overlaps(target_background_button);
   confetti.overlaps(start_button);
   confetti.overlaps(game_over_button);
+
+  hi_score = getItem('hi_score');
+  if (typeof (hi_score) != 'number') {
+    hi_score = 0;
+  }
 }
 
 function num_to_color(this_num) {
