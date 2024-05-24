@@ -557,6 +557,7 @@ function check_for_touch_or_click() {
   }
   // Check toggle buttons
   if (toggle_auto_submit_button.mouse.pressed()) {
+    click_sound.play();
     auto_submit = 1 - auto_submit;
     if (auto_submit == 1) {
       submit_button.visible = false;
@@ -569,6 +570,7 @@ function check_for_touch_or_click() {
     }
   }
   if (toggle_time_pressure_button.mouse.pressed()) {
+    click_sound.play();
     time_pressure_on = 1 - time_pressure_on;
     if (time_pressure_on == 0) {
       new_disc_delay = 10000000;
