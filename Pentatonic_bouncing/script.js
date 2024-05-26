@@ -19,9 +19,10 @@ function draw() {
     text('Click anywhere to start', 120, 20);
     stroke('black');
   } else {
+    // Make colors change slightly out of sync, with prime mods
     ball0.color = color(frameCount % 360, 100, 100);
-    ball1.color = color((frameCount + 120) % 360, 100, 100);
-    ball2.color = color((frameCount + 240) % 360, 100, 100);
+    ball1.color = color(frameCount % 331, 100, 100);
+    ball2.color = color(frameCount % 307, 100, 100);
   }
 }
 
