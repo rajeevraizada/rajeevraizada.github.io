@@ -1,11 +1,11 @@
-let xmax = 350;
+let xmax = 370;
 let ymax = 600;
 let ballDiameter = 10;
 let numSegments = 150;
 let segmentLength = 6;
 let bigCircleLinesAndAngles;
-let bigCircleStartX = 200;
-let bigCircleStartY = 200;
+let bigCircleStartX = xmax / 2;
+let bigCircleStartY = ymax / 2;
 let max_speed = 10;
 let ball_bounciness = 1.08;
 let tones_pentatonic = [0, 2, 4, 7, 9, 12];
@@ -14,10 +14,9 @@ let initial_drop_made = 0;
 function draw() {
   // clear();
   if (initial_drop_made == 0) {
-    noStroke();
     textSize(14);
-    text('Click anywhere to start', 120, 20);
-    stroke('black');
+    noStroke();
+    text('Click anywhere to start', 110, 20);
   } else {
     // Make colors change slightly out of sync, with prime mods
     ball0.color = color(frameCount % 360, 100, 100);
@@ -52,6 +51,7 @@ function setup() {
   ball_group.y = bigCircleStartY;
   ball_group.x = bigCircleStartX + 70;
   ball_group.direction_int = 0;
+  ball_group.stroke = 'black';
   ball_group.collides(bigCircle, (this_ball, bigCircle) => {
     // Make the ball bigger, up to some max size
     this_ball.diameter = min(this_ball.diameter + 1, 60);
@@ -76,6 +76,12 @@ function mousePressed() {
   if (initial_drop_made == 0) {
     synth.triggerAttackRelease(200, 0.1);
     initial_drop();
+  } else {
+    ball0.remove();
+    ball1.remove();
+    ball2.remove();
+    initial_drop_made = 0;
+    initial_drop();
   }
 }
 
@@ -85,8 +91,14 @@ function initial_drop() {
     ball0 = new ball_group.Sprite();
     ball1 = new ball_group.Sprite();
     ball2 = new ball_group.Sprite();
-    ball1.x = ball0.x + 30 + 5 * Math.random();
-    ball2.x = ball0.x + 60 + 5 * Math.random();
+    ball0.x = xmax / 2 - 120 + 20 * Math.random();
+    ball1.x = xmax / 2 - 30 + 70 * Math.random();
+    ball2.x = xmax / 2 + 80 + 40 * Math.random();
+    ball0.y = ymax / 2 - 20 + 20 * Math.random();
+    ball1.y = ymax / 2 - 50 - 50 * Math.random();
+    ball2.y = ymax / 2 - 10 - 40 * Math.random();
     initial_drop_made = 1;
+    clear();
+    text('Click anywhere to restart', 102, 20);
   }
 }
