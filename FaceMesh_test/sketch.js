@@ -17,7 +17,7 @@ function gotFaces(results) {
 }
 
 function setup() {
-  createCanvas(350, 480);
+  createCanvas(700, 900);
   video = createCapture(VIDEO, { flipped: true });
   video.hide();
   faceMesh.detectStart(video, gotFaces);
