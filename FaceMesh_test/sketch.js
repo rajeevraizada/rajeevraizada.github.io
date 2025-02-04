@@ -59,10 +59,12 @@ function draw() {
 		makeEyeBrowChains();
 		drawLips();
 
-		textSize(25);
+		textSize(20);
 		fill("white");
 		stroke("black");
-		text("Open your mouth to drop p5play sprites", 100, 30);
+		text("Open your mouth to drop p5play sprites", 150, 30);
+		fill("yellow");
+		text("Raindrops bounce off your eyebrows!", 165, 60);
 	}
 
 	makeItRain();
@@ -98,9 +100,10 @@ function drawLips() {
 	let y = (a.y + b.y) * 0.5;
 
 	// Emit particles when mouth is open
-	if (d > 20 && random(1) < 0.25) {
+	if (d > 10 && random(1) < 0.25) {
 		this_ball = new Sprite(x, y, d);
 		this_ball.stroke = "white";
+		this_ball.life = 400 * random();
 	}
 }
 
