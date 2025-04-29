@@ -82,7 +82,8 @@ function mousePressed() {
 }
 
 function draw() {
-  clear();
+  // clear();
+  background('white');
   move_car();
   record_histories();
   show_position_axes();
@@ -141,7 +142,7 @@ function show_position_axes() {
   fill('red');
   text('Position ➡', 0, 0);
   pop();
-  textSize(12);
+  textSize(15);
   text('Drag car up or down to start. Friction damps its motion.', xmax / 2 - 120, 20);
 }
 
@@ -160,7 +161,7 @@ function show_velocity_axes() {
   fill('royalblue');
   text('Velocity ➡', 0, 0);
   pop();
-  textSize(12);
+  textSize(15);
   text('Velocity of car vs. time', xmax / 2 - 40, vel_y0 - yrange / 2 + 20);
 }
 
@@ -187,6 +188,8 @@ function setup() {
   car.y = y0;
   car.bounciness = 0;
   car.img = 'Assets/car_topview.png';
+  car.img.scale = 2;
+  // car.debug = true;
   car.rotationLock = true;
   // Give the car some drag, as friction when not being pulled to mouse
   car.drag = friction_amount;
