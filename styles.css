@@ -25,7 +25,7 @@ max-height:3vw;
 
 #header {
 background-color:#3882C7;
-border:1px solid #fafafa;
+border:0px solid #fafafa;
 color:#fafafa;
 font-size:4vw;
 height:4vw;
@@ -47,23 +47,17 @@ text-align:right;
 .menuhaut a {
 color:#fafafa;
 margin:0 0vw;
-font-size: 2vw;
+font-size: 1.5vw;
 text-decoration:none;
 }
 
-.menuhaut a:hover {
-color:#FF0;
-font-size: 2vw;
-text-decoration:none;
-}
 
 .menuhaut li {
 border-right:1px solid #fff;
 display:inline;
 float:left;
-margin:0;
-font-size: 2vw;
-padding:1vw 1vw; 
+margin:0 vw;
+padding:0vw 1vw; 
 }
 
 a {
@@ -83,7 +77,7 @@ margin:0.5vw 0.5vw 1vw 0;
 }
 
 h3 {
-font-size:3vw;
+font-size:2.5vw;
 margin:0.5vw 0.5vw 0.3vw 0.8vw;
 }
 
