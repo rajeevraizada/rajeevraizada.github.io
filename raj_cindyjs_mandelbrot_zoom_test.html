@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Cindy JS</title>
+        <script type="text/javascript" src="../../build/js/Cindy.js"></script>
+        <script type="text/javascript" src="../../build/js/CindyGL.js"></script>
+        <link rel="stylesheet" href="../../css/cindy.css" />
+    </head>
+
+    <body style="font-family: Arial">
+
+        <script id="csdraw" type="text/x-cindyscript">
+            colorplot(A, B, "plot", iter(0, complex(#) )
+
+                // ( .5 + .5*sin( |complex(# - C) | ), 
+                //    0.5+(1/(2*pi))*im(log( complex(# - C) )), 
+                //    0.5+(1/(2*pi))*im(log( complex(# - C) )) 
+                // )
+            );
+            drawimage(A0, B0, "plot");
+            drawtext( A, "A" );
+            drawtext( B, "B" );
+            drawtext( clickCoords, "M" );
+        </script>
+
+        <script id="csmousedown" type="text/x-cindyscript">
+            clickCoords = mouse().xy;
+            A = A + (moveFactor*clickCoords - A) *  moveFactor;
+            B = B + (moveFactor*clickCoords - B) *  moveFactor;
+        </script>
+
+        <script id="csinit" type="text/x-cindyscript">
+            moveFactor = 0.2;
+            A0 = A;
+            B0 = B;
+            use("CindyGL");
+            createimage("plot",500,500);
+
+            f(z, c) := z*z+c;
+            maxIts = 50;
+
+            iter(z, c) := (
+              timeToEscape = 0;
+              l0 = abs(z);
+              repeat(maxIts,
+                if(l0<=4,
+                  z = f(z, c);
+                  l1 = abs(z);
+                  timeToEscape = timeToEscape + 1;
+                  l0 = l1;
+                )
+              );
+              if(timeToEscape >= maxIts,
+                hue(im(log(z))/(2*pi)), //phase of z
+                gray(1.0 - timeToEscape/ maxIts) 
+              )
+            );
+        </script>
+
+        <div id="CSCanvas" style="width: 600px; height: 600px; border: 2px solid #000000"></div>
+
+        <script type="text/javascript">
+            var gslp = [
+                { name: "A", kind: "P", type: "Free", visible: false, pos: [-10, -10] },
+                { name: "B", kind: "P", type: "Free", visible: false, pos: [14, -10] },
+                { name: "C", kind: "P", type: "Free", visible: false, pos: [0, 0] },
+            ];
+            CindyJS({ canvasname: "CSCanvas", scripts: "cs*", geometry: gslp });
+        </script>
+    </body>
+</html>
