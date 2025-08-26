@@ -26,8 +26,10 @@
 
         <script id="csmousedown" type="text/x-cindyscript">
             clickCoords = mouse().xy;
-            A = A + (moveFactor*clickCoords - A) *  moveFactor;
-            B = B + (moveFactor*clickCoords - B) *  moveFactor;
+            // A = A + (moveFactor*clickCoords - A) *  moveFactor;
+            // B = B + (moveFactor*clickCoords - B) *  moveFactor;
+            A.xy = clickCoords + (A.xy-clickCoords)*moveFactor;
+            B.xy = clickCoords + (B.xy-clickCoords)*moveFactor;
         </script>
 
         <script id="csinit" type="text/x-cindyscript">
