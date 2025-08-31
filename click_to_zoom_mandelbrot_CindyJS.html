@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Cindy JS</title>
+    <script type="text/javascript" src="https://cindyjs.org/dist/latest/Cindy.js"></script>
+    <script type="text/javascript" src="https://cindyjs.org/dist/latest/CindyGL.js"></script>
+</head>
+
+<body style="font-family: Arial">
+Click on the image to zoom into it. Then click again to zoom more.
+
+    <script type="text/javascript">
+        coordMin = -10;
+        coordMax = 10;
+
+        var gslp = [{
+            name: "A",
+            kind: "P",
+            type: "Free",
+            visible: false,
+            pos: [coordMin, coordMin]
+        },
+        {
+            name: "B",
+            kind: "P",
+            type: "Free",
+            visible: false,
+            pos: [coordMax, coordMin]
+        },
+        {
+            name: "A0",
+            kind: "P",
+            type: "Free",
+            visible: false,
+            pos: [coordMin, coordMin]
+        },
+        {
+            name: "B0",
+            kind: "P",
+            type: "Free",
+            visible: false,
+            pos: [coordMax, coordMin]
+        },
+        ];
+        CindyJS({
+            canvasname: "CSCanvas",
+            scripts: "cs*",
+            geometry: gslp,
+            autoplay: true
+        });
+
+
+    </script>
+
+    <script id="csdraw" type="text/x-cindyscript">
+	coordMin = A0.x;
+	coordMax = B0.x;
+		
+		colorplot(A, B, "plot", iter(0, complex(#) )
+            );
+            drawimage(A0, B0, "plot");
+						// Uncomment the text below if you want to see the coords at the mouse position
+						// drawtext( mouse().xy,
+						//					(A.x + (mouse().x - coordMin) / (coordMax - coordMin) * (B-A).x,
+						//					 A.y + (mouse().y - coordMin) / (coordMax - coordMin) * (B-A).x ),
+						//					size->15, color->(1,1,1) );
+																	
+						drawtext(B0 + (-4.5,1), "Iterations: " + maxIts, size->15, color->(1,1,1) );
+						drawtext(B0 + (-4.5,0.2), "Zoom: " + round(10* (A0-B0).x / (A-B).x)/10, size->15, color->(1,1,1) );
+        </script>
+
+    <script id="csmousedown" type="text/x-cindyscript">
+		maxIts = maxIts + 10; // Need to run more iterations as we move in
+		moveFactor =  0.8;    // The new shown area will cover this much smaller a coord range
+		coordMin = A0.x;
+		coordMax = B0.x;
+
+		startingImageWidth  = coordMax - coordMin;
+		startingImageHeight = coordMax - coordMin;
+		mousePosAsProportionOfImageWidth  = (mouse().x - coordMin) / startingImageWidth;
+		mousePosAsProportionOfImageHeight = (mouse().y - coordMin) / startingImageHeight;
+		currentImageWidth = (B-A).x;
+		currentImageHeight = (B-A).x; // Same as height, because we made the image square
+
+		mousePosInAxesCoords = ( A.x + (mouse().x - coordMin) * currentImageWidth / startingImageWidth,
+														 A.y + (mouse().y - coordMin) * currentImageHeight / startingImageHeight );
+
+    // Now we update to make new positions of the boundary points A and B
+		A = mousePosInAxesCoords + (A - mousePosInAxesCoords) * moveFactor ; 
+    B = mousePosInAxesCoords + (B - mousePosInAxesCoords) * moveFactor ;  
+  </script>
+
+
+    <script id="csinit" type="text/x-cindyscript">
+		maxIts = 50;
+
+    // The use of CindyGL is what makes this Mandelbrot zooming fast,
+    // as it runs on the GPU.
+    // Without this library, we would need to write a shader,
+    // which requires lower-level code, and is more complicated.
+    use("CindyGL");
+
+            createimage("plot",1000,1000); // The 1000 pixel size looks better, and is still fast
+
+            f(z, c) := z*z+c;
+						
+						// This part calculates the Mandelbrot trajectory.
+					  // Taken from the original Cindy.js mandelbrot example script
+            iter(z, c) := (
+              timeToEscape = 0;
+              l0 = abs(z);
+              repeat(maxIts,
+                if(l0<=4,
+                  z = f(z, c);
+                  l1 = abs(z);
+                  timeToEscape = timeToEscape + 1;
+                  l0 = l1;
+                )
+              );
+							hVal = timeToEscape/maxIts;
+							if(timeToEscape >= maxIts,
+								gray(0),  // The else part of the if comes after this
+								hue( hVal );
+              )
+            );
+        </script>
+
+    <div id="CSCanvas" style="width: 500px; height: 500px; border: 2px solid #000000"></div>
+
+
+</body>
+
+</html>
