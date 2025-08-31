@@ -17,9 +17,10 @@
             drawimage(A0, B0, "plot");
 						// drawtext( mouse().xy, A.x + (mouse().x+10)/20 * (B-A).x  + ", " + 
 						// 											( A.y + (mouse().y+10)/20 * (B-A).x ) 	);
-						drawtext(B0 + (-6,1.2), "Iterations: " + maxIts);
-						drawtext(B0 + (-6,0.2), "Zoom: " + round(10* (A0-B0).x / (A-B).x)/10,
-						size -> 10, color -> (1,1,1) );
+						drawtext(B0 + (-4,1), "Iterations: " + maxIts,
+						size -> 15, color -> (1,1,1) );
+						drawtext(B0 + (-4,0.2), "Zoom: " + round(10* (A0-B0).x / (A-B).x)/10,
+						size -> 15, color -> (1,1,1) );
         </script>
 
         <script id="csmousedown" type="text/x-cindyscript">
