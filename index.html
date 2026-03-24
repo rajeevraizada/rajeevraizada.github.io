@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raj Raizada — NYC Math & Computer Science Tutor</title>
+<meta name="description" content="Math and computer science tutoring in NYC. Oxford-educated, former university professor, and independent school teacher. SHSAT, ISEE, SAT, ACT prep and advanced math.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #0f1b2d;
+  --navy-light: #1a2940;
+  --slate: #2d3e50;
+  --gold: #c9a84c;
+  --gold-light: #e8d48b;
+  --cream: #faf8f4;
+  --white: #ffffff;
+  --text: #3a3a3a;
+  --text-light: #6b7280;
+  --accent-blue: #4a7c9b;
+  --border: #e5e2db;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text);
+  background: var(--cream);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(15, 27, 45, 0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  padding: 0 2rem;
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.15); }
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif; font-weight: 600;
+  font-size: 1.25rem; color: var(--white); text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.nav-logo span { color: var(--gold); }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  color: rgba(255,255,255,0.75); text-decoration: none;
+  font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em;
+  text-transform: uppercase; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--gold); }
+.nav-cta {
+  background: var(--gold); color: var(--navy) !important;
+  padding: 0.5rem 1.25rem; border-radius: 6px;
+  font-weight: 600 !important; text-transform: uppercase !important;
+  font-size: 0.8rem !important; letter-spacing: 0.05em;
+  transition: background 0.2s, transform 0.2s;
+}
+.nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+.mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+.mobile-toggle span { display: block; width: 24px; height: 2px; background: white; margin: 5px 0; transition: 0.3s; }
+
+/* HERO */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 50%, var(--slate) 100%);
+  padding: 6rem 2rem 4rem;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -50%; right: -20%; width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-inner {
+  max-width: 1100px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 340px; gap: 4rem; align-items: center;
+}
+.hero-text h1 {
+  font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 700;
+  color: var(--white); line-height: 1.15; margin-bottom: 0.5rem;
+}
+.hero-text h1 em {
+  font-style: normal; color: var(--gold);
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-subtitle {
+  font-size: 1.15rem; color: rgba(255,255,255,0.7); margin-bottom: 2rem;
+  max-width: 520px; line-height: 1.75;
+}
+.hero-credentials {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2.5rem;
+}
+.credential-tag {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(201,168,76,0.25);
+  color: rgba(255,255,255,0.85); padding: 0.35rem 0.9rem; border-radius: 100px;
+  font-size: 0.78rem; font-weight: 500; letter-spacing: 0.02em;
+}
+.hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--gold); color: var(--navy); padding: 0.85rem 2rem;
+  border-radius: 8px; text-decoration: none; font-weight: 600;
+  font-size: 0.95rem; letter-spacing: 0.02em;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(201,168,76,0.3); }
+.btn-secondary {
+  border: 1.5px solid rgba(255,255,255,0.3); color: var(--white);
+  padding: 0.85rem 2rem; border-radius: 8px; text-decoration: none;
+  font-weight: 500; font-size: 0.95rem; transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+.hero-photo {
+  width: 300px; height: 360px; border-radius: 16px; overflow: hidden;
+  border: 3px solid rgba(201,168,76,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  position: relative;
+}
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+/* SECTIONS */
+section { padding: 5rem 2rem; }
+.section-inner { max-width: 1000px; margin: 0 auto; }
+.section-label {
+  text-transform: uppercase; font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.12em; color: var(--gold); margin-bottom: 0.5rem;
+}
+.section-title {
+  font-family: 'Playfair Display', serif; font-size: 2.2rem;
+  font-weight: 600; color: var(--navy); margin-bottom: 1rem;
+}
+.section-subtitle {
+  color: var(--text-light); font-size: 1.05rem; max-width: 600px; margin-bottom: 3rem;
+}
+
+/* CREDENTIALS SECTION */
+.credentials-section { background: var(--white); }
+.cred-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+}
+.cred-card {
+  padding: 2rem; border-radius: 12px; border: 1px solid var(--border);
+  background: var(--cream); transition: transform 0.2s, box-shadow 0.2s;
+}
+.cred-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+.cred-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--navy), var(--slate));
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.2rem; font-size: 1.3rem;
+}
+.cred-card h3 {
+  font-size: 1.05rem; font-weight: 600; color: var(--navy); margin-bottom: 0.5rem;
+}
+.cred-card p { font-size: 0.9rem; color: var(--text-light); line-height: 1.65; }
+
+/* TUTORING SECTION */
+.tutoring-section { background: var(--cream); }
+.tutor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.tutor-card {
+  background: var(--white); border-radius: 12px; padding: 2rem;
+  border: 1px solid var(--border); transition: all 0.2s;
+}
+.tutor-card:hover { border-color: var(--gold); box-shadow: 0 4px 20px rgba(201,168,76,0.1); }
+.tutor-card h3 {
+  font-size: 1.1rem; font-weight: 600; color: var(--navy); margin-bottom: 0.4rem;
+}
+.tutor-card .subjects {
+  font-size: 0.88rem; color: var(--text-light); margin-bottom: 0.8rem;
+}
+.tutor-card .tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.subject-tag {
+  background: rgba(74, 124, 155, 0.08); color: var(--accent-blue);
+  padding: 0.25rem 0.65rem; border-radius: 6px;
+  font-size: 0.75rem; font-weight: 500;
+}
+
+/* APPROACH SECTION */
+.approach-section { background: var(--navy); color: var(--white); }
+.approach-section .section-title { color: var(--white); }
+.approach-section .section-subtitle { color: rgba(255,255,255,0.6); }
+.approach-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+}
+.approach-card {
+  padding: 2rem; border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.approach-num {
+  font-family: 'Playfair Display', serif; font-size: 2.5rem;
+  font-weight: 700; color: var(--gold); opacity: 0.6; margin-bottom: 0.8rem;
+}
+.approach-card h3 { font-size: 1.05rem; margin-bottom: 0.5rem; font-weight: 600; }
+.approach-card p { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.7; }
+
+/* INTERACTIVE WORK */
+.work-section { background: var(--white); }
+.work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.work-card {
+  border-radius: 12px; overflow: hidden; border: 1px solid var(--border);
+  transition: all 0.3s; text-decoration: none; display: block;
+}
+.work-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+.work-thumb {
+  height: 180px; overflow: hidden; background: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+}
+.work-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.work-info { padding: 1.2rem; }
+.work-info h3 { font-size: 0.95rem; font-weight: 600; color: var(--navy); margin-bottom: 0.3rem; }
+.work-info p { font-size: 0.82rem; color: var(--text-light); }
+.work-badge {
+  display: inline-block; font-size: 0.7rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem; border-radius: 4px; margin-bottom: 0.5rem;
+}
+.badge-python { background: rgba(55,118,171,0.1); color: #3776ab; }
+.badge-desmos { background: rgba(46,139,87,0.1); color: #2e8b57; }
+.badge-js { background: rgba(240,192,48,0.15); color: #b8860b; }
+
+/* CONTACT / CTA */
+.cta-section {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--slate) 100%);
+  text-align: center; padding: 5rem 2rem;
+}
+.cta-section .section-title { color: var(--white); margin-bottom: 1rem; }
+.cta-section p { color: rgba(255,255,255,0.65); max-width: 500px; margin: 0 auto 2rem; font-size: 1.05rem; }
+.cta-email {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(201,168,76,0.3);
+  padding: 1rem 2rem; border-radius: 10px; margin-bottom: 1.5rem;
+  color: var(--gold); font-size: 1.1rem; font-weight: 500;
+  text-decoration: none; transition: all 0.2s;
+}
+.cta-email:hover { background: rgba(201,168,76,0.1); border-color: var(--gold); }
+.cta-detail { color: rgba(255,255,255,0.45); font-size: 0.85rem; }
+
+/* FOOTER */
+footer {
+  background: var(--navy); padding: 2rem;
+  text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.35);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+footer a:hover { color: var(--gold); }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; text-align: center; }
+  .hero-text h1 { font-size: 2.4rem; }
+  .hero-subtitle { margin: 0 auto 2rem; }
+  .hero-credentials { justify-content: center; }
+  .hero-ctas { justify-content: center; }
+  .hero-photo { display: none; }
+  .cred-grid, .approach-grid, .work-grid { grid-template-columns: 1fr; }
+  .tutor-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .mobile-toggle { display: block; }
+  nav.open .nav-links {
+    display: flex; flex-direction: column; position: absolute;
+    top: 64px; left: 0; right: 0; background: var(--navy);
+    padding: 1.5rem 2rem; gap: 1rem;
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+  }
+}
+@media (max-width: 600px) {
+  section { padding: 3.5rem 1.25rem; }
+  .hero-text h1 { font-size: 2rem; }
+  .section-title { font-size: 1.7rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Raj <span>Raizada</span></a>
+    <ul class="nav-links">
+      <li><a href="#credentials">Background</a></li>
+      <li><a href="#tutoring">Tutoring</a></li>
+      <li><a href="#approach">Approach</a></li>
+      <li><a href="#work">Interactive Work</a></li>
+      <li><a href="#contact" class="nav-cta">Get in Touch</a></li>
+    </ul>
+    <button class="mobile-toggle" onclick="document.getElementById('nav').classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1>Math & Computer Science Tutoring for <em>Ambitious Students</em></h1>
+      <p class="hero-subtitle">
+        Oxford-trained mathematician, former university professor, and experienced NYC independent school teacher. Offering rigorous, one-on-one tutoring that builds deep understanding.
+      </p>
+      <div class="hero-credentials">
+        <span class="credential-tag">📐 Oxford B.A. in Mathematics</span>
+        <span class="credential-tag">🧠 Ph.D. Cognitive & Neural Systems</span>
+        <span class="credential-tag">🏫 NYC Independent Schools</span>
+        <span class="credential-tag">🏆 NSF CAREER Award</span>
+        <span class="credential-tag">🔬 Former Univ. Professor</span>
+        <span class="credential-tag">💻 Desmos Curriculum Developer</span>
+      </div>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn-primary">Contact</a>
+        <a href="#credentials" class="btn-secondary">View Full Background</a>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <img src="https://rajeevraizada.github.io/Images/raj_with_puppet.jpg" alt="Raj Raizada">
+    </div>
+  </div>
+</section>
+
+<!-- CREDENTIALS -->
+<section class="credentials-section" id="credentials">
+  <div class="section-inner">
+    <p class="section-label">Background & Credentials</p>
+    <h2 class="section-title">Why Families Choose Raj</h2>
+    <p class="section-subtitle">An unusual combination of elite academic training, deep research expertise, and hands-on K–12 classroom experience.</p>
+    <div class="cred-grid">
+      <div class="cred-card">
+        <div class="cred-icon">🎓</div>
+        <h3>Oxford & Boston University</h3>
+        <p>B.A. in Mathematics & Philosophy from the University of Oxford. Ph.D. in Cognitive & Neural Systems from Boston University. M.Sc. from the University of Birmingham.</p>
+      </div>
+      <div class="cred-card">
+        <div class="cred-icon">🏛️</div>
+        <h3>University Faculty & Research</h3>
+        <p>Former Assistant Professor at the University of Rochester and Research Scientist at Cornell and Dartmouth. Recipient of an NSF CAREER Award and a Google Faculty Award.</p>
+      </div>
+      <div class="cred-card">
+        <div class="cred-icon">🏫</div>
+        <h3>NYC Independent Schools</h3>
+        <p>Currently teaching at Speyer Legacy School in Manhattan. Previously at St. Ann's School (Brooklyn) and The Birch Wathen Lenox School (Upper East Side).</p>
+      </div>
+      <div class="cred-card">
+        <div class="cred-icon">🧩</div>
+        <h3>Desmos & Ed-Tech</h3>
+        <p>Developed curriculum activities at Desmos / Amplify, one of the most respected platforms in mathematics education. Creator of interactive math demos.</p>
+      </div>
+      <div class="cred-card">
+        <div class="cred-icon">📊</div>
+        <h3>Published Researcher</h3>
+        <p>Author of peer-reviewed studies in journals including <em>Cerebral Cortex</em> and <em>NeuroImage</em>.</p>
+      </div>
+      <div class="cred-card">
+        <div class="cred-icon">🧠</div>
+        <h3>Cognitive Science of Learning</h3>
+        <p>Research background in cognitive neuroscience: a valuable lens for understanding how students actually learn and where they get stuck.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TUTORING -->
+<section class="tutoring-section" id="tutoring">
+  <div class="section-inner">
+    <p class="section-label">Tutoring Services</p>
+    <h2 class="section-title">Subjects & Test Prep</h2>
+    <p class="section-subtitle">Available for one-on-one sessions, in-person in NYC or online. Every session is tailored to the individual student.</p>
+    <div class="tutor-grid">
+      <div class="tutor-card">
+        <h3>Mathematics</h3>
+        <p class="subjects">Middle school through advanced topics, with deep conceptual grounding at every level.</p>
+        <div class="tag-row">
+          <span class="subject-tag">Pre-Algebra</span>
+          <span class="subject-tag">Algebra 1 & 2</span>
+          <span class="subject-tag">Geometry</span>
+          <span class="subject-tag">Precalculus</span>
+          <span class="subject-tag">Calculus</span>
+          <span class="subject-tag">Linear Algebra</span>
+        </div>
+      </div>
+      <div class="tutor-card">
+        <h3>Computer Science & Data Science</h3>
+        <p class="subjects">From first programs to machine learning, with an experienced coder and published researcher.</p>
+        <div class="tag-row">
+          <span class="subject-tag">Python</span>
+          <span class="subject-tag">JavaScript</span>
+          <span class="subject-tag">Matlab</span>
+          <span class="subject-tag">Statistics</span>
+          <span class="subject-tag">NumPy / scikit-learn</span>
+        </div>
+      </div>
+      <div class="tutor-card">
+        <h3>Admissions Test Prep</h3>
+        <p class="subjects">Strategic, rigorous preparation for the math and verbal sections of major admissions exams.</p>
+        <div class="tag-row">
+          <span class="subject-tag">SHSAT</span>
+          <span class="subject-tag">ISEE</span>
+          <span class="subject-tag">SAT</span>
+          <span class="subject-tag">ACT</span>
+          <span class="subject-tag">GRE</span>
+        </div>
+      </div>
+      <div class="tutor-card">
+        <h3>Enrichment & Competition Math</h3>
+        <p class="subjects">For students who want to go beyond the standard curriculum: building mathematical intuition and problem-solving creativity.</p>
+        <div class="tag-row">
+          <span class="subject-tag">Proof Techniques</span>
+          <span class="subject-tag">Geometry</span>
+          <span class="subject-tag">Creative Problem Solving</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section class="approach-section" id="approach">
+  <div class="section-inner">
+    <p class="section-label">Teaching Philosophy</p>
+    <h2 class="section-title">How Raj Teaches</h2>
+    <p class="section-subtitle">Informed by cognitive science research and years of classroom experience.</p>
+    <div class="approach-grid">
+      <div class="approach-card">
+        <div class="approach-num">01</div>
+        <h3>Find the "Aha!" Moment</h3>
+        <p>Every student has a way in. Raj identifies the right explanation, analogy, or visualization that makes a concept click: drawing on a deep toolkit built over years of teaching and research.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-num">02</div>
+        <h3>Uncover Hidden Gaps</h3>
+        <p>Struggles in math often trace back to earlier misconceptions. Raj diagnoses these root causes and addresses them directly, so students build on a solid foundation.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-num">03</div>
+        <h3>Make It Interactive</h3>
+        <p>As a creator of math games and Desmos activities, Raj brings an interactive, visual approach that keeps students engaged and thinking deeply.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK SAMPLES -->
+<section class="work-section" id="work">
+  <div class="section-inner">
+    <p class="section-label">Interactive Creations</p>
+    <h2 class="section-title">A Window into Raj's Teaching</h2>
+    <p class="section-subtitle">Original math games, simulations, and visualizations — the kind of engaging tools Raj brings into every lesson.</p>
+    <div class="work-grid">
+      <a class="work-card" href="https://rajeevraizada.github.io/NumberDrop/" target="_blank">
+        <div class="work-thumb">
+          <img src="https://rajeevraizada.github.io/Gifs/NumberDrop_still.gif" alt="Number Drop game">
+        </div>
+        <div class="work-info">
+          <span class="work-badge badge-js">JavaScript</span>
+          <h3>Number Drop</h3>
+          <p>Match falling numbers to hit target sums — arithmetic fluency as a game.</p>
+        </div>
+      </a>
+      <a class="work-card" href="https://teacher.desmos.com/activitybuilder/custom/63c9ab90cd1cfc178c6781e5" target="_blank">
+        <div class="work-thumb">
+          <img src="https://rajeevraizada.github.io/Gifs/snake_game_small_still.gif" alt="Snakes trig game">
+        </div>
+        <div class="work-info">
+          <span class="work-badge badge-desmos">Desmos</span>
+          <h3>Snakes on Trig Graphs</h3>
+          <p>Navigate sine and cosine curves in this original trigonometry game.</p>
+        </div>
+      </a>
+      <a class="work-card" href="https://colab.research.google.com/drive/1bJmiwg8sRxtgpwhYWfbl2VNR1nXhQHtb" target="_blank">
+        <div class="work-thumb">
+          <img src="https://rajeevraizada.github.io/Gifs/xor.gif" alt="Neural network tutorial">
+        </div>
+        <div class="work-info">
+          <span class="work-badge badge-python">Python</span>
+          <h3>Neural Networks Explained</h3>
+          <p>Hands-on tutorial building a neural network from scratch: accessible and visual.</p>
+        </div>
+      </a>
+      <a class="work-card" href="https://rajeevraizada.github.io/rajmathgame/" target="_blank">
+        <div class="work-thumb">
+          <img src="https://rajeevraizada.github.io/Gifs/math_crush_still.gif" alt="Math Candy Crush">
+        </div>
+        <div class="work-info">
+          <span class="work-badge badge-js">JavaScript</span>
+          <h3>Math Candy Crush</h3>
+          <p>Match blocks by numerical value in this addictive math puzzle game.</p>
+        </div>
+      </a>
+      <a class="work-card" href="https://teacher.desmos.com/activitybuilder/custom/637cda185daedb7c0b2c4e7f" target="_blank">
+        <div class="work-thumb">
+          <img src="https://rajeevraizada.github.io/Gifs/radian_invaders_small_still.gif" alt="Radian invaders">
+        </div>
+        <div class="work-info">
+          <span class="work-badge badge-desmos">Desmos</span>
+          <h3>Radian Space Invaders</h3>
+          <p>Learn radian angle measures by shooting invaders at the right positions.</p>
+        </div>
+      </a>
+      <a class="work-card" href="https://rajeevraizada.github.io/Galton_board_p5play/" target="_blank">
+        <div class="work-thumb">
+          <img src="https://rajeevraizada.github.io/Gifs/galton_still.gif" alt="Galton board simulation">
+        </div>
+        <div class="work-info">
+          <span class="work-badge badge-js">JavaScript</span>
+          <h3>Galton Board Simulation</h3>
+          <p>Watch the normal distribution emerge in real time from random bounces.</p>
+        </div>
+      </a>
+    </div>
+    <div style="text-align:center; margin-top: 2.5rem;">
+      <a href="https://rajeevraizada.github.io" class="btn-secondary" style="border-color: var(--border); color: var(--text);" target="_blank">View All Projects on Full Site →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT CTA -->
+<section class="cta-section" id="contact">
+  <div class="section-inner">
+    <p class="section-label">Get Started</p>
+    <h2 class="section-title">Ready to Work Together?</h2>
+    <p>Reach out to discuss your student's needs, schedule, and goals. Available for in-person sessions in NYC, and online worldwide.</p>
+    <a href="mailto:rajeev.raizada@gmail.com" class="cta-email">
+      ✉️&nbsp;&nbsp;rajeev.raizada@gmail.com
+    </a>
+    <p class="cta-detail">Typically responds within 24 hours</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p style="margin-bottom:0.5rem;">
+    <a href="https://rajeevraizada.github.io/cv.html" target="_blank">Full CV</a> &nbsp;·&nbsp;
+    <a href="https://scholar.google.com/citations?hl=en&user=PJWjx8gAAAAJ" target="_blank">Google Scholar</a> &nbsp;·&nbsp;
+    <a href="https://rajeevraizada.github.io/publications.html" target="_blank">Publications</a> &nbsp;·&nbsp;
+    <a href="https://rajeevraizada.github.io/teaching.html" target="_blank">Teaching Portfolio</a>
+  </p>
+  <p>© 2026 Raj Raizada. All rights reserved.</p>
+</footer>
+
+<script>
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+});
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('nav').classList.remove('open');
+  });
+});
+</script>
+</body>
+</html>
