@@ -191,6 +191,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
       Getting There
     </button>
+    <button class="action-btn" id="transportBtn" onclick="togglePanel('transport')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16M12 3v8M8 19l-2 3M16 19l2 3M8 15h0M16 15h0"/></svg>
+      Getting Around
+    </button>
     <button class="action-btn" id="hotelBtn" onclick="togglePanel('hotel')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7a2 2 0 012-2h14a2 2 0 012 2v14"/><path d="M3 21h18M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1"/></svg>
       <span id="hotelBtnLabel">Hotels (4)</span>
@@ -199,6 +203,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
   <!-- Panels -->
   <div id="travelPanel" class="panel" style="display:none"></div>
+  <div id="transportPanel" class="panel" style="display:none"></div>
   <div id="hotelPanel" class="panel" style="display:none"></div>
 
   <!-- Day Selector -->
@@ -228,6 +233,7 @@ const CITIES = {
     name: "Rome", dates: "Jul 10–14", nights: 5,
     color: "#B8450E", accent: "#E8A87C", bg: "#FDF6F0", emoji: "🇮🇹",
     travel: "London → Rome: Fly direct (2h 30m). British Airways, ITA Airways, or Ryanair from Gatwick/Stansted. Budget carriers often under £50pp. Book BA if you collect Avios points.",
+    transport: "🚇 METRO: Rome has 3 lines (A, B, C). You'll mainly use A (Vatican/Spanish Steps) and B (Colosseum/Termini). Runs 5:30am–11:30pm weekdays, until 1:30am Fri/Sat. Single ticket (BIT): €1.50, valid 100 min across metro/bus/tram. 🚌 BUS & TRAM: Extensive network fills gaps the metro doesn't cover. Especially useful for Trastevere, Testaccio, and the Jewish Ghetto. Validate your ticket on board. 🚕 TAXI/UBER: White licensed taxis are metered and reliable. Uber works in Rome but availability is limited — Free Now app is better for hailing cabs. Airport taxi to city center is a flat €50 from Fiumicino. 🎫 PASSES: For 5 days, buy individual BIT tickets (€1.50 each) as needed — you'll walk most of the time in the historic center. A 48h or 72h pass (€12.50/€18) only pays off if you ride 4+ times daily. Tap-and-go contactless payment now works on metro turnstiles. Kids under 10 ride free. The Roma Pass (€53/72h) bundles transport + 2 museum entries — worth considering if you'd use it for the Colosseum + Borghese. 👟 REALITY: Rome's historic center is very walkable. Most days you'll only need transit 1–2 times. Taxis are your friend for tired kids after long days.",
     hotels: [
       { name: "The Rome EDITION", primary: true, price: "~€500–800/night", loyalty: "Marriott Bonvoy — full points earning/redemption, elite member benefits", desc: "Ian Schrager's minimalist masterpiece near Via Veneto. Tucked down a private cobblestone lane, the lobby opens into a sunken garden — a hidden oasis. Modern Italian design with restraint and warmth. Rooftop pool, excellent Anima restaurant, family rooms available. Walking distance to Spanish Steps, Trevi Fountain, and Borghese Gardens. The aesthetic matches your Hotel L'Oscar and New Hotel Athens taste perfectly." },
       { name: "The Pantheon Iconic Rome Hotel, Autograph Collection", primary: false, price: "~€450–700/night", loyalty: "Marriott Bonvoy (Autograph Collection) — full points, elite upgrades", desc: "Boutique hotel steps behind the Pantheon with a rooftop terrace serving breakfast with jaw-dropping dome views. Modern design layered onto Rome's golden-age architecture. Michelin-starred Idylio restaurant on-site. Family of four can book interconnecting rooms. Ideal location for the Centro Storico — Piazza Navona, Campo de' Fiori, and Trastevere all walkable." },
@@ -247,6 +253,7 @@ const CITIES = {
     name: "Madrid", dates: "Jul 15–19", nights: 5,
     color: "#1B4D6E", accent: "#7FB3D3", bg: "#F0F5F9", emoji: "🇪🇸",
     travel: "Rome → Madrid: Fly direct (2h 30m). Vueling, Iberia, or Ryanair. Flights from Fiumicino (FCO) are frequent and affordable. Morning flight gets you to Madrid by lunchtime.",
+    transport: "🚇 METRO: Madrid's metro is superb — 13 lines, clean, fast, air-conditioned. Covers virtually everywhere you'd want to go. Runs 6am–1:30am daily. Single ticket: €1.50–2.00 depending on distance. 🚌 BUS: Blue EMT city buses complement the metro well. Useful for Malasaña, La Latina, and routes the metro doesn't cover directly. Night buses (búhos) run all night from Cibeles. 🚕 TAXI/UBER: White taxis with red stripe are metered, honest, and plentiful. Uber and Cabify both work well in Madrid. Airport to city center: flat rate ~€33. 🎫 PASSES: The Tourist Travel Pass (Título Turístico) is excellent value. Buy a 5-day Zone A pass (~€35 per adult) at any metro station — loaded onto a Tarjeta Multi card (€2.50). Gives unlimited metro, bus, and Cercanías trains including the airport supplement. Children under 11 get 50% off (~€17.50). Under 4s ride free. The Tarjeta Multi 10-trip ticket (€12.20) can be shared by tapping once per person — great for families doing fewer trips. Zone T pass covers Toledo/Segovia day trips by Cercanías (but NOT the AVE high-speed train). 👟 REALITY: Madrid is very walkable but spread out. You'll use the metro 2–4 times daily. The 5-day tourist pass is the clear winner for your family — buy it at Barajas airport on arrival.",
     hotels: [
       { name: "URSO Hotel & Spa", primary: true, price: "~€350–550/night", loyalty: "Marriott Bonvoy (via Design Hotels) — earn/redeem points, elite benefits", desc: "A 1920s palace converted into a 78-room boutique hotel in the Alonso Martínez area. Neoclassical façade, interiors by architect Antonio Obrador — clean lines, natural materials, beautiful courtyard. Subterranean spa with a gorgeous pool. Interconnecting rooms available. Quiet residential street but walkable to everything. Similar spirit to your Hotel Sans Souci Wien — understated luxury with soul." },
       { name: "The Madrid EDITION", primary: false, price: "~€500–800/night", loyalty: "Marriott Bonvoy — full points, elite benefits, rooftop pool", desc: "Ian Schrager's Madrid outpost, set in a tranquil plaza near Puerta del Sol. 77 connecting rooms and suites specifically designed for families (capacity 4–8 guests). Madrid's largest luxury rooftop infinity pool, Oroya restaurant (Peruvian by Chef Diego Muñoz), Punch Room cocktail bar. Staff greet kids by name and deliver personalized cookies to the room. Walking distance to the Prado, Reina Sofía, and Retiro Park. Recent family reviews rave about the experience — one of the most family-forward luxury hotels in Madrid." },
@@ -265,6 +272,7 @@ const CITIES = {
     name: "Barcelona", dates: "Jul 20–26", nights: 6,
     color: "#8B2252", accent: "#D4829C", bg: "#FAF0F4", emoji: "🇪🇸",
     travel: "Madrid → Barcelona: Take the AVE high-speed train (2h 30m, up to 300km/h). Book directly at renfe.com — no Eurail pass needed, point-to-point tickets are cheaper for this single journey. Advance fares can be as low as €30–50pp booked 2 months ahead; Preferente (first class) runs ~€80–120pp with spacious seats, at-seat meal service, and lounge access at Atocha. Your 10-year-old gets a child fare (~40% off). Departs Madrid Atocha, arrives Barcelona Sants — both city-center stations.",
+    transport: "🚇 METRO: 12 lines, efficient and covers all major sights. L3 (Green) and L4 (Yellow) are the most useful tourist lines. Runs 5am–midnight Sun–Thu, 5am–2am Fri, 24h Sat. Single ticket: €2.90. 🚌 BUS: Excellent network with V-lines (vertical/north-south) and H-lines (horizontal/east-west) for easy navigation. Contactless tap-to-pay works on most buses. 🚕 TAXI/UBER: Black-and-yellow taxis are safe and metered. Free Now app works well. Uber is available but less common than in Madrid. Airport to city: ~€40 by taxi, or take the Aerobus (€6.75, 35 min to Plaça Catalunya). 🎫 PASSES: For 6 days, buy the Hola BCN 5-day pass (~€43.60 per person) — unlimited metro, bus, tram, FGC trains, Montjuïc funicular, AND airport metro. Buy online at holabarcelona.com for 10% off and collect at any metro machine with a voucher code. Your 10-year-old pays full price (free only under 4). For the Montserrat day trip, the T-Casual 10-trip card (€13, Zone 2 version ~€25.50) is a good supplement. The T-Familiar (8 shared trips, €11.05) is great for the family on lighter transit days. 👟 REALITY: Barcelona is very walkable within neighborhoods but distances between them add up (Gothic Quarter to Sagrada Família is 2.5km). You'll use the metro 3–4 times daily. The Hola BCN pass pays for itself quickly and removes all ticket hassle.",
     hotels: [
       { name: "El Palace Barcelona", primary: true, price: "~€450–750/night", loyalty: "IHG One Rewards (via Leading Hotels of the World) + iPrefer", desc: "Built in 1919 by César Ritz himself. Opulent Belle Époque interiors with a modern renovation — marble columns, gilded ceilings, stunning garden restaurant. On Gran Via near Passeig de Gràcia, walking distance to Gaudí masterpieces. Pool, spa, kids' welcome kits, interconnecting rooms. The grand dame choice — similar in spirit to the Fairmont Amman you loved." },
       { name: "Majestic Hotel & Spa", primary: false, price: "~€500–800/night", loyalty: "Marriott Bonvoy (LXR Hotels & Resorts) — full points, elite benefits", desc: "On Passeig de Gràcia with rooftop pool overlooking Casa Batlló and La Pedrera — the best Gaudí views from any hotel in the city. Family-owned since 1918, recently renovated. SOLC restaurant (one Michelin star), full spa. The strongest Bonvoy option in Barcelona if you want to maximize points. Connecting rooms available for families." },
@@ -287,6 +295,7 @@ const CITIES = {
 let activeCity = 'rome';
 let activeDay = 0;
 let showTravel = false;
+let showTransport = false;
 let showHotel = false;
 
 function render() {
@@ -307,6 +316,7 @@ function render() {
   // Hotel button label
   document.getElementById('hotelBtnLabel').textContent = `Hotels (${city.hotels.length})`;
   document.getElementById('travelBtn').className = `action-btn ${showTravel ? 'active' : ''}`;
+  document.getElementById('transportBtn').className = `action-btn ${showTransport ? 'active' : ''}`;
   document.getElementById('hotelBtn').className = `action-btn ${showHotel ? 'active' : ''}`;
 
   // Travel panel
@@ -318,6 +328,27 @@ function render() {
       <p>${city.travel}</p>
     </div>`;
   } else { tp.style.display = 'none'; }
+
+  // Transport panel
+  const trp = document.getElementById('transportPanel');
+  if (showTransport) {
+    trp.style.display = 'block';
+    const sections = city.transport.split(/(?=🚇|🚌|🚕|🎫|👟)/g).filter(s => s.trim());
+    trp.innerHTML = `<div class="fade-in">
+      <div class="panel-label" style="color:${city.color}">Getting Around ${city.name}</div>
+      ${sections.map(s => {
+        const emoji = s.substring(0,2);
+        const rest = s.substring(2).trim();
+        const colonIdx = rest.indexOf(':');
+        const title = colonIdx > -1 ? rest.substring(0, colonIdx) : '';
+        const body = colonIdx > -1 ? rest.substring(colonIdx + 1).trim() : rest;
+        return `<div style="background:white; border:1.5px solid #e8e6e1; border-radius:10px; padding:0.9rem 1rem; margin-bottom:0.5rem">
+          <div style="font-family:'DM Sans',sans-serif; font-size:0.72rem; font-weight:700; color:${city.color}; margin-bottom:0.25rem">${emoji} ${title}</div>
+          <p style="font-size:0.83rem; line-height:1.7; color:#555">${body}</p>
+        </div>`;
+      }).join('')}
+    </div>`;
+  } else { trp.style.display = 'none'; }
 
   // Hotel panel
   const hp = document.getElementById('hotelPanel');
@@ -379,11 +410,12 @@ function timeBlock(icon, label, text, color) {
   </div>`;
 }
 
-function setCity(key) { activeCity = key; activeDay = 0; showHotel = false; showTravel = false; render(); }
+function setCity(key) { activeCity = key; activeDay = 0; showHotel = false; showTravel = false; showTransport = false; render(); }
 function setDay(i) { activeDay = i; render(); }
 function togglePanel(panel) {
-  if (panel === 'travel') { showTravel = !showTravel; showHotel = false; }
-  else { showHotel = !showHotel; showTravel = false; }
+  if (panel === 'travel') { showTravel = !showTravel; showHotel = false; showTransport = false; }
+  else if (panel === 'transport') { showTransport = !showTransport; showTravel = false; showHotel = false; }
+  else { showHotel = !showHotel; showTravel = false; showTransport = false; }
   render();
 }
 
