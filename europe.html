@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rome · Madrid · Barcelona — Family Itinerary Jul 10–26, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Crimson Pro', Georgia, serif; background: #FAF9F6; color: #2C2C2C; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+::-webkit-scrollbar { height: 4px; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn 0.3s ease; }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 2rem 1.5rem 1.5rem; color: white; position: relative; overflow: hidden;
+}
+.header::before {
+  content: ''; position: absolute; top: -30%; right: -10%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(232,168,124,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.header-inner { max-width: 720px; margin: 0 auto; position: relative; }
+.header-label {
+  font-family: 'DM Sans', sans-serif; font-size: 0.65rem;
+  text-transform: uppercase; letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.5); margin-bottom: 0.4rem;
+}
+.header h1 { font-size: 1.8rem; font-weight: 300; line-height: 1.2; margin-bottom: 0.3rem; letter-spacing: -0.01em; }
+.header p {
+  font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+  color: rgba(255,255,255,0.55); line-height: 1.6; max-width: 500px;
+}
+
+/* Container */
+.container { max-width: 720px; margin: 0 auto; padding: 0 1rem; }
+
+/* City Tabs */
+.city-tabs {
+  display: flex; gap: 0.5rem; padding: 1rem 0;
+  position: sticky; top: 0; background: #FAF9F6; z-index: 10;
+}
+.city-tab {
+  flex: 1; padding: 0.7rem 0.5rem; border: 1.5px solid #ddd;
+  border-radius: 10px; background: white; transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif; text-align: center;
+}
+.city-tab.active { border-width: 2px; }
+.city-tab .emoji { font-size: 1.1rem; margin-bottom: 0.15rem; }
+.city-tab .name { font-weight: 600; font-size: 0.82rem; color: #666; }
+.city-tab.active .name { color: inherit; }
+.city-tab .nights { font-size: 0.65rem; color: #999; }
+
+/* Action Buttons */
+.action-btns { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.action-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  padding: 0.6rem; border: 1.5px solid #ddd; border-radius: 8px;
+  background: white; font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem; font-weight: 600; color: #555; transition: background 0.2s;
+}
+.action-btn.active { background: #f0f0f0; }
+.action-btn svg { width: 16px; height: 16px; }
+
+/* Panels */
+.panel { margin-bottom: 1rem; }
+.panel-label {
+  font-family: 'DM Sans', sans-serif; font-size: 0.65rem;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  font-weight: 700; margin-bottom: 0.5rem;
+}
+.travel-panel {
+  background: white; border: 1.5px solid #ddd; border-radius: 12px; padding: 1.25rem;
+}
+.travel-panel p { font-size: 0.88rem; line-height: 1.75; color: #444; }
+
+/* Hotel Cards */
+.hotel-card {
+  background: #fafafa; border: 1.5px solid #e8e6e1; border-radius: 12px;
+  padding: 1rem 1.15rem; margin-bottom: 0.6rem; position: relative;
+}
+.hotel-card.primary { background: white; }
+.hotel-card .rec-badge {
+  position: absolute; top: -1px; right: 16px;
+  color: white; font-family: 'DM Sans', sans-serif;
+  font-size: 0.6rem; font-weight: 700;
+  padding: 0.2rem 0.6rem; border-radius: 0 0 6px 6px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.hotel-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; color: #1a1a2e; }
+.hotel-card h3.has-badge { padding-right: 90px; }
+.hotel-card .desc { font-size: 0.83rem; line-height: 1.7; color: #555; margin-bottom: 0.5rem; }
+.hotel-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.hotel-tag {
+  font-size: 0.68rem; font-family: 'DM Sans', sans-serif; font-weight: 600;
+  padding: 0.25rem 0.6rem; border-radius: 5px;
+}
+.hotel-tag.price { background: rgba(0,0,0,0.04); }
+.hotel-tag.loyalty { background: #f0f7ff; color: #1B4D6E; }
+
+/* Day Selector */
+.day-selector {
+  display: flex; gap: 0.35rem; margin-bottom: 1rem;
+  overflow-x: auto; padding-bottom: 0.25rem;
+}
+.day-btn {
+  min-width: 56px; padding: 0.5rem 0.4rem;
+  border: 1.5px solid #e0e0e0; border-radius: 8px;
+  background: white; transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif; flex-shrink: 0; text-align: center;
+}
+.day-btn.active { border-width: 2px; }
+.day-btn .date-label { font-size: 0.7rem; font-weight: 700; color: #999; white-space: nowrap; }
+.day-btn.active .date-label { color: inherit; }
+.day-btn .day-label { font-size: 0.55rem; color: #aaa; white-space: nowrap; margin-top: 0.1rem; }
+
+/* Day Content */
+.day-card { background: white; border-radius: 14px; border: 1.5px solid #e8e6e1; overflow: hidden; margin-bottom: 1.5rem; }
+.day-header { padding: 1.25rem 1.25rem 1rem; color: white; }
+.day-header .date-line {
+  font-family: 'DM Sans', sans-serif; font-size: 0.6rem;
+  text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.7; margin-bottom: 0.2rem;
+}
+.day-header h2 { font-size: 1.3rem; font-weight: 600; letter-spacing: -0.01em; }
+.day-body { padding: 1.25rem; }
+.time-block { margin-bottom: 1.2rem; }
+.time-label {
+  font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;
+}
+.time-label .icon { font-size: 0.85rem; }
+.time-block p { font-size: 0.88rem; line-height: 1.75; color: #444; }
+.local-tip {
+  background: #FFFBF0; border: 1px solid #F0E6C8; border-radius: 10px;
+  padding: 0.9rem 1rem; margin-top: 0.5rem;
+}
+.local-tip .tip-label {
+  font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em; color: #B8860B;
+  margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.4rem;
+}
+.local-tip .tip-label .icon { font-size: 0.8rem; }
+.local-tip p { font-size: 0.84rem; line-height: 1.7; color: #6B5B3E; }
+
+/* Quick Reference */
+.quick-ref {
+  background: #1a1a2e; border-radius: 12px; padding: 1.25rem; margin-bottom: 2rem; color: white;
+}
+.quick-ref .qr-label {
+  font-family: 'DM Sans', sans-serif; font-size: 0.65rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.5); margin-bottom: 0.75rem;
+}
+.quick-ref .qr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; font-size: 0.78rem; }
+.quick-ref .qr-grid .full { grid-column: 1 / -1; }
+.qr-dim { color: rgba(255,255,255,0.45); }
+.qr-gold { color: #E8A87C; }
+.qr-light { color: rgba(255,255,255,0.85); }
+.qr-muted { color: rgba(255,255,255,0.7); font-size: 0.74rem; }
+
+@media (max-width: 500px) {
+  .header h1 { font-size: 1.4rem; }
+  .quick-ref .qr-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-label">Jul 10–26, 2026 · Family Adventure</div>
+    <h1>Rome · Madrid · Barcelona</h1>
+    <p>Culture, food, history &amp; hidden gems for a family of four — two adults, two boys (10 &amp; 14). Starting from London.</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- City Tabs -->
+  <div class="city-tabs" id="cityTabs"></div>
+
+  <!-- Action Buttons -->
+  <div class="action-btns">
+    <button class="action-btn" id="travelBtn" onclick="togglePanel('travel')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 00-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+      Getting There
+    </button>
+    <button class="action-btn" id="hotelBtn" onclick="togglePanel('hotel')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7a2 2 0 012-2h14a2 2 0 012 2v14"/><path d="M3 21h18M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1"/></svg>
+      <span id="hotelBtnLabel">Hotels (4)</span>
+    </button>
+  </div>
+
+  <!-- Panels -->
+  <div id="travelPanel" class="panel" style="display:none"></div>
+  <div id="hotelPanel" class="panel" style="display:none"></div>
+
+  <!-- Day Selector -->
+  <div class="day-selector" id="daySelector"></div>
+
+  <!-- Day Content -->
+  <div id="dayContent"></div>
+
+  <!-- Quick Reference -->
+  <div class="quick-ref">
+    <div class="qr-label">Quick Reference</div>
+    <div class="qr-grid">
+      <div><span class="qr-dim">Route: </span><span class="qr-gold">LDN ✈ ROM ✈ MAD 🚄 BCN</span></div>
+      <div><span class="qr-dim">Duration: </span><span class="qr-light">Jul 10–26 · 16 nights</span></div>
+      <div><span class="qr-dim">Hotels: </span><span class="qr-light">iPrefer · Bonvoy · IHG</span></div>
+      <div><span class="qr-dim">Est. Hotels: </span><span class="qr-gold">~$8,500–12,000 total</span></div>
+      <div class="full"><span class="qr-dim">Transport: </span><span class="qr-muted">Fly LDN→ROM · Fly ROM→MAD · AVE train MAD→BCN (book renfe.com, no Eurail pass needed)</span></div>
+      <div class="full"><span class="qr-dim">Key bookings: </span><span class="qr-muted">Vatican first-entry · Borghese Gallery · Sagrada Família · Flamenco · Colosseum Underground · ⭐ Disfrutar Jul 23 7:15pm — all need advance tickets</span></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CITIES = {
+  rome: {
+    name: "Rome", dates: "Jul 10–14", nights: 5,
+    color: "#B8450E", accent: "#E8A87C", bg: "#FDF6F0", emoji: "🇮🇹",
+    travel: "London → Rome: Fly direct (2h 30m). British Airways, ITA Airways, or Ryanair from Gatwick/Stansted. Budget carriers often under £50pp. Book BA if you collect Avios points.",
+    hotels: [
+      { name: "The Rome EDITION", primary: true, price: "~€500–800/night", loyalty: "Marriott Bonvoy — full points earning/redemption, elite member benefits", desc: "Ian Schrager's minimalist masterpiece near Via Veneto. Tucked down a private cobblestone lane, the lobby opens into a sunken garden — a hidden oasis. Modern Italian design with restraint and warmth. Rooftop pool, excellent Anima restaurant, family rooms available. Walking distance to Spanish Steps, Trevi Fountain, and Borghese Gardens. The aesthetic matches your Hotel L'Oscar and New Hotel Athens taste perfectly." },
+      { name: "The Pantheon Iconic Rome Hotel, Autograph Collection", primary: false, price: "~€450–700/night", loyalty: "Marriott Bonvoy (Autograph Collection) — full points, elite upgrades", desc: "Boutique hotel steps behind the Pantheon with a rooftop terrace serving breakfast with jaw-dropping dome views. Modern design layered onto Rome's golden-age architecture. Michelin-starred Idylio restaurant on-site. Family of four can book interconnecting rooms. Ideal location for the Centro Storico — Piazza Navona, Campo de' Fiori, and Trastevere all walkable." },
+      { name: "Hotel Vilòn", primary: false, price: "~€400–650/night", loyalty: "iPrefer (Preferred Hotels) — points, upgrades, welcome amenity", desc: "Only 18 rooms inside Palazzo Borghese — feels like staying in a wealthy Roman friend's home. Venetian mosaic floors, contemporary furniture, a secluded courtyard garden. Adelaide Restaurant on-site. Intimate, quiet, full of character. Near the Spanish Steps and Villa Borghese. The most 'boutique' option — similar vibe to Hotel Bairro Alto in Lisbon." },
+      { name: "The St. Regis Rome", primary: false, price: "~€600–950/night", loyalty: "Marriott Bonvoy — full points, butler service for Platinum+ members", desc: "Grand dame since 1894, commissioned by César Ritz. Recently renovated with fearless, elegant interiors — Rubelli fabrics, handmade glass, high ceilings flooded with light. On Via Vittorio Emanuele Orlando near Piazza della Repubblica. If you want old-world grandeur with modern edge (think Mandarin Oriental Tokyo scale), this is your pick. Butler service in every room." },
+      { name: "Aleph Rome Hotel, Curio Collection by Hilton", primary: false, price: "~€400–700/night", loyalty: "Hilton Honors (Curio Collection) — earn/redeem points, Gold/Diamond perks", desc: "A 1930s bank headquarters transformed into a striking 80-room hotel on Via di San Basilio, steps from Via Veneto. The original marble floors, onyx paneling, and vault door remain — dramatic character at every turn. Rooftop pool and Sky Blu restaurant with city panoramas, underground spa with hammam and jacuzzi in the old bank vault. Recently renovated (reopening 2026). Bespoke family experience with kids' menu and dedicated amenities. Also bookable via Amex Fine Hotels + Resorts for Platinum cardholders." }
+    ],
+    days: [
+      { day: 1, title: "Arrival & Ancient Rome", date: "Fri, Jul 10", morning: "Arrive from London. Check in, freshen up. Walk to the Colosseum area in the afternoon.", afternoon: "Colosseum & Roman Forum — book the 'Underground & Arena Floor' tour in advance (kids will love the gladiator tunnels beneath the arena). Walk through the Forum imagining daily Roman life. The Palatine Hill has great views and fewer crowds.", evening: "Dinner at Roscioli Salumeria con Cucina (Testaccio-adjacent, beloved by locals — incredible cacio e pepe, charcuterie, and natural wines). 🔖 Reservation essential — book via email or TheFork well in advance.", local: "Skip the tourist gelato on Via dei Fori Imperiali. Instead walk 10 min to Fatamorgana (Via Laurina) — Romans' favorite artisan gelato with inventive flavors like Kentuki (tobacco & dark chocolate)." },
+      { day: 2, title: "Vatican, Trastevere & Al Moro", date: "Sat, Jul 11", morning: "Vatican Museums — book first-entry tickets (7:30am) to see the Sistine Chapel nearly empty. The Gallery of Maps is a highlight kids appreciate. Allow 3 hours.", afternoon: "St. Peter's Basilica (free, no ticket needed after museum visit). Climb the dome — 551 steps but unforgettable panorama. Then cross the river to Trastevere for a late lunch at Tonnarello (classic Roman trattoria, outdoor seating on cobblestoned streets). 🔖 No reservation needed — queue moves fast. Explore Trastevere afterward — street musicians, artisan shops. Supplì (fried rice balls) from Supplizio for a walking snack.", evening: "🍽️ 7:30pm — Al Moro (Vicolo delle Bollette, 13 — steps from the Trevi Fountain). A nearly century-old trattoria and Fellini's favorite haunt, now frequented by politicians and well-heeled Roman families. Order the spaghetti alla Moro (their signature carbonara with red pepper flakes) and the fried artichokes. Sit in the front room. Formal, old-school, and unmistakably Roman. 🔖 Reservation confirmed for 19:30 — call +39 06 678 3495 or email info@ristorantealmororoma.it to secure. Dress smartly.", local: "After Al Moro, walk to the Trevi Fountain at night — it's spectacularly lit and far less crowded after 10pm. If you have energy another evening, Da Enzo al 29 in Trastevere is worth the queue (no reservations accepted — line up by 7pm)." },
+      { day: 3, title: "Borghese, Street Art & Roman Life", date: "Sun, Jul 12", morning: "Galleria Borghese — absolutely unmissable. Bernini's sculptures will mesmerize the 14-year-old (Apollo & Daphne is mind-bending). Timed entry, book months ahead. Only 2 hours per visit, which is perfect with kids.", afternoon: "Villa Borghese gardens — rent a rowboat on the lake or tandem bikes. Then head to the Ostiense/Testaccio neighborhood for Rome's incredible street art scene. The 14-year-old will love the massive murals along Via del Porto Fluviale. Visit the MACRO museum of contemporary art.", evening: "Testaccio for dinner — this is THE local food neighborhood. Flavio al Velavevodetto is built into Monte Testaccio (an ancient hill of broken Roman pottery shards). Roman classics done perfectly — their cacio e pepe and amatriciana are legendary. 🔖 Reservation strongly recommended — book via TheFork or call +39 06 5744194. Or try Trapizzino nearby for gourmet stuffed pizza pockets — a Roman street food invention (no reservation needed, walk-in).", local: "Visit the Testaccio Market (Mercato Testaccio) for lunch instead — stalls selling supplì, porchetta sandwiches, and fresh pasta. This is where Romans actually shop. No reservations needed." },
+      { day: 4, title: "Appian Way & Catacombs", date: "Mon, Jul 13", morning: "Rent bikes and ride the Via Appia Antica (Appian Way) — a 2,300-year-old Roman road lined with ruins, tombs, and umbrella pines. Remarkably peaceful and kid-friendly. Start at the Catacombs of San Callisto (underground burial tunnels — genuinely thrilling for kids).", afternoon: "Continue to the Aqueduct Park (Parco degli Acquedotti) — massive Roman aqueducts in open fields. Feels like a movie set. Perfect for the boys to run around. Locals picnic here.", evening: "Pigneto neighborhood for dinner — Rome's hip, graffiti-covered, very local quarter. Necci dal 1924 is the anchor (Pasolini used to drink here). Great pasta, laid-back terrace. 🔖 Reservation recommended for Necci at weekends, walk-in usually fine weekday evenings.", local: "On the bike ride, stop at a roadside bar along the Appia for a granita al caffè — coffee ice, whipped cream, pure Roman summer." },
+      { day: 5, title: "Pantheon Quarter & Departure Prep", date: "Tue, Jul 14", morning: "The Pantheon — free entry, arrive at opening (9am). The oculus is one of architecture's greatest moments; if it's raining, you'll see water fall through the dome. Then stop at Caffè Sant'Eustachio (Piazza Sant'Eustachio, 82) — Rome's most famous coffee bar since 1938, steps from the Pantheon. Order the 'Gran Caffè' — the secret recipe produces an extraordinary crema. The baristas turn their backs while preparing it to guard the method. Say 'amaro' if you don't want it pre-sweetened. No reservation needed — just walk up to the bar. Then wander to Piazza Navona and the backstreets behind it.", afternoon: "Jewish Ghetto quarter — one of Rome's oldest and most fascinating neighborhoods. Lunch at Nonna Betta (Roman-Jewish cuisine: fried artichokes, carciofi alla giudia, are extraordinary). 🔖 Reservation recommended for Nonna Betta, especially weekend lunch. Visit the Turtle Fountain and the Theatre of Marcellus. If time allows, the Centrale Montemartini museum — ancient Roman sculptures displayed in a converted power plant. Wildly undervisited.", evening: "Final Roman evening. Aperitivo at Il Palazzetto (terrace overlooking the Spanish Steps — no reservation needed for drinks) then a last dinner wherever your heart leads. Campo de' Fiori market area is magical at night.", local: "Pasticceria Regoli in Esquilino for the best maritozzo (cream-filled bun) in Rome — a Roman breakfast tradition the tourists miss. No reservation needed." }
+    ]
+  },
+  madrid: {
+    name: "Madrid", dates: "Jul 15–19", nights: 5,
+    color: "#1B4D6E", accent: "#7FB3D3", bg: "#F0F5F9", emoji: "🇪🇸",
+    travel: "Rome → Madrid: Fly direct (2h 30m). Vueling, Iberia, or Ryanair. Flights from Fiumicino (FCO) are frequent and affordable. Morning flight gets you to Madrid by lunchtime.",
+    hotels: [
+      { name: "URSO Hotel & Spa", primary: true, price: "~€350–550/night", loyalty: "Marriott Bonvoy (via Design Hotels) — earn/redeem points, elite benefits", desc: "A 1920s palace converted into a 78-room boutique hotel in the Alonso Martínez area. Neoclassical façade, interiors by architect Antonio Obrador — clean lines, natural materials, beautiful courtyard. Subterranean spa with a gorgeous pool. Interconnecting rooms available. Quiet residential street but walkable to everything. Similar spirit to your Hotel Sans Souci Wien — understated luxury with soul." },
+      { name: "The Madrid EDITION", primary: false, price: "~€500–800/night", loyalty: "Marriott Bonvoy — full points, elite benefits, rooftop pool", desc: "Ian Schrager's Madrid outpost, set in a tranquil plaza near Puerta del Sol. 77 connecting rooms and suites specifically designed for families (capacity 4–8 guests). Madrid's largest luxury rooftop infinity pool, Oroya restaurant (Peruvian by Chef Diego Muñoz), Punch Room cocktail bar. Staff greet kids by name and deliver personalized cookies to the room. Walking distance to the Prado, Reina Sofía, and Retiro Park. Recent family reviews rave about the experience — one of the most family-forward luxury hotels in Madrid." },
+      { name: "Gran Hotel Inglés", primary: false, price: "~€400–600/night", loyalty: "Marriott Bonvoy (Tribute Portfolio) — full points, elite benefits", desc: "Madrid's oldest grand hotel (1886), stunningly restored. In the Barrio de las Letras (Literary Quarter) — cobblestone streets, independent bookshops, and tapas bars at your doorstep. Lobo 8 restaurant, beautiful lobby bar. Rooms blend 19th-century architecture with modern design. The most characterful option with the best neighborhood for evening tapas crawls." },
+      { name: "Hotel Palacio del Retiro, Autograph Collection", primary: false, price: "~€350–500/night", loyalty: "Marriott Bonvoy (Autograph Collection) — full points, elite upgrades", desc: "A palatial early 20th-century home converted into a 50-room boutique hotel, directly facing Retiro Park. In the Art Triangle between the Prado, Thyssen, and Reina Sofía museums. Protected heritage building, discreet and elegant. The best value Bonvoy option with the most prestigious museum-district location." }
+    ],
+    days: [
+      { day: 6, title: "Arrival & Madrid's Heart", date: "Wed, Jul 15", morning: "Fly from Rome, arrive late morning. Check in, settle.", afternoon: "Walk the Paseo del Prado. Visit the CaixaForum — the building alone (a power station with a floating façade and a living vertical garden wall) is worth the trip. Free or very cheap exhibitions, always interesting. Then walk through Retiro Park — rent rowboats on the lake, see the Crystal Palace (Palacio de Cristal).", evening: "First taste of Madrid's late dining culture (dinner rarely before 9pm). Head to La Barraca on Calle de la Reina for exceptional paella in an old-school Madrid setting — locals, not tourists. The seafood paella is the one.", local: "Madrid's rhythm: lunch 2–3pm, siesta/rest, evening paseo around 7–8pm, dinner 9:30–10:30pm. Embrace it — the boys will love staying up late." },
+      { day: 7, title: "The Prado & Literary Quarter", date: "Thu, Jul 16", morning: "Museo del Prado — one of the world's great museums. Focus on Velázquez (Las Meninas is a must — ask the 14yr old what's strange about the painting), Goya's Black Paintings (haunting, memorable), and Bosch's Garden of Earthly Delights (both boys will be transfixed — it's like a medieval fever dream). 3 hours max with kids.", afternoon: "Barrio de las Letras (Literary Quarter) — cobblestones inlaid with quotes from Cervantes and Lope de Vega. Browse independent bookshops. Lunch at Casa Alberto (since 1827, where Cervantes lived upstairs) — try the croquetas and slow-braised oxtail.", evening: "Tapas crawl in La Latina neighborhood. Start at Juana La Loca (famous tortilla with caramelized onion), then Casa Lucas, then Txirimiri for Basque pintxos. This is how Madrileños eat.", local: "El Rastro flea market is Sunday mornings in La Latina — if your timing works, it's an electric experience. Thousands of stalls, buskers, locals." },
+      { day: 8, title: "Reina Sofía, Lavapiés & Flamenco", date: "Fri, Jul 17", morning: "Museo Reina Sofía — Picasso's Guernica. Prepare the boys beforehand (show them photos of the Spanish Civil War bombing). The painting's scale and power is unforgettable. The museum also has great Dalí and Miró.", afternoon: "Walk into Lavapiés — Madrid's most multicultural, artistic neighborhood. Street art, indie galleries, global food. Lunch at Tribuetxe (Basque tapas, incredible quality, local crowd) or grab Indian/Bangladeshi food on Calle de Lavapiés — best in the city.", evening: "Flamenco at Corral de la Morería — the world's most celebrated flamenco venue. Book the show-only option (dinner+show is pricey). The raw emotion transcends language. Even the 10-year-old will be riveted by the percussion and energy. Alternatively, Casa Patas for a more intimate, purist experience.", local: "For a less touristy flamenco experience, ask your hotel concierge about tablaos in Lavapiés — smaller venues where performers practice and the audience is mostly Spanish." },
+      { day: 9, title: "Royal Madrid & Mercado Magic", date: "Sat, Jul 18", morning: "Royal Palace (Palacio Real) — the largest functioning royal palace in Europe. The armory collection is a hit with kids (full suits of armor, swords, jousting gear). Book a guided tour.", afternoon: "Mercado de San Miguel for a tasting lunch (upscale tapas market — touristy but fun, especially with kids who can pick what appeals). Then the lesser-known Mercado de San Fernando in Lavapiés for the real local experience — craft beer, vinyl stalls, and neighborhood vibe.", evening: "Malasaña neighborhood — Madrid's coolest quarter. Walk Calle de Fuencarral, browse vintage shops. Dinner at Bodega de la Ardosa (opened 1892) — famous for its tortilla española and vermouth on tap. Standing room, elbows-in, totally authentic.", local: "In Malasaña, get churros y chocolate at El Taller del Buen Comer (not the famous San Ginés, which is tourist-mobbed). Thick hot chocolate, fresh churros, local crowd." },
+      { day: 10, title: "Day Trip: Toledo or Segovia", date: "Sun, Jul 19", morning: "Toledo (30 min by high-speed train from Atocha): a medieval walled city where Christian, Muslim, and Jewish cultures fused. Walk the narrow streets, visit the Cathedral (Gothic, spectacular), and the Synagogue of Santa María la Blanca.", afternoon: "El Greco Museum, then Alcázar fortress. Lunch at Adolfo Restaurante (refined Castilian cuisine) or a local spot in the Jewish Quarter. OR choose Segovia instead: the Roman aqueduct is jaw-dropping, the Alcázar inspired Disney's castle, and roast suckling pig (cochinillo) at Mesón de Cándido is legendary.", evening: "Return to Madrid. Light dinner at StreetXO (David Muñoz's casual concept — wildly creative Asian-Spanish fusion, the boys will love the punk-rock energy and unexpected flavors).", local: "On the train back from Toledo, the Castilian landscape — red earth, olive groves, big sky — is stunning at golden hour." }
+    ]
+  },
+  barcelona: {
+    name: "Barcelona", dates: "Jul 20–26", nights: 6,
+    color: "#8B2252", accent: "#D4829C", bg: "#FAF0F4", emoji: "🇪🇸",
+    travel: "Madrid → Barcelona: Take the AVE high-speed train (2h 30m, up to 300km/h). Book directly at renfe.com — no Eurail pass needed, point-to-point tickets are cheaper for this single journey. Advance fares can be as low as €30–50pp booked 2 months ahead; Preferente (first class) runs ~€80–120pp with spacious seats, at-seat meal service, and lounge access at Atocha. Your 10-year-old gets a child fare (~40% off). Departs Madrid Atocha, arrives Barcelona Sants — both city-center stations.",
+    hotels: [
+      { name: "El Palace Barcelona", primary: true, price: "~€450–750/night", loyalty: "IHG One Rewards (via Leading Hotels of the World) + iPrefer", desc: "Built in 1919 by César Ritz himself. Opulent Belle Époque interiors with a modern renovation — marble columns, gilded ceilings, stunning garden restaurant. On Gran Via near Passeig de Gràcia, walking distance to Gaudí masterpieces. Pool, spa, kids' welcome kits, interconnecting rooms. The grand dame choice — similar in spirit to the Fairmont Amman you loved." },
+      { name: "Majestic Hotel & Spa", primary: false, price: "~€500–800/night", loyalty: "Marriott Bonvoy (LXR Hotels & Resorts) — full points, elite benefits", desc: "On Passeig de Gràcia with rooftop pool overlooking Casa Batlló and La Pedrera — the best Gaudí views from any hotel in the city. Family-owned since 1918, recently renovated. SOLC restaurant (one Michelin star), full spa. The strongest Bonvoy option in Barcelona if you want to maximize points. Connecting rooms available for families." },
+      { name: "Hotel Neri", primary: false, price: "~€400–600/night", loyalty: "iPrefer (Preferred Hotels) — points, upgrades, welcome amenity", desc: "A medieval palace in the heart of the Gothic Quarter, on a quiet square (Plaça Sant Felip Neri — the one with the shrapnel marks from the Civil War). Rooftop plunge pool, exposed stone walls, moody-chic interiors. Only 22 rooms — extremely intimate. Walking distance to the Cathedral and Picasso Museum. The most 'New Hotel Athens' vibe of the Barcelona options." },
+      { name: "Cotton House Hotel", primary: false, price: "~€350–550/night", loyalty: "Marriott Bonvoy (Autograph Collection) — full points, elite benefits", desc: "A restored 19th-century cotton guild headquarters on Gran Via. Dramatic spiral staircase, library lounge, rooftop pool and bar. Neoclassical bones with eclectic modern design — taxidermy, velvet, marble. Near Plaça Catalunya and walkable to both Eixample and Gothic Quarter. Best value Bonvoy option with genuine architectural character." },
+      { name: "H10 Metropolitan", primary: false, price: "~€200–400/night", loyalty: "H10 Rewards (own loyalty program) — 5% discount, points for stays, free nights", desc: "A beautifully renovated historic building on Rambla Catalunya, steps from Plaça Catalunya. Interiors by celebrated designer Lázaro Rosa-Violán channel Barcelona's 19th-century industrial era — wide-plank wood floors, antique window frames, leather Chesterfields mixed with striking contemporary art. Rooftop plunge pool with Eixample views, 85 rooms including triple rooms for families. The most affordable option with serious design credentials — Condé Nast Traveler named it Best Urban Hotel in Spain. Not part of the big loyalty chains, but H10's own program offers direct-booking discounts." }
+    ],
+    days: [
+      { day: 11, title: "Arrival & Gothic Quarter", date: "Mon, Jul 20", morning: "AVE train from Madrid (depart ~10am, arrive ~12:30pm). Check in at El Palace.", afternoon: "Barri Gòtic (Gothic Quarter) — lose yourselves in the medieval lanes. Cathedral of Barcelona (climb the roof for panoramic views), the ancient Roman temple columns hidden in a courtyard (Temple of Augustus — the boys will love discovering these), and Plaça del Rei (medieval royal square).", evening: "Dinner at Els Quatre Gats — the tavern where young Picasso held his first exhibition (1900). Good Catalan food in an art-nouveau gem. Then walk Las Ramblas, but only as a spectacle — don't eat there.", local: "Duck into Caelum (Carrer de la Palla) — a café in a medieval cellar that sells sweets made by monks and nuns from monasteries across Spain. Atmospheric and unique." },
+      { day: 12, title: "Gaudí Day", date: "Tue, Jul 21", morning: "Sagrada Família — book first-entry timed tickets. The interior is the revelation: forests of branching columns, light streaming through stained glass in shifting colors. Tower access is worth it. Allocate 2 hours.", afternoon: "Park Güell (timed entry, book ahead). The mosaic terrace and gingerbread gatehouses are iconic. Then walk downhill through the Gràcia neighborhood — a village within the city. Lunch at La Pepita (legendary patatas bravas and creative tapas, packed with locals).", evening: "Casa Batlló night experience (if available) — they sometimes do evening visits with rooftop music. The building's dragon-scale roof at sunset is magical. Dinner at Cervecería Catalana (Eixample) — outstanding tapas, always buzzing, a local institution.", local: "In Gràcia, stop at Plaça del Sol or Plaça de la Vila de Gràcia — neighborhood squares where local families gather, kids play, and the vibe is completely untouristy." },
+      { day: 13, title: "Picasso, Born & Beach", date: "Wed, Jul 22", morning: "Museu Picasso — housed in five connected medieval palaces. The collection traces Picasso from age 9 to master — the 14-year-old seeing what Picasso painted at his exact age is a powerful moment. The Las Meninas series (reimagining Velázquez) connects perfectly to your Prado visit.", afternoon: "El Born neighborhood — Barcelona's coolest quarter. Browse boutiques, see the Born Cultural Centre (excavated medieval streets under glass), then walk to Barceloneta beach. The boys can swim while you grab a drink at a chiringuito (beach bar).", evening: "Seafood dinner at Can Paixano (La Xampanyeria) — a legendary standing cava bar in Barceloneta. Cheap cava, great cured meats and seafood. Chaotic, fun, totally local. Follow with a proper sit-down at La Mar Salada for excellent rice dishes.", local: "Skip the tourist paella along the boardwalk. Can Paixano is 2 blocks inland and 10x better at a fraction of the price." },
+      { day: 14, title: "⭐ Disfrutar Day", date: "Thu, Jul 23", morning: "A deliberately relaxed morning — you have the meal of a lifetime tonight. Sleep in, enjoy a long breakfast at the hotel. Then stroll to the Mercat del Ninot (directly across the street from Disfrutar) — a beautifully renovated local market. Browse the stalls, grab fresh fruit and coffee. The boys can see where Disfrutar's chefs source their ingredients.", afternoon: "Keep it light — you want to arrive hungry. Walk through the Eixample neighborhood admiring the modernista architecture on every block. Visit the lesser-known Casa Amatller (next to Casa Batlló, far fewer crowds, chocolate tasting included). Then head back to the hotel to freshen up and change. Disfrutar is smart-casual but this is the #1 restaurant in the world — dress the occasion. Light snack only if needed.", evening: "🌟 7:15pm — Disfrutar (Carrer de Villarroel, 163). Three Michelin stars, #1 in The World's 50 Best Restaurants. Expect 20–28 courses of avant-garde Mediterranean cuisine from chefs Oriol Castro, Eduard Xatruch and Mateu Casañas (all former elBulli). The 'solid bubbles,' deconstructed ceviche, and famous olive spherifications are sensory theatre — the boys will be mesmerized. Choose between the Classic menu (signature dishes) or the Festival menu (seasonal creations). Wine pairing highly recommended for the adults. Allow 2.5–3 hours. This will be a meal your family talks about for years.", local: "Disfrutar means 'to enjoy' — the chefs actively encourage photos. The ceramic-lined interior is inspired by the Ninot market across the street and the Mediterranean coast. Don't skip the final 'chocolate peppers' — they look exactly like real chillies but are filled with chocolate cream. Pure magic." },
+      { day: 15, title: "Montjuïc & Miró", date: "Fri, Jul 24", morning: "Fundació Joan Miró on Montjuïc hill — a beautiful building, playful art that kids respond to strongly. Miró's childlike style makes abstract art accessible. The rooftop sculpture garden has amazing views.", afternoon: "MNAC (Museu Nacional d'Art de Catalunya) — the Romanesque collection (1,000-year-old church frescoes rescued from Pyrenean chapels) is unlike anything else in the world. The building itself, at the top of Montjuïc, has commanding views. Take the escalators up, cable car or funicular options for fun transit.", evening: "Live music at Jamboree Jazz Club (Plaça Reial) — Barcelona's iconic jazz venue in a vaulted cellar. Early shows are all-ages friendly. Or check Palau de la Música Catalana for classical concerts — the building (Catalan modernisme, UNESCO site) is as extraordinary as the music.", local: "On Montjuïc, find the Jardins de Laribal — hidden terraced gardens with fountains and tile work, almost no tourists." },
+      { day: 16, title: "Montserrat Day Trip", date: "Sat, Jul 25", morning: "Day trip to Montserrat (1h by train + rack railway or cable car). A monastery perched in surreal serrated mountains. The boys' choir (La Escolania, one of Europe's oldest) performs at 1pm — hauntingly beautiful. Arrive early to hike the Sant Joan trail for spectacular views.", afternoon: "Explore the monastery, see the Black Madonna. Lunch at the mountain restaurant or pack a picnic. The landscape is otherworldly — like another planet.", evening: "Back in Barcelona. Final evening. Sunset at Bunkers del Carmel (the locals' secret viewpoint — old Civil War anti-aircraft bunkers with 360° panoramic views of the entire city). Bring snacks and drinks. Then a farewell dinner at Cal Pep (counter-style seafood tapas near the Born — one of Barcelona's best, book ahead).", local: "The Bunkers del Carmel sunset is the most magical experience in Barcelona that most tourists never find. Go 45 minutes before sunset. The walk up is part of the charm." },
+      { day: 17, title: "Departure", date: "Sun, Jul 26", morning: "Last morning. La Boqueria market at opening (8am) for a final breakfast grazing — fresh juice, jamón ibérico, fruit cups. Or grab ensaïmadas (spiral pastries) from a local bakery. Fly Barcelona → London (2h 15m, frequent flights). Or Barcelona has direct flights to many US cities if heading home.", afternoon: "", evening: "", local: "" }
+    ]
+  }
+};
+
+let activeCity = 'rome';
+let activeDay = 0;
+let showTravel = false;
+let showHotel = false;
+
+function render() {
+  const city = CITIES[activeCity];
+  const day = city.days[activeDay];
+
+  // City Tabs
+  document.getElementById('cityTabs').innerHTML = Object.entries(CITIES).map(([key, c]) => `
+    <button class="city-tab ${activeCity === key ? 'active' : ''}"
+      style="${activeCity === key ? `border-color:${c.color}; background:${c.bg}` : ''}"
+      onclick="setCity('${key}')">
+      <div class="emoji">${c.emoji}</div>
+      <div class="name" style="${activeCity === key ? `color:${c.color}` : ''}">${c.name}</div>
+      <div class="nights">${c.nights} nights</div>
+    </button>
+  `).join('');
+
+  // Hotel button label
+  document.getElementById('hotelBtnLabel').textContent = `Hotels (${city.hotels.length})`;
+  document.getElementById('travelBtn').className = `action-btn ${showTravel ? 'active' : ''}`;
+  document.getElementById('hotelBtn').className = `action-btn ${showHotel ? 'active' : ''}`;
+
+  // Travel panel
+  const tp = document.getElementById('travelPanel');
+  if (showTravel) {
+    tp.style.display = 'block';
+    tp.innerHTML = `<div class="travel-panel fade-in">
+      <div class="panel-label" style="color:${city.color}">Travel to ${city.name}</div>
+      <p>${city.travel}</p>
+    </div>`;
+  } else { tp.style.display = 'none'; }
+
+  // Hotel panel
+  const hp = document.getElementById('hotelPanel');
+  if (showHotel) {
+    hp.style.display = 'block';
+    hp.innerHTML = `<div class="fade-in">
+      <div class="panel-label" style="color:${city.color}">Hotel Options · ${city.name}</div>
+      ${city.hotels.map(h => `
+        <div class="hotel-card ${h.primary ? 'primary' : ''}" style="${h.primary ? `border-color:${city.color}30; border-width:2px` : ''}">
+          ${h.primary ? `<div class="rec-badge" style="background:${city.color}">Recommended</div>` : ''}
+          <h3 class="${h.primary ? 'has-badge' : ''}">${h.name}</h3>
+          <p class="desc">${h.desc}</p>
+          <div class="hotel-tags">
+            <span class="hotel-tag price" style="color:${city.color}; background:${city.color}10">${h.price}</span>
+            <span class="hotel-tag loyalty">${h.loyalty}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+  } else { hp.style.display = 'none'; }
+
+  // Day Selector
+  document.getElementById('daySelector').innerHTML = city.days.map((d, i) => {
+    const isDisfrutar = d.title.includes('Disfrutar');
+    const dateParts = d.date ? d.date.split(', ') : [];
+    return `<button class="day-btn ${activeDay === i ? 'active' : ''}"
+      style="${activeDay === i ? `border-color:${city.color}; background:${city.bg}` : ''}"
+      onclick="setDay(${i})">
+      <div class="date-label" style="${activeDay === i ? `color:${city.color}` : ''}">${dateParts[1] || 'Day ' + d.day}</div>
+      <div class="day-label" style="${isDisfrutar ? `color:${city.color}; font-weight:700` : ''}">${isDisfrutar ? '⭐ Disfrutar' : dateParts[0] || ''}</div>
+    </button>`;
+  }).join('');
+
+  // Day Content
+  let bodyHTML = '';
+  if (day.morning) bodyHTML += timeBlock('☀️', 'Morning', day.morning, city.color);
+  if (day.afternoon) bodyHTML += timeBlock('🌤️', 'Afternoon', day.afternoon, city.color);
+  if (day.evening) bodyHTML += timeBlock('🌙', 'Evening', day.evening, city.color);
+  if (day.local) bodyHTML += `
+    <div class="local-tip">
+      <div class="tip-label"><span class="icon">📍</span> Local's Tip</div>
+      <p>${day.local}</p>
+    </div>`;
+
+  document.getElementById('dayContent').innerHTML = `
+    <div class="day-card">
+      <div class="day-header" style="background:linear-gradient(135deg, ${city.color}, ${city.color}dd)">
+        <div class="date-line">${day.date || 'Day ' + day.day} · ${city.name}${day.title.includes('Disfrutar') ? ' · ⭐' : ''}</div>
+        <h2>${day.title}</h2>
+      </div>
+      <div class="day-body">${bodyHTML}</div>
+    </div>`;
+}
+
+function timeBlock(icon, label, text, color) {
+  return `<div class="time-block">
+    <div class="time-label" style="color:${color}"><span class="icon">${icon}</span> ${label}</div>
+    <p>${text}</p>
+  </div>`;
+}
+
+function setCity(key) { activeCity = key; activeDay = 0; showHotel = false; showTravel = false; render(); }
+function setDay(i) { activeDay = i; render(); }
+function togglePanel(panel) {
+  if (panel === 'travel') { showTravel = !showTravel; showHotel = false; }
+  else { showHotel = !showHotel; showTravel = false; }
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
