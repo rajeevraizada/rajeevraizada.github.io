@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rome · Madrid · Barcelona — Family Itinerary Jul 11–25, 2026</title>
+<title>London · Rome · Madrid · Barcelona — Family Itinerary Jul 7–26, 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -174,9 +174,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 <div class="header">
   <div class="header-inner">
-    <div class="header-label">Jul 11–25, 2026 · Family Adventure</div>
-    <h1>Rome · Madrid · Barcelona</h1>
-    <p>Culture, food, history &amp; hidden gems for a family of four — two adults, two boys (10 &amp; 14). Starting from London.</p>
+    <div class="header-label">Jul 7–26, 2026 · Family Adventure</div>
+    <h1>London · Rome · Madrid · Barcelona</h1>
+    <p>Culture, food, history &amp; hidden gems for a family of four — two adults, two boys (10 &amp; 14). Starting in London, then Rome, Madrid, and Barcelona.</p>
   </div>
 </div>
 
@@ -185,6 +185,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <!-- City Tabs -->
   <div class="city-tabs" id="cityTabs"></div>
 
+  <!-- Flights Panel -->
+  <div id="flightsPanel" class="panel" style="display:none"></div>
+
+  <!-- City-specific content -->
+  <div id="cityContent">
   <!-- Action Buttons -->
   <div class="action-btns" style="flex-wrap:wrap">
     <button class="action-btn" id="travelBtn" onclick="togglePanel('travel')">
@@ -217,15 +222,17 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <!-- Day Content -->
   <div id="dayContent"></div>
 
+  </div><!-- end cityContent -->
+
   <!-- Quick Reference -->
   <div class="quick-ref">
     <div class="qr-label">Quick Reference</div>
     <div class="qr-grid">
-      <div><span class="qr-dim">Route: </span><span class="qr-gold">LHR T5 ✈ FCO ✈ MAD 🚄 BCN ✈ LHR T5</span></div>
-      <div><span class="qr-dim">Duration: </span><span class="qr-light">Jul 11–25 · 14 nights</span></div>
-      <div><span class="qr-dim">Hotels: </span><span class="qr-light">iPrefer · Bonvoy · IHG</span></div>
+      <div><span class="qr-dim">Route: </span><span class="qr-gold">NYC ✈ LDN ✈ ROM ✈ MAD 🚄 BCN ✈ LDN ✈ NYC</span></div>
+      <div><span class="qr-dim">Duration: </span><span class="qr-light">Jul 7–26 · 19 days (3 London, 4 Rome, 5 Madrid, 5 Barcelona, 1 London)</span></div>
+      <div><span class="qr-dim">Hotels: </span><span class="qr-light">Hilton · Bonvoy · iPrefer · IHG</span></div>
       <div><span class="qr-dim">Est. Hotels: </span><span class="qr-gold">~$8,500–12,000 total</span></div>
-      <div class="full"><span class="qr-dim">Flights: </span><span class="qr-muted">BA 546 LHR→FCO Jul 11 · IB 660 FCO→MAD Jul 15 · BA 477 BCN→LHR Jul 25 · All conf: BA4WAJ</span></div>
+      <div class="full"><span class="qr-dim">Flights: </span><span class="qr-muted">VS 46 JFK→LHR Jul 7 (CW7D6J) · BA 546 LHR→FCO Jul 11 · IB 660 FCO→MAD Jul 15 · BA 477 BCN→LHR Jul 25 (BA4WAJ) · VS 25 LHR→JFK Jul 26 (CW7D6J)</span></div>
       <div class="full"><span class="qr-dim">Train: </span><span class="qr-muted">AVE or Iryo MAD Atocha → BCN Sants Jul 20 (compare at thetrainline.com)</span></div>
       <div class="full"><span class="qr-dim">Key bookings: </span><span class="qr-muted">Vatican first-entry · Borghese Gallery · Sagrada Família · Flamenco · Colosseum Underground · ⭐ Disfrutar Jul 23 7:15pm — all need advance tickets</span></div>
     </div>
@@ -235,6 +242,21 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 <script>
 const CITIES = {
+  london_pre: {
+    name: "London", dates: "Jul 8–11", nights: 3,
+    color: "#4A4A6A", accent: "#8E8EAE", bg: "#F2F2F7", emoji: "🇬🇧",
+    travel: "Arrive in London July 8. Three nights to explore before flying to Rome on July 11 at 6:40am from LHR Terminal 5.",
+    transport: "🚇 TUBE: The London Underground is the fastest way around. Contactless payment (tap your Amex or phone) works on all Tube, bus, DLR, and Overground — daily spend is auto-capped at the equivalent of a day travelcard (~£8.10/day Zones 1–2). No need to buy an Oyster card. Children under 11 ride free with a paying adult. 🚌 BUS: Red double-deckers cover every corner. Contactless tap-on, no tap-off needed. Night buses run 24/7. 🚕 TAXI/UBER: Black cabs are metered and reliable. Uber works well across London. From Heathrow: Heathrow Express to Paddington (15 min, ~£25pp) or Tube Piccadilly Line (~1 hour, ~£5.50). 👟 REALITY: Central London is very walkable. Most days you'll use the Tube 2–3 times. Contactless eliminates all ticket hassle.",
+    tickets: [],
+    hotels: [
+      { name: "St. Ermin's Hotel, Autograph Collection ⭐ BOOKED", primary: true, price: "3 nights · Jul 8–11", loyalty: "Marriott Bonvoy #118155469 (Gold Elite) — points, complimentary Wi-Fi, late checkout (subject to availability), enhanced room upgrade, welcome gift", desc: "✅ CONFIRMED — Ref #85089210. Check-in Wed Jul 8 at 3:00pm / Check-out Sat Jul 11. 2 Caxton Street, Westminster, London SW1H 0QW. Phone: +44 20 7222 7888. Nearest Tube: St James's Park (District & Circle lines). A historic 1889 hotel in Westminster with WWII espionage connections — Churchill's Special Operations Executive was founded here. Lush tree-lined courtyard, Caxton Bar & Grill, and a kids' 'Secret Mission' scavenger hunt at check-in. Walking distance to Westminster Abbey, Big Ben, Buckingham Palace, and St James's Park." }
+    ],
+    days: [
+      { day: 1, title: "Arrival in London", date: "Wed, Jul 8", morning: "✈️ VS 0046 — JFK dep 7:00pm Tue Jul 7 → LHR T3 arr 7:15am Wed Jul 8 (7h 15m, non-stop, Airbus A350-1000, Premium class). Confirmation: CW7D6J. Seats 23D, 23E, 23F, 23G. Heathrow Express to Paddington (15 min) or taxi to St. Ermin's (~45 min). 🏨 Check into St. Ermin's Hotel (2 Caxton Street, Westminster, Ref #85089210). Check-in from 3:00pm — drop bags early and rest. You'll be jet-lagged from the overnight flight.", afternoon: "Explore Westminster on foot — you're steps from St James's Park, Westminster Abbey, and the Houses of Parliament. Walk through St James's Park to Buckingham Palace. The boys will enjoy the pelicans in the park (fed daily at 2:30pm).", evening: "Dinner at Caxton Bar & Grill in the hotel (excellent British fare, convenient first night), or walk 15 min to Brasserie Zédel (Piccadilly — stunning Art Deco basement, French brasserie, surprisingly affordable) or Dishoom (King's Cross — Bombay café, the boys will love the black daal and bacon naan roll).", local: "London is 5 hours ahead of NYC. The boys will be jet-lagged — plan a light first day and let them adjust. Ask at check-in for the kids' Secret Mission scavenger hunt." },
+      { day: 2, title: "Museums & West End", date: "Thu, Jul 9", morning: "British Museum (free, opens 10am) — the Rosetta Stone, Egyptian mummies, and Parthenon marbles. The 14-year-old can handle 2–3 hours here. Or the Natural History Museum (free) if the boys prefer dinosaurs and wildlife.", afternoon: "Walk through Covent Garden (street performers, market, shops) then cross to the South Bank for the London Eye or just soak in the views. Borough Market for lunch — one of Europe's great food markets. Ameer the cook will love exploring the stalls.", evening: "🍽️ 7:45pm — Darjeeling Express (Top Floor, Kingly Court, Carnaby Street, London W1B 5PW). ✅ Confirmed via OpenTable, Ref #13424. Phone: 020 3375 3772. Chef Asma Khan's celebrated restaurant — inspired by the royal kitchens of her Hyderabadi heritage, run by an all-women team. The set menu changes seasonally — expect dishes like lamb biryani, black daal, and goat curry that are deeply personal and beautifully spiced. A perfect meal before or after a West End show — Carnaby Street is a 5-minute walk from the theatre district.", local: "Most major London museums are free — British Museum, Natural History Museum, V&A, Science Museum, Tate Modern, National Gallery. Take advantage." },
+      { day: 3, title: "Exploring & Packing for Rome", date: "Fri, Jul 10", morning: "Tower of London (book ahead, ~£33 adults, under-16 £16) — the Crown Jewels and 1,000 years of history. Or if the boys prefer something different, the Science Museum (free) has incredible interactive exhibits.", afternoon: "Camden Market for lunch and browsing (eclectic, vibrant, great street food from around the world) or Portobello Road in Notting Hill (antiques, vintage, street food). Last-minute London exploring.", evening: "Early night — you fly to Rome tomorrow at 6:40am from LHR T5. Pack tonight. ⚠️ Set alarm for ~3:30am to allow time to get to Heathrow. Pre-book a taxi or Uber for ~4:00am from St. Ermin's. It's about 45 min to LHR T5 by car at that hour (no traffic).", local: "The hotel's concierge can arrange an early-morning airport transfer — ask the day before so it's confirmed." }
+    ]
+  },
   rome: {
     name: "Rome", dates: "Jul 11–15", nights: 4,
     color: "#B8450E", accent: "#E8A87C", bg: "#FDF6F0", emoji: "🇮🇹",
@@ -247,7 +269,7 @@ const CITIES = {
       { attraction: "Pantheon", date: "Mon, Jul 13", urgency: "LOW", bookWhen: "Book a few days ahead or walk up", price: "€5 adults / free under 18", how: "✅ OFFICIAL: pantheon.cultura.gov.it — simple online booking. Can also buy at the door with short queues at opening (9am). No scam risk here — low price means resellers don't bother.", notes: "Free for your boys. Quick visit — 30–45 min is plenty." }
     ],
     hotels: [
-      { name: "Aleph Rome Hotel, Curio Collection by Hilton ⭐ BOOKED", primary: true, price: "4 nights · Aleph Suite", loyalty: "Hilton Honors (Curio Collection) — earn/redeem points, Gold/Diamond perks", desc: "✅ CONFIRMED — Via di San Basilio, 15, Rome 00187. Check-in Sat Jul 11 at 3:00pm / Check-out Wed Jul 15 at 12:00pm. 1× Aleph Suite for 2 adults + 2 children. Guest: Tanzeem Choudhury. Phone: +39 06 422 901. A 1930s bank headquarters transformed into a striking 80-room hotel, steps from Via Veneto. The original marble floors, onyx paneling, and vault door remain — dramatic character at every turn. Rooftop pool and Sky Blu restaurant with city panoramas, underground spa with hammam and jacuzzi in the old bank vault. Bespoke family experience with kids' menu and dedicated amenities." },
+      { name: "Aleph Rome Hotel, Curio Collection by Hilton ⭐ BOOKED", primary: true, price: "4 nights · Aleph Suite", loyalty: "Hilton Honors #859112246 (Gold) — complimentary Wi-Fi, 5th night free on reward stays, 80% bonus points, room upgrade (subject to availability), late checkout", desc: "✅ CONFIRMED — Via di San Basilio, 15, Rome 00187. Check-in Sat Jul 11 at 3:00pm / Check-out Wed Jul 15 at 12:00pm. 1× Aleph Suite for 2 adults + 2 children. Guest: Tanzeem Choudhury. Phone: +39 06 422 901. A 1930s bank headquarters transformed into a striking 80-room hotel, steps from Via Veneto. The original marble floors, onyx paneling, and vault door remain — dramatic character at every turn. Rooftop pool and Sky Blu restaurant with city panoramas, underground spa with hammam and jacuzzi in the old bank vault. Bespoke family experience with kids' menu and dedicated amenities." },
       { name: "The Rome EDITION", primary: false, price: "~€500–800/night", loyalty: "Marriott Bonvoy — full points earning/redemption, elite member benefits", desc: "Ian Schrager's minimalist masterpiece near Via Veneto. Tucked down a private cobblestone lane, the lobby opens into a sunken garden — a hidden oasis. Modern Italian design with restraint and warmth. Rooftop pool, excellent Anima restaurant, family rooms available. Walking distance to Spanish Steps, Trevi Fountain, and Borghese Gardens. The aesthetic matches your Hotel L'Oscar and New Hotel Athens taste perfectly." },
       { name: "The Pantheon Iconic Rome Hotel, Autograph Collection", primary: false, price: "~€450–700/night", loyalty: "Marriott Bonvoy (Autograph Collection) — full points, elite upgrades", desc: "Boutique hotel steps behind the Pantheon with a rooftop terrace serving breakfast with jaw-dropping dome views. Modern design layered onto Rome's golden-age architecture. Michelin-starred Idylio restaurant on-site. Family of four can book interconnecting rooms. Ideal location for the Centro Storico — Piazza Navona, Campo de' Fiori, and Trastevere all walkable." },
       { name: "Hotel Vilòn", primary: false, price: "~€400–650/night", loyalty: "iPrefer (Preferred Hotels) — points, upgrades, welcome amenity", desc: "Only 18 rooms inside Palazzo Borghese — feels like staying in a wealthy Roman friend's home. Venetian mosaic floors, contemporary furniture, a secluded courtyard garden. Adelaide Restaurant on-site. Intimate, quiet, full of character. Near the Spanish Steps and Villa Borghese. The most 'boutique' option — similar vibe to Hotel Bairro Alto in Lisbon." },
@@ -275,7 +297,7 @@ const CITIES = {
       { attraction: "Toledo Day Trip (Train)", date: "Sun, Jul 19", urgency: "LOW", bookWhen: "Book train 1–2 weeks ahead", price: "~€13–26 pp round trip (AVANT train)", how: "✅ OFFICIAL: renfe.com — AVANT high-speed from Atocha to Toledo, 33 min. ⚠️ Only buy train tickets from renfe.com — several fake 'renfe' reseller sites exist that charge double. Toledo Cathedral: buy tickets at the door (€12.50 adults).", notes: "Toledo's attractions are walkable from the station. No advance tickets needed for most sites except the Cathedral." }
     ],
     hotels: [
-      { name: "The Madrid EDITION ⭐ BOOKED", primary: true, price: "€4,672.24 total (5 nights, 2 rooms)", loyalty: "Marriott Bonvoy — full points, elite benefits, rooftop pool", desc: "✅ CONFIRMED — Ref #88087496. Check-in Wed Jul 15 at 3:00pm / Check-out Mon Jul 20 at 12:00pm. 2× Superior with Terrace rooms (1 King each, interior view, terrace). Ian Schrager's Madrid outpost, set in a tranquil plaza near Puerta del Sol. 77 connecting rooms and suites specifically designed for families. Madrid's largest luxury rooftop infinity pool, Oroya restaurant (Peruvian by Chef Diego Muñoz), Punch Room cocktail bar. Staff greet kids by name and deliver personalized cookies to the room. Walking distance to the Prado, Reina Sofía, and Retiro Park." },
+      { name: "The Madrid EDITION ⭐ BOOKED", primary: true, price: "€4,672.24 total (5 nights, 2 rooms)", loyalty: "Marriott Bonvoy #118155469 (Gold Elite) — points, complimentary Wi-Fi, late checkout, enhanced room upgrade", desc: "✅ CONFIRMED — Ref #88087496. Check-in Wed Jul 15 at 3:00pm / Check-out Mon Jul 20 at 12:00pm. 2× Superior with Terrace rooms (1 King each, interior view, terrace). Ian Schrager's Madrid outpost, set in a tranquil plaza near Puerta del Sol. 77 connecting rooms and suites specifically designed for families. Madrid's largest luxury rooftop infinity pool, Oroya restaurant (Peruvian by Chef Diego Muñoz), Punch Room cocktail bar. Staff greet kids by name and deliver personalized cookies to the room. Walking distance to the Prado, Reina Sofía, and Retiro Park." },
       { name: "URSO Hotel & Spa", primary: false, price: "~€350–550/night", loyalty: "Marriott Bonvoy (via Design Hotels) — earn/redeem points, elite benefits", desc: "A 1920s palace converted into a 78-room boutique hotel in the Alonso Martínez area. Neoclassical façade, interiors by architect Antonio Obrador — clean lines, natural materials, beautiful courtyard. Subterranean spa with a gorgeous pool. Interconnecting rooms available. Quiet residential street but walkable to everything. Similar spirit to your Hotel Sans Souci Wien — understated luxury with soul." },
       { name: "Gran Hotel Inglés", primary: false, price: "~€400–600/night", loyalty: "Marriott Bonvoy (Tribute Portfolio) — full points, elite benefits", desc: "Madrid's oldest grand hotel (1886), stunningly restored. In the Barrio de las Letras (Literary Quarter) — cobblestone streets, independent bookshops, and tapas bars at your doorstep. Lobo 8 restaurant, beautiful lobby bar. Rooms blend 19th-century architecture with modern design. The most characterful option with the best neighborhood for evening tapas crawls." },
       { name: "Hotel Palacio del Retiro, Autograph Collection", primary: false, price: "~€350–500/night", loyalty: "Marriott Bonvoy (Autograph Collection) — full points, elite upgrades", desc: "A palatial early 20th-century home converted into a 50-room boutique hotel, directly facing Retiro Park. In the Art Triangle between the Prado, Thyssen, and Reina Sofía museums. Protected heritage building, discreet and elegant. The best value Bonvoy option with the most prestigious museum-district location." }
@@ -304,7 +326,7 @@ const CITIES = {
       { attraction: "Montserrat", date: "N/A", urgency: "MEDIUM", bookWhen: "Trip cut short — save for next visit", price: "Tot Montserrat ~€53 adults / ~€32 ages 4–13", how: "If your plans change and you gain a day, buy the 'Tot Montserrat' combined ticket at fgc.cat — includes round-trip train, rack railway, museum entry, and cafeteria meal.", notes: "Requires a full day. Cut from itinerary due to Jul 25 departure flight. La Escolania boys' choir performs at 1pm." }
     ],
     hotels: [
-      { name: "Monument Hotel ⭐ BOOKED", primary: true, price: "5 nights · 2× Deluxe Double Rooms", loyalty: "iPrefer (Preferred Hotels) — earn up to $250 in rewards, upgrades, welcome amenity", desc: "✅ CONFIRMED — Ref #9093066725525. Passeig de Gràcia 75, Barcelona 08008. Phone: +34 93 548 2000. Check-in Mon Jul 20 at 3:00pm / Check-out Sat Jul 25 at 12:00pm (late checkout requested for Room 2). 2× Deluxe Double Rooms for 2+2 guests. Guest: Tanzeem Choudhury. Cancellation: free until Jul 18 3pm; 1-night penalty Jul 18–20. A neo-Gothic 1895 palazzo on Passeig de Gràcia — steps from Casa Batlló and La Pedrera. Five-star luxury with restrained elegance, outdoor pool, spa, jacuzzi. Home to Lasarte (3 Michelin stars by Martín Berasategui) plus bistro-style Oria. Rated 9.1 Wonderful." },
+      { name: "Monument Hotel ⭐ BOOKED", primary: true, price: "5 nights · 2× Deluxe Double Rooms", loyalty: "iPrefer #358B73 (Preferred Hotels) — earn up to $250 in rewards, upgrades, welcome amenity", desc: "✅ CONFIRMED — Ref #67108SG010571. Passeig de Gràcia 75, Barcelona 08008. Phone: +34 93 548 2000. Check-in Mon Jul 20 at 3:00pm / Check-out Sat Jul 25 at 12:00pm (late checkout requested for Room 2). 2× Deluxe Double Rooms for 2+2 guests. Guest: Tanzeem Choudhury. Cancellation: free until Jul 18 3pm; 1-night penalty Jul 18–20. A neo-Gothic 1895 palazzo on Passeig de Gràcia — steps from Casa Batlló and La Pedrera. Five-star luxury with restrained elegance, outdoor pool, spa, jacuzzi. Home to Lasarte (3 Michelin stars by Martín Berasategui) plus bistro-style Oria. Rated 9.1 Wonderful." },
       { name: "El Palace Barcelona", primary: false, price: "~€450–750/night", loyalty: "IHG One Rewards (via Leading Hotels of the World) + iPrefer", desc: "Built in 1919 by César Ritz himself. Opulent Belle Époque interiors with a modern renovation — marble columns, gilded ceilings, stunning garden restaurant. On Gran Via near Passeig de Gràcia, walking distance to Gaudí masterpieces. Pool, spa, kids' welcome kits, interconnecting rooms. The grand dame choice — similar in spirit to the Fairmont Amman you loved." },
       { name: "Majestic Hotel & Spa", primary: false, price: "~€500–800/night", loyalty: "Marriott Bonvoy (LXR Hotels & Resorts) — full points, elite benefits", desc: "On Passeig de Gràcia with rooftop pool overlooking Casa Batlló and La Pedrera — the best Gaudí views from any hotel in the city. Family-owned since 1918, recently renovated. SOLC restaurant (one Michelin star), full spa. The strongest Bonvoy option in Barcelona if you want to maximize points. Connecting rooms available for families." },
       { name: "Hotel Neri", primary: false, price: "~€400–600/night", loyalty: "iPrefer (Preferred Hotels) — points, upgrades, welcome amenity", desc: "A medieval palace in the heart of the Gothic Quarter, on a quiet square (Plaça Sant Felip Neri — the one with the shrapnel marks from the Civil War). Rooftop plunge pool, exposed stone walls, moody-chic interiors. Only 22 rooms — extremely intimate. Walking distance to the Cathedral and Picasso Museum. The most 'New Hotel Athens' vibe of the Barcelona options." },
@@ -312,22 +334,139 @@ const CITIES = {
       { name: "H10 Metropolitan", primary: false, price: "~€200–400/night", loyalty: "H10 Rewards (own loyalty program) — 5% discount, points for stays, free nights", desc: "A beautifully renovated historic building on Rambla Catalunya, steps from Plaça Catalunya. Interiors by celebrated designer Lázaro Rosa-Violán channel Barcelona's 19th-century industrial era — wide-plank wood floors, antique window frames, leather Chesterfields mixed with striking contemporary art. Rooftop plunge pool with Eixample views, 85 rooms including triple rooms for families. The most affordable option with serious design credentials — Condé Nast Traveler named it Best Urban Hotel in Spain. Not part of the big loyalty chains, but H10's own program offers direct-booking discounts." }
     ],
     days: [
-      { day: 11, title: "Arrival & Gothic Quarter", date: "Mon, Jul 20", morning: "Check out of The Madrid EDITION by 12:00pm. 🚄 12:22pm train from Madrid Atocha → Barcelona Sants (Locator: TJC6G1, ~2h 30m, arriving ~2:50pm). Taxi or metro to Monument Hotel (Passeig de Gràcia 75, Ref #9093066725525). Check-in from 3:00pm — 2× Deluxe Double Rooms.", afternoon: "Settle in at Monument Hotel by ~3:30pm. Then head to the Barri Gòtic (Gothic Quarter) — lose yourselves in the medieval lanes. Cathedral of Barcelona (climb the roof for panoramic views), the ancient Roman temple columns hidden in a courtyard (Temple of Augustus — the boys will love discovering these), and Plaça del Rei (medieval royal square).", evening: "🍽️ 8:30pm — Dos Pebrots (Carrer del Doctor Dou, 19 — Raval, walkable from the Gothic Quarter). A beloved local gem celebrating Mediterranean cuisine with seasonal tasting menus and à la carte. Every dish honours the product and the season — try the two peppers appetizer (an explosion of flavour that gives the restaurant its name) and the gnocchi with egg yolk and stracciatella. 🔖 Reservation confirmed for 20:30. Then walk Las Ramblas, but only as a spectacle — don't eat there.", local: "Duck into Caelum (Carrer de la Palla) — a café in a medieval cellar that sells sweets made by monks and nuns from monasteries across Spain. Atmospheric and unique. Also visit El Xampanyet (Carrer de Montcada, 22) — a historic cava bar in Born that has kept its authentic soul despite tourist attention. Classic tapas, perfectly executed." },
+      { day: 11, title: "Arrival & Gothic Quarter", date: "Mon, Jul 20", morning: "Check out of The Madrid EDITION by 12:00pm. 🚄 12:22pm train from Madrid Atocha → Barcelona Sants (Locator: TJC6G1, ~2h 30m, arriving ~2:50pm). Taxi or metro to Monument Hotel (Passeig de Gràcia 75, Ref #67108SG010571). Check-in from 3:00pm — 2× Deluxe Double Rooms.", afternoon: "Settle in at Monument Hotel by ~3:30pm. Then head to the Barri Gòtic (Gothic Quarter) — lose yourselves in the medieval lanes. Cathedral of Barcelona (climb the roof for panoramic views), the ancient Roman temple columns hidden in a courtyard (Temple of Augustus — the boys will love discovering these), and Plaça del Rei (medieval royal square).", evening: "🍽️ 8:30pm — Dos Pebrots (Carrer del Doctor Dou, 19 — Raval, walkable from the Gothic Quarter). A beloved local gem celebrating Mediterranean cuisine with seasonal tasting menus and à la carte. Every dish honours the product and the season — try the two peppers appetizer (an explosion of flavour that gives the restaurant its name) and the gnocchi with egg yolk and stracciatella. 🔖 Reservation confirmed for 20:30. Then walk Las Ramblas, but only as a spectacle — don't eat there.", local: "Duck into Caelum (Carrer de la Palla) — a café in a medieval cellar that sells sweets made by monks and nuns from monasteries across Spain. Atmospheric and unique. Also visit El Xampanyet (Carrer de Montcada, 22) — a historic cava bar in Born that has kept its authentic soul despite tourist attention. Classic tapas, perfectly executed." },
       { day: 12, title: "Gaudí Day", date: "Tue, Jul 21", morning: "Relaxed morning — your Sagrada Família tower tour isn't until 11:30am. Start with breakfast at the hotel or a local café, then explore the Eixample neighborhood's modernista architecture along Passeig de Gràcia at a leisurely pace. 🎫 11:15am — Sagrada Família entry (via Carrer de la Marina). 🎫 11:30am — Nativity Tower tour (Torre del Nacimiento). Tickets confirmed for all four: Tanzeem, Rajeev, Zameer (General, €36 each), and Ameer (under 11, free). Reservation #100592048. Bring passports — ID required at entry. Download the Sagrada Família Official app beforehand and enter your reservation locator for the audio guide. Allow 2 hours for the full visit including the tower.", afternoon: "Park Güell (timed entry, book ahead). The mosaic terrace and gingerbread gatehouses are iconic. Then walk downhill through the Gràcia neighborhood — a village within the city. Lunch at La Pepita (legendary patatas bravas and creative tapas, packed with locals).", evening: "Early dinner at Hermòs Bar de Peix inside Mercat de la Llibertat in Gràcia — a hidden seafood counter inside the local market with seasonal dishes, natural wines, and just a few stools at a bar. Far from touristy, incredible quality. 🔖 Book Hermòs via Instagram or phone — only a few seats. Aim for 7:30–8pm to leave time for Casa Batlló. 🎫 9:00pm — Casa Batlló (Passeig de Gràcia, 43 — a 5-minute walk from Monument Hotel). ✅ Confirmed. Ref #101083422. Gold Ticket with free cancellation. Gaudí's masterpiece at night is pure magic — the dragon-scale roof, the bone-like balconies, and the light-filled interior are even more atmospheric after dark. Excellent AR/VR guide included. Allow 1–1.5 hours. You'll be back at the hotel by 10:30pm.", local: "In Gràcia, stop at Plaça del Sol or Plaça de la Vila de Gràcia — neighborhood squares where local families gather, kids play, and the vibe is completely untouristy." },
       { day: 13, title: "Born, Picasso & Beach", date: "Wed, Jul 22", morning: "Relaxed morning — Picasso isn't until 12:30pm. Start with El Born neighborhood — Barcelona's coolest quarter. Browse boutiques, see the Born Cultural Centre (excavated medieval streets under glass). 🎩 MAGIC: Stop at El Rey de la Magia (Carrer de la Princesa, 11 — right in El Born, nearest metro Jaume I). The oldest magic shop in Europe, open since 1881. Three spaces: a shop crammed with tricks, books, and equipment; a museum of historic magic props; and a tiny 60-seat theater with regular shows (Thu–Sun, €10–20). The owners perform live demonstrations before selling you anything — then take you behind a curtain to a secret area where the trick is revealed. Your 14-year-old will lose his mind here. Buy him something special and check if there's a show on Thursday Jul 23 (your Disfrutar day has a free afternoon — perfect timing).", afternoon: "🎫 12:30pm — Museu Picasso (Carrer de Montcada, 15–23 — steps from El Rey de la Magia, same street). ✅ Confirmed booking for Wed Jul 22 at 12:30pm. Housed in five connected medieval palaces. The collection traces Picasso from age 9 to master — the 14-year-old seeing what Picasso painted at his exact age is a powerful moment. The Las Meninas series (reimagining Velázquez) connects perfectly to your Prado visit. Free for both boys (under 16) — only 2 adult tickets needed. Allow 1.5–2 hours. Then walk to Barceloneta beach — the boys can swim while you grab a drink at a chiringuito (beach bar).", evening: "Start at Can Paixano / La Xampanyeria (Carrer de la Reina Cristina, 7) — a legendary standing cava bar in Barceloneta. €1 glasses of cava, excellent cured meats. Chaotic, fun, totally local — 🔖 no reservation, just elbow in. Then for a proper sit-down seafood dinner, walk to Casa Maians (Carrer de Sant Carles, 28) — one of the few genuinely non-touristy restaurants in Barceloneta. Short seasonal menu on a mirror-board, outstanding black rice with red prawns, and wonderful bombas. 🔖 Reservation recommended — small space.", local: "Skip the tourist paella along the boardwalk. Can Paixano is 2 blocks inland and 10x better at a fraction of the price." },
       { day: 14, title: "⭐ Disfrutar Day", date: "Thu, Jul 23", morning: "A deliberately relaxed morning — you have the meal of a lifetime tonight. Sleep in, enjoy a long breakfast at the hotel. Then stroll to the Mercat del Ninot (directly across the street from Disfrutar) — a beautifully renovated local market. Browse the stalls, grab fresh fruit and coffee. The boys can see where Disfrutar's chefs source their ingredients.", afternoon: "Keep it light — you want to arrive hungry. Walk through the Eixample neighborhood admiring the modernista architecture on every block. Visit the lesser-known Casa Amatller (next to Casa Batlló, far fewer crowds, chocolate tasting included). 🎩 MAGIC: If El Rey de la Magia has a Thursday afternoon show (check schedule at the shop on Wednesday), this is the perfect time — the theater is steps from El Born and you'll be back with hours to spare before Disfrutar. Then head back to the hotel to freshen up and change. Disfrutar is smart-casual but this is the #1 restaurant in the world — dress the occasion. Light snack only if needed.", evening: "🌟 7:15pm — Disfrutar (Carrer de Villarroel, 163). Three Michelin stars, #1 in The World's 50 Best Restaurants. Expect 20–28 courses of avant-garde Mediterranean cuisine from chefs Oriol Castro, Eduard Xatruch and Mateu Casañas (all former elBulli). The 'solid bubbles,' deconstructed ceviche, and famous olive spherifications are sensory theatre — the boys will be mesmerized. Choose between the Classic menu (signature dishes) or the Festival menu (seasonal creations). Wine pairing highly recommended for the adults. Allow 2.5–3 hours. This will be a meal your family talks about for years.", local: "Disfrutar means 'to enjoy' — the chefs actively encourage photos. The ceramic-lined interior is inspired by the Ninot market across the street and the Mediterranean coast. Don't skip the final 'chocolate peppers' — they look exactly like real chillies but are filled with chocolate cream. Pure magic." },
       { day: 15, title: "Montjuïc, Miró & Farewell", date: "Fri, Jul 24", morning: "Fundació Joan Miró on Montjuïc hill — a beautiful building, playful art that kids respond to strongly. Miró's childlike style makes abstract art accessible. The rooftop sculpture garden has amazing views.", afternoon: "MNAC (Museu Nacional d'Art de Catalunya) — the Romanesque collection (1,000-year-old church frescoes rescued from Pyrenean chapels) is unlike anything else in the world. The building itself, at the top of Montjuïc, has commanding views. Take the escalators up, cable car or funicular options for fun transit.", evening: "Your final Barcelona evening. Sunset at Bunkers del Carmel (the locals' secret viewpoint — old Civil War anti-aircraft bunkers with 360° panoramic views of the entire city). Bring snacks and drinks. Go 45 min before sunset. Then farewell dinner at Cal Pep (Plaça de les Olles, 8 — counter-style seafood tapas near the Born, one of Barcelona's most beloved restaurants. The fried baby squid, clams with jamón, and tortillitas de camarones are legendary. Sit at the bar and let Pep's team guide you). 🔖 Reservation essential — book well ahead via their website or phone +34 933 107 961.", local: "On Montjuïc, find the Jardins de Laribal — hidden terraced gardens with fountains and tile work, almost no tourists. The Bunkers del Carmel sunset is the most magical experience in Barcelona that most tourists never find — the walk up is part of the charm." },
-      { day: 16, title: "Departure to London", date: "Sat, Jul 25", morning: "Last morning. La Boqueria market at opening (8am) for a final breakfast grazing — fresh juice, jamón ibérico, fruit cups, seafood. Or grab ensaïmadas (spiral pastries) from a local bakery. Check out of Monument Hotel (12:00pm, late checkout requested for Room 2). ✈️ BA 477 — BCN T1 dep 2:40pm → LHR T5 arr 4:05pm (2h 25m, non-stop). Confirmation: BA4WAJ. Head to BCN airport by 12:00pm (taxi ~€40, 25 min, or Aerobus from Plaça Catalunya, €6.75, 35 min).", afternoon: "", evening: "", local: "Note: Montserrat (the mountain monastery with the boys' choir) is an incredible day trip but requires a full day — save it for a future Barcelona visit or if your flight changes." }
+      { day: 16, title: "Barcelona → London", date: "Sat, Jul 25", morning: "Last morning in Barcelona. La Boqueria market at opening (8am) for a final breakfast grazing — fresh juice, jamón ibérico, fruit cups, seafood. Or grab ensaïmadas (spiral pastries) from a local bakery. Check out of Monument Hotel (12:00pm, late checkout requested for Room 2). ✈️ BA 477 — BCN T1 dep 2:40pm → LHR T5 arr 4:05pm (2h 25m, non-stop). Confirmation: BA4WAJ. Head to BCN airport by 12:00pm (taxi ~€40, 25 min, or Aerobus from Plaça Catalunya, €6.75, 35 min).", afternoon: "Arrive London Heathrow T5 at 4:05pm. 🏨 Kimpton Fitzroy London — ✅ Confirmed, Ref #67106207. One night, Jul 25. IHG One Rewards #922469870 (Silver Elite). A stunning Victorian building on Russell Square in Bloomsbury. Heathrow Express to Paddington (15 min) then taxi or Tube to Russell Square, or taxi direct from Heathrow (~45 min). Check in, settle into London.", evening: "Final evening of the trip. Bloomsbury is walkable to Covent Garden, Soho, and the British Museum area — plenty of options for a relaxed farewell dinner. Don't stay out too late — but your flight tomorrow isn't until 8:05pm so you have a full last day.", local: "Note: Montserrat (the mountain monastery with the boys' choir) is an incredible day trip but requires a full day — save it for a future Barcelona visit." },
+      { day: 17, title: "London → Home", date: "Sun, Jul 26", morning: "Check out of Kimpton Fitzroy by noon. Full day in London before your evening flight. Last-minute exploring — revisit a favourite spot, pick up souvenirs, or discover something new. The British Museum, National Gallery, or a walk along the South Bank are all nearby.", afternoon: "Late lunch somewhere special, then head to Heathrow. ✈️ VS 0025 — LHR T3 dep 8:05pm → JFK T4 arr 10:50pm (7h 45m, non-stop, Boeing 787-9, Premium class). Confirmation: CW7D6J. Seats 23F, 23G, 24F, 24G. ⚠️ Note: you arrive at LHR T5 from Barcelona but depart from LHR T3 (Virgin Atlantic). Leave central London by ~5:00pm. Tube Piccadilly Line to Heathrow T2/3 (~1 hour) or Heathrow Express to T3 via Paddington.", evening: "Arrive JFK Terminal 4 at 10:50pm. Home to Roosevelt Island. Trip complete.", local: "You have luggage from 18 days of travel — consider storing bags at the Kimpton Fitzroy or a left-luggage service (Stasher or LuggageHero near Russell Square) so you can explore hands-free before heading to Heathrow." }
     ]
   }
 };
 
-let activeCity = 'rome';
+let activeCity = 'london_pre';
 let activeDay = 0;
 let showTravel = false;
 let showTransport = false;
 let showTickets = false;
 let showHotel = false;
+let showFlights = false;
+
+function getFlightsPanelHTML() {
+  const cardStyle = `background:white; border-radius:14px; margin-bottom:0.75rem; border:1.5px solid #e5e5ea; overflow:hidden`;
+  const bodyStyle = `padding:1rem`;
+  const dateStyle = `font-size:0.72rem; font-weight:600; color:#86868b; margin-bottom:0.6rem`;
+  const codeStyle = `font-size:1.4rem; font-weight:700; color:#1d1d1f; line-height:1`;
+  const timeStyle = `font-size:0.85rem; font-weight:600; color:#1d1d1f; margin-top:0.15rem`;
+  const cityStyle = `font-size:0.6rem; color:#86868b; margin-top:0.1rem`;
+  const termStyle = `font-size:0.6rem; font-weight:600; color:#0071e3; margin-top:0.1rem`;
+  const tagStyle = `font-size:0.6rem; font-weight:600; padding:0.2rem 0.5rem; border-radius:4px; display:inline-block; margin:0.15rem 0.15rem 0 0`;
+  const confTag = `${tagStyle} background:#f0f9f0; color:#248a3d`;
+  const seatTag = `${tagStyle} background:#e8f4fd; color:#0071e3`;
+  const planeTag = `${tagStyle} background:#f5f5f7; color:#636366`;
+  const warnTag = `${tagStyle} background:#fff3e0; color:#c77c00`;
+
+  function flightCard(airline, airlineColor, flightNum, classType, date, depCode, depTime, depCity, depTerm, arrCode, arrTime, arrCity, arrTerm, duration, conf, seats, aircraft, warnings) {
+    return `<div style="${cardStyle}">
+      <div style="background:${airlineColor}; color:white; padding:0.6rem 1rem; display:flex; align-items:center; justify-content:space-between">
+        <span style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em">${airline}</span>
+        <span style="font-size:0.6rem; font-weight:600; color:rgba(255,255,255,0.8)">${classType}</span>
+        <span style="font-size:0.7rem; font-weight:600; color:white; background:rgba(0,0,0,0.15); padding:0.15rem 0.5rem; border-radius:4px">${flightNum}</span>
+      </div>
+      <div style="${bodyStyle}">
+        <div style="${dateStyle}">${date}</div>
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.8rem">
+          <div style="text-align:center; min-width:70px">
+            <div style="${codeStyle}">${depCode}</div>
+            <div style="${timeStyle}">${depTime}</div>
+            <div style="${cityStyle}">${depCity}</div>
+            <div style="${termStyle}">${depTerm}</div>
+          </div>
+          <div style="flex:1; position:relative; height:20px; display:flex; align-items:center">
+            <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:0.55rem; font-weight:600; color:#86868b; background:white; padding:0 0.3rem; white-space:nowrap">${duration}</div>
+            <div style="flex:1; height:1.5px; background:#d2d2d7; position:relative"><span style="position:absolute; right:-4px; top:-9px; font-size:14px; color:#86868b">✈</span></div>
+            <div style="position:absolute; bottom:-12px; left:50%; transform:translateX(-50%); font-size:0.5rem; font-weight:600; color:#34c759; text-transform:uppercase; letter-spacing:0.05em">Non-stop</div>
+          </div>
+          <div style="text-align:center; min-width:70px">
+            <div style="${codeStyle}">${arrCode}</div>
+            <div style="${timeStyle}">${arrTime}</div>
+            <div style="${cityStyle}">${arrCity}</div>
+            <div style="${termStyle}">${arrTerm}</div>
+          </div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.15rem">
+          <span style="${confTag}">${conf}</span>
+          <span style="${seatTag}">${seats}</span>
+          <span style="${planeTag}">${aircraft}</span>
+          ${warnings.map(w => `<span style="${warnTag}">⚠ ${w}</span>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  return `<div class="fade-in">
+    <div style="text-align:center; margin-bottom:1rem">
+      <div style="font-family:'DM Sans',sans-serif; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.15em; color:#86868b; margin-bottom:0.3rem">Choudhury / Raizada Family</div>
+      <div style="display:flex; gap:0.4rem; justify-content:center; flex-wrap:wrap">
+        <span style="${confTag}">Virgin: CW7D6J</span>
+        <span style="${confTag}">BA/Iberia: BA4WAJ</span>
+        <span style="font-size:0.6rem; font-weight:600; padding:0.2rem 0.5rem; border-radius:4px; background:#f3e8fd; color:#6929c4; display:inline-block">Train: TJC6G1</span>
+      </div>
+    </div>
+
+    ${flightCard('Virgin Atlantic', '#e50914', 'VS 0046', 'Premium', 'Tuesday, July 7 → Wednesday, July 8', 'JFK', '7:00pm', 'New York', 'Terminal TBD', 'LHR', '7:15am', 'London', 'Terminal 3', '7h 15m', 'CW7D6J', '23D, 23E, 23F, 23G', 'A350-1000', ['Overnight flight'])}
+
+    ${flightCard('British Airways', '#2e3b7b', 'BA 546', 'Economy', 'Saturday, July 11', 'LHR', '6:40am', 'London', 'Terminal 5', 'FCO', '10:15am', 'Rome', 'Terminal 3', '2h 35m', 'BA4WAJ', '', 'A320', ['Leave hotel by 4am', 'LHR T5 — not T3'])}
+
+    ${flightCard('Iberia', '#d4213d', 'IB 660', 'Economy', 'Wednesday, July 15', 'FCO', '1:25pm', 'Rome', 'Terminal 1', 'MAD', '4:00pm', 'Madrid', 'Terminal 4', '2h 35m', 'BA4WAJ', '', 'A320', ['FCO T1 — not T3'])}
+
+    <div style="${cardStyle}">
+      <div style="background:#6929c4; color:white; padding:0.6rem 1rem; display:flex; align-items:center; justify-content:space-between">
+        <span style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em">🚄 High-Speed Train</span>
+        <span style="font-size:0.7rem; font-weight:600; color:white; background:rgba(0,0,0,0.15); padding:0.15rem 0.5rem; border-radius:4px">TJC6G1</span>
+      </div>
+      <div style="${bodyStyle}">
+        <div style="${dateStyle}">Monday, July 20</div>
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.8rem">
+          <div style="text-align:center; min-width:70px">
+            <div style="${codeStyle}">MAD</div>
+            <div style="${timeStyle}">12:22pm</div>
+            <div style="${cityStyle}">Madrid</div>
+            <div style="${termStyle}">Atocha Station</div>
+          </div>
+          <div style="flex:1; position:relative; height:20px; display:flex; align-items:center">
+            <div style="position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:0.55rem; font-weight:600; color:#86868b; background:white; padding:0 0.3rem; white-space:nowrap">~2h 30m</div>
+            <div style="flex:1; height:1.5px; background:#d2d2d7; position:relative"><span style="position:absolute; right:-4px; top:-9px; font-size:14px; color:#86868b">🚄</span></div>
+            <div style="position:absolute; bottom:-12px; left:50%; transform:translateX(-50%); font-size:0.5rem; font-weight:600; color:#34c759; text-transform:uppercase; letter-spacing:0.05em">Direct</div>
+          </div>
+          <div style="text-align:center; min-width:70px">
+            <div style="${codeStyle}">BCN</div>
+            <div style="${timeStyle}">~2:50pm</div>
+            <div style="${cityStyle}">Barcelona</div>
+            <div style="${termStyle}">Sants Station</div>
+          </div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:0.15rem">
+          <span style="${confTag}">TJC6G1</span>
+          <span style="${planeTag}">AVE / Iryo</span>
+          <span style="${warnTag}">⚠ Security screening — arrive 20min early</span>
+        </div>
+      </div>
+    </div>
+
+    ${flightCard('British Airways', '#2e3b7b', 'BA 477', 'Economy', 'Saturday, July 25', 'BCN', '2:40pm', 'Barcelona', 'Terminal 1', 'LHR', '4:05pm', 'London', 'Terminal 5', '2h 25m', 'BA4WAJ', '', 'A320', [])}
+
+    ${flightCard('Virgin Atlantic', '#e50914', 'VS 0025', 'Premium', 'Sunday, July 26', 'LHR', '8:05pm', 'London', 'Terminal 3', 'JFK', '10:50pm', 'New York', 'Terminal 4', '7h 45m', 'CW7D6J', '23F, 23G, 24F, 24G', '787-9', ['LHR T3 — not T5 (arrival terminal)'])}
+
+    <div style="background:white; border-radius:14px; padding:1rem; border:1.5px solid #e5e5ea">
+      <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#86868b; margin-bottom:0.5rem">⚠ Terminal Alerts</div>
+      <div style="font-size:0.72rem; line-height:1.6; padding:0.3rem 0; border-bottom:1px solid #f0f0f0"><b>Jul 11 LHR:</b> Depart <b>T5</b> (BA). Arrived Jul 8 at <b>T3</b> (Virgin).</div>
+      <div style="font-size:0.72rem; line-height:1.6; padding:0.3rem 0; border-bottom:1px solid #f0f0f0"><b>Jul 15 FCO:</b> Depart <b>T1</b> (Iberia). Arrived Jul 11 at <b>T3</b> (BA).</div>
+      <div style="font-size:0.72rem; line-height:1.6; padding:0.3rem 0"><b>Jul 26 LHR:</b> Depart <b>T3</b> (Virgin). Arrived Jul 25 at <b>T5</b> (BA).</div>
+    </div>
+  </div>`;
+}
 
 function render() {
   const city = CITIES[activeCity];
@@ -335,14 +474,31 @@ function render() {
 
   // City Tabs
   document.getElementById('cityTabs').innerHTML = Object.entries(CITIES).map(([key, c]) => `
-    <button class="city-tab ${activeCity === key ? 'active' : ''}"
-      style="${activeCity === key ? `border-color:${c.color}; background:${c.bg}` : ''}"
+    <button class="city-tab ${activeCity === key && !showFlights ? 'active' : ''}"
+      style="${activeCity === key && !showFlights ? `border-color:${c.color}; background:${c.bg}` : ''}"
       onclick="setCity('${key}')">
       <div class="emoji">${c.emoji}</div>
-      <div class="name" style="${activeCity === key ? `color:${c.color}` : ''}">${c.name}</div>
+      <div class="name" style="${activeCity === key && !showFlights ? `color:${c.color}` : ''}">${c.name}</div>
       <div class="nights">${c.nights} nights</div>
     </button>
-  `).join('');
+  `).join('') + `
+    <button class="city-tab ${showFlights ? 'active' : ''}"
+      style="${showFlights ? 'border-color:#0071e3; background:#e8f4fd' : ''}"
+      onclick="toggleFlights()">
+      <div class="emoji">✈️</div>
+      <div class="name" style="${showFlights ? 'color:#0071e3' : ''}">Flights</div>
+      <div class="nights">5 legs</div>
+    </button>
+  `;
+
+  // Show/hide flights vs city content
+  document.getElementById('flightsPanel').style.display = showFlights ? 'block' : 'none';
+  document.getElementById('cityContent').style.display = showFlights ? 'none' : 'block';
+
+  if (showFlights) {
+    document.getElementById('flightsPanel').innerHTML = getFlightsPanelHTML();
+    return;
+  }
 
   // Hotel button label
   document.getElementById('hotelBtnLabel').textContent = `Hotels (${city.hotels.length})`;
@@ -467,8 +623,9 @@ function timeBlock(icon, label, text, color) {
   </div>`;
 }
 
-function setCity(key) { activeCity = key; activeDay = 0; showHotel = false; showTravel = false; showTransport = false; showTickets = false; render(); }
+function setCity(key) { activeCity = key; activeDay = 0; showHotel = false; showTravel = false; showTransport = false; showTickets = false; showFlights = false; render(); }
 function setDay(i) { activeDay = i; render(); }
+function toggleFlights() { showFlights = !showFlights; render(); }
 function togglePanel(panel) {
   if (panel === 'travel') { showTravel = !showTravel; showHotel = false; showTransport = false; showTickets = false; }
   else if (panel === 'transport') { showTransport = !showTransport; showTravel = false; showHotel = false; showTickets = false; }
