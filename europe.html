@@ -204,6 +204,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 013-3h14a3 3 0 013 3v0a3 3 0 01-3 3v0a3 3 0 013 3v0a3 3 0 01-3 3H5a3 3 0 01-3-3v0a3 3 0 013-3v0a3 3 0 01-3-3z"/><path d="M13 6v2M13 10v2M13 14v2M13 18v0"/></svg>
       <span id="ticketsBtnLabel">Tickets</span>
     </button>
+    <button class="action-btn" id="restaurantsBtn" onclick="togglePanel('restaurants')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2M7 2v20M21 15V2v0a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
+      <span id="restaurantsBtnLabel">Dining</span>
+    </button>
     <button class="action-btn" id="hotelBtn" onclick="togglePanel('hotel')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7a2 2 0 012-2h14a2 2 0 012 2v14"/><path d="M3 21h18M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1"/></svg>
       <span id="hotelBtnLabel">Hotels (4)</span>
@@ -214,6 +218,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <div id="travelPanel" class="panel" style="display:none"></div>
   <div id="transportPanel" class="panel" style="display:none"></div>
   <div id="ticketsPanel" class="panel" style="display:none"></div>
+  <div id="restaurantsPanel" class="panel" style="display:none"></div>
   <div id="hotelPanel" class="panel" style="display:none"></div>
 
   <!-- Day Selector -->
@@ -245,6 +250,9 @@ const CITIES = {
   london_pre: {
     name: "London", dates: "Jul 8–11", nights: 3,
     color: "#4A4A6A", accent: "#8E8EAE", bg: "#F2F2F7", emoji: "🇬🇧",
+    restaurants: [
+      { name: "Darjeeling Express", date: "Thu, Jul 9", time: "7:45pm", status: "✅ Confirmed", ref: "OpenTable #13424", address: "Top Floor, Kingly Court, Carnaby Street, W1B 5PW", phone: "020 3375 3772", notes: "Chef Asma Khan's celebrated restaurant — royal Hyderabadi cuisine, all-women kitchen. Set menu changes seasonally." }
+    ],
     travel: "Arrive in London July 8. Three nights to explore before flying to Rome on July 11 at 6:40am from LHR Terminal 5.",
     transport: "🚇 TUBE: The London Underground is the fastest way around. Contactless payment (tap your Amex or phone) works on all Tube, bus, DLR, and Overground — daily spend is auto-capped at the equivalent of a day travelcard (~£8.10/day Zones 1–2). No need to buy an Oyster card. Children under 11 ride free with a paying adult. 🚌 BUS: Red double-deckers cover every corner. Contactless tap-on, no tap-off needed. Night buses run 24/7. 🚕 TAXI/UBER: Black cabs are metered and reliable. Uber works well across London. From Heathrow: Heathrow Express to Paddington (15 min, ~£25pp) or Tube Piccadilly Line (~1 hour, ~£5.50). 👟 REALITY: Central London is very walkable. Most days you'll use the Tube 2–3 times. Contactless eliminates all ticket hassle.",
     tickets: [],
@@ -260,6 +268,13 @@ const CITIES = {
   rome: {
     name: "Rome", dates: "Jul 11–15", nights: 4,
     color: "#B8450E", accent: "#E8A87C", bg: "#FDF6F0", emoji: "🇮🇹",
+    restaurants: [
+      { name: "Al Moro", date: "Sat, Jul 11", time: "7:30pm", status: "✅ Confirmed", ref: "", address: "Vicolo delle Bollette, 13 (near Trevi Fountain)", phone: "+39 06 678 3495", notes: "Fellini's favourite trattoria. Spaghetti alla Moro (signature carbonara with red pepper flakes), fried artichokes. Dress smartly." },
+      { name: "Roscioli Salumeria con Cucina", date: "Mon, Jul 13", time: "12:30pm", status: "✅ Confirmed", ref: "", address: "Via dei Giubbonari, 21 (near Campo de' Fiori)", phone: "", notes: "Legendary cacio e pepe, world-class charcuterie and cheese boards, curated natural wine list. Book via salumeria@roscioli.com." },
+      { name: "Flavio al Velavevodetto", date: "Tue, Jul 14", time: "8:15pm", status: "✅ Confirmed", ref: "", address: "Via di Monte Testaccio, 97 (Testaccio)", phone: "+39 06 5744194", notes: "Built into Monte Testaccio — an ancient hill of broken Roman pottery. Cacio e pepe and amatriciana are legendary. Farewell Roman dinner." },
+      { name: "Taverna Trilussa", date: "Sun, Jul 12", time: "Lunch", status: "🔖 Book", ref: "", address: "Via del Politeama, 23 (Trastevere)", phone: "", notes: "Generous pasta portions served from the pan. Book via TheFork." },
+      { name: "Armando al Pantheon", date: "Tue, Jul 14", time: "Lunch", status: "🔖 Book", ref: "", address: "Salita dei Crescenzi, 31 (near Pantheon)", phone: "", notes: "One of the hardest reservations in Rome. Book weeks ahead via website or TheFork." }
+    ],
     travel: "✈️ London → Rome: BA 546, LHR T5 dep 6:40am → FCO T3 arr 10:15am (2h 35m, non-stop). Confirmation: BA4WAJ. Taxi from Fiumicino flat rate €50, or Leonardo Express train to Termini €14pp (32 min).",
     transport: "🚇 METRO: Rome has 3 lines (A, B, C). You'll mainly use A (Vatican/Spanish Steps) and B (Colosseum/Termini). Runs 5:30am–11:30pm weekdays, until 1:30am Fri/Sat. Single ticket (BIT): €1.50, valid 100 min across metro/bus/tram. 🚌 BUS & TRAM: Extensive network fills gaps the metro doesn't cover. Especially useful for Trastevere, Testaccio, and the Jewish Ghetto. Validate your ticket on board. 🚕 TAXI/UBER: White licensed taxis are metered and reliable. Uber works in Rome but availability is limited — Free Now app is better for hailing cabs. Airport taxi to city center is a flat €50 from Fiumicino. 🎫 PASSES: For 5 days, buy individual BIT tickets (€1.50 each) as needed — you'll walk most of the time in the historic center. A 48h or 72h pass (€12.50/€18) only pays off if you ride 4+ times daily. Tap-and-go contactless payment now works on metro turnstiles. Kids under 10 ride free. The Roma Pass (€53/72h) bundles transport + 2 museum entries — worth considering if you'd use it for the Colosseum + Borghese. 👟 REALITY: Rome's historic center is very walkable. Most days you'll only need transit 1–2 times. Taxis are your friend for tired kids after long days.",
     tickets: [
@@ -286,6 +301,13 @@ const CITIES = {
   madrid: {
     name: "Madrid", dates: "Jul 15–20", nights: 5,
     color: "#1B4D6E", accent: "#7FB3D3", bg: "#F0F5F9", emoji: "🇪🇸",
+    restaurants: [
+      { name: "Casa Lucio", date: "Wed, Jul 15", time: "~9:30pm", status: "🔖 Book", ref: "", address: "Calle de la Cava Baja, 35 (La Latina)", phone: "", notes: "Madrid institution since 1974. Famous huevos rotos. Where the King of Spain eats. Reservation essential." },
+      { name: "Casa Alberto", date: "Thu, Jul 16", time: "Lunch", status: "🔖 Book", ref: "", address: "Calle de las Huertas, 18 (Literary Quarter)", phone: "", notes: "Since 1827, Cervantes lived upstairs. Oxtail croquetas, slow-braised bull's tail. Reservation recommended for dining room." },
+      { name: "La Cripta Mágica", date: "Fri, Jul 17", time: "6:30pm", status: "✅ Confirmed", ref: "El Entretenedor", address: "Calle de Tarragona, 15 (near Atocha)", phone: "", notes: "Magic show, not restaurant — but confirmed booking. Secret password door, 19th-century theater." },
+      { name: "Sala de Despiece", date: "Sat, Jul 18", time: "Dinner", status: "🔖 Book", ref: "", address: "Calle de Ponzano, 11 (Malasaña)", phone: "", notes: "Butcher-shop-turned-tapas-bar. Tuna tataki, Iberian pork. 90% local crowd. Reservation essential via website." },
+      { name: "StreetXO", date: "Sun, Jul 19", time: "Dinner", status: "🔖 Book", ref: "", address: "", phone: "", notes: "David Muñoz's casual concept. Asian-Spanish fusion. Reservation recommended." }
+    ],
     travel: "✈️ Rome → Madrid: IB 660 (Iberia), FCO T1 dep 1:25pm → MAD T4 arr 4:00pm (2h 35m, non-stop). Confirmation: BA4WAJ. ⚠️ Departure from FCO Terminal 1 (not T3). Taxi from Barajas flat rate ~€33, or metro Line 8 to city centre.",
     transport: "🚇 METRO: Madrid's metro is superb — 13 lines, clean, fast, air-conditioned. Covers virtually everywhere you'd want to go. Runs 6am–1:30am daily. Single ticket: €1.50–2.00 depending on distance. 🚌 BUS: Blue EMT city buses complement the metro well. Useful for Malasaña, La Latina, and routes the metro doesn't cover directly. Night buses (búhos) run all night from Cibeles. 🚕 TAXI/UBER: White taxis with red stripe are metered, honest, and plentiful. Uber and Cabify both work well in Madrid. Airport to city center: flat rate ~€33. 🎫 PASSES: The Tourist Travel Pass (Título Turístico) is excellent value. Buy a 5-day Zone A pass (~€35 per adult) at any metro station — loaded onto a Tarjeta Multi card (€2.50). Gives unlimited metro, bus, and Cercanías trains including the airport supplement. Children under 11 get 50% off (~€17.50). Under 4s ride free. The Tarjeta Multi 10-trip ticket (€12.20) can be shared by tapping once per person — great for families doing fewer trips. Zone T pass covers Toledo/Segovia day trips by Cercanías (but NOT the AVE high-speed train). 👟 REALITY: Madrid is very walkable but spread out. You'll use the metro 2–4 times daily. The 5-day tourist pass is the clear winner for your family — buy it at Barajas airport on arrival.",
     tickets: [
@@ -314,11 +336,18 @@ const CITIES = {
   barcelona: {
     name: "Barcelona", dates: "Jul 20–25", nights: 5,
     color: "#8B2252", accent: "#D4829C", bg: "#FAF0F4", emoji: "🇪🇸",
+    restaurants: [
+      { name: "Dos Pebrots", date: "Mon, Jul 20", time: "8:30pm", status: "✅ Confirmed", ref: "", address: "Carrer del Doctor Dou, 19 (Raval)", phone: "", notes: "Seasonal Mediterranean cuisine. Two peppers appetizer, gnocchi with egg yolk and stracciatella." },
+      { name: "Disfrutar", date: "Thu, Jul 23", time: "7:15pm", status: "✅ Confirmed", ref: "", address: "Carrer de Villarroel, 163 (Eixample)", phone: "", notes: "World's #1 restaurant. Smart-casual but dress the occasion. Arrive hungry — this is a once-in-a-lifetime meal." },
+      { name: "Hermòs Bar de Peix", date: "Tue, Jul 21", time: "~7:30pm", status: "🔖 Book", ref: "", address: "Mercat de la Llibertat (Gràcia)", phone: "", notes: "Hidden seafood counter inside Gràcia's local market. Only a few seats. Book via Instagram or phone." },
+      { name: "Casa Maians", date: "Wed, Jul 22", time: "Dinner", status: "🔖 Book", ref: "", address: "Carrer de Sant Carles, 28 (Barceloneta)", phone: "", notes: "One of the few genuinely non-touristy restaurants in Barceloneta. Black rice with red prawns. Reservation recommended." },
+      { name: "Cal Pep", date: "Fri, Jul 24", time: "Dinner", status: "🔖 Book", ref: "", address: "Plaça de les Olles, 8 (Born)", phone: "+34 933 107 961", notes: "Counter-style seafood tapas. Fried baby squid, clams with jamón. Sit at the bar. Reservation essential via website." }
+    ],
     travel: "🚄 Madrid → Barcelona: High-speed train from Madrid Atocha → Barcelona Sants (~2h 30m). Two operators to compare: Renfe AVE (renfe.com) or Iryo (iryo.eu) — both run the same route, same stations, same journey time. Compare prices on thetrainline.com. Iryo often cheaper (from €28pp) with newer trains. For families: book Iryo Infinita (1st class, 2+1 seating, large bags included) or Renfe Preferente (1st class, meals included). Advance fares best value booked 2+ months ahead. Your 10-year-old gets a child fare on Renfe (~40% off); Iryo pricing is the same for all ages.",
     transport: "🚇 METRO: 12 lines, efficient and covers all major sights. L3 (Green) and L4 (Yellow) are the most useful tourist lines. Runs 5am–midnight Sun–Thu, 5am–2am Fri, 24h Sat. Single ticket: €2.90. 🚌 BUS: Excellent network with V-lines (vertical/north-south) and H-lines (horizontal/east-west) for easy navigation. Contactless tap-to-pay works on most buses. 🚕 TAXI/UBER: Black-and-yellow taxis are safe and metered. Free Now app works well. Uber is available but less common than in Madrid. Airport to city: ~€40 by taxi, or take the Aerobus (€6.75, 35 min to Plaça Catalunya). 🎫 PASSES: For 6 days, buy the Hola BCN 5-day pass (~€43.60 per person) — unlimited metro, bus, tram, FGC trains, Montjuïc funicular, AND airport metro. Buy online at holabarcelona.com for 10% off and collect at any metro machine with a voucher code. Your 10-year-old pays full price (free only under 4). For the Montserrat day trip, the T-Casual 10-trip card (€13, Zone 2 version ~€25.50) is a good supplement. The T-Familiar (8 shared trips, €11.05) is great for the family on lighter transit days. 👟 REALITY: Barcelona is very walkable within neighborhoods but distances between them add up (Gothic Quarter to Sagrada Família is 2.5km). You'll use the metro 3–4 times daily. The Hola BCN pass pays for itself quickly and removes all ticket hassle.",
     tickets: [
       { attraction: "Sagrada Família (with Tower Access)", date: "Tue, Jul 21", urgency: "✅ BOOKED", bookWhen: "PURCHASED — tickets in hand", price: "3× General €36 + 1× Under 11 free = €108 total", how: "✅ Confirmed booking from sagradafamilia.org. Reservation #100592048. Entry 11:15am via Carrer de la Marina. Tower access (Nativity) at 11:30am. All 4 tickets are nominal — bring passports (Tanzeem, Rajeev, Zameer, Ameer). Download the Sagrada Família Official app and enter the reservation locator for audio guide.", notes: "Tickets are named and non-transferable. Keep them until end of visit — staff may check. Arrive 15 min early." },
-      { attraction: "Park Güell (Monumental Zone)", date: "Tue, Jul 21", urgency: "HIGH", bookWhen: "Book 4–6 weeks ahead", price: "€10 adults / €7 ages 7–12 / free under 7", how: "✅ OFFICIAL: park.guell.barcelona.cat — timed 30-min entry windows. Tickets go on sale ~90 days ahead. Book afternoon slot since Sagrada is morning. ⚠️ Avoid parkguell.es or similar lookalike domains.", notes: "30-min entry window but you can stay as long as you like once inside." },
+      { attraction: "Park Güell (Monumental Zone)", date: "Tue, Jul 21", urgency: "✅ BOOKED", bookWhen: "PURCHASED — tickets in hand", price: "€10 adults / €7 ages 7–12 / free under 7", how: "✅ Confirmed booking from park.guell.barcelona.cat. Locator #700637831221. Order #626215124532. Timed entry at 3:00pm.", notes: "30-min entry window but you can stay as long as you like once inside." },
       { attraction: "Museu Picasso", date: "Wed, Jul 22", urgency: "✅ BOOKED", bookWhen: "PURCHASED — tickets in hand", price: "2 adult tickets · free under 16 (both boys free)", how: "✅ Confirmed booking for Wed Jul 22 at 12:30pm. Carrer de Montcada, 15–23, El Born. Audio guide €5 extra.", notes: "Free under 16 — only 2 adult tickets needed. Allow 1.5–2 hours." },
       { attraction: "Casa Batlló (Night Visit)", date: "Tue, Jul 21", urgency: "✅ BOOKED", bookWhen: "PURCHASED — Gold Ticket with free cancellation", price: "4 pax · Gold Ticket", how: "✅ Confirmed. Ref #101083422. Entry at 9:00pm. Passeig de Gràcia, 43 (5 min walk from Monument Hotel). Gold Ticket includes AR/VR guide. Free cancellation available.", notes: "Allow 1–1.5 hours. The night experience is more atmospheric than daytime — fewer crowds, dramatic lighting." },
       { attraction: "El Rey de la Magia (Show)", date: "Thu, Jul 23", urgency: "MEDIUM", bookWhen: "Book 1 week ahead", price: "~€10–20 pp", how: "✅ OFFICIAL: elreydelamagia.com — book shows directly. Thu–Sun performances. The shop at Carrer de la Princesa 11 is walk-in, no ticket needed.", notes: "Visit the shop on Wed Jul 22 (your El Born day), catch a show Thu Jul 23 afternoon before Disfrutar." },
@@ -335,7 +364,7 @@ const CITIES = {
     ],
     days: [
       { day: 11, title: "Arrival & Gothic Quarter", date: "Mon, Jul 20", morning: "Check out of The Madrid EDITION by 12:00pm. 🚄 12:22pm train from Madrid Atocha → Barcelona Sants (Locator: TJC6G1, ~2h 30m, arriving ~2:50pm). Taxi or metro to Monument Hotel (Passeig de Gràcia 75, Ref #67108SG010571). Check-in from 3:00pm — 2× Deluxe Double Rooms.", afternoon: "Settle in at Monument Hotel by ~3:30pm. Then head to the Barri Gòtic (Gothic Quarter) — lose yourselves in the medieval lanes. Cathedral of Barcelona (climb the roof for panoramic views), the ancient Roman temple columns hidden in a courtyard (Temple of Augustus — the boys will love discovering these), and Plaça del Rei (medieval royal square).", evening: "🍽️ 8:30pm — Dos Pebrots (Carrer del Doctor Dou, 19 — Raval, walkable from the Gothic Quarter). A beloved local gem celebrating Mediterranean cuisine with seasonal tasting menus and à la carte. Every dish honours the product and the season — try the two peppers appetizer (an explosion of flavour that gives the restaurant its name) and the gnocchi with egg yolk and stracciatella. 🔖 Reservation confirmed for 20:30. Then walk Las Ramblas, but only as a spectacle — don't eat there.", local: "Duck into Caelum (Carrer de la Palla) — a café in a medieval cellar that sells sweets made by monks and nuns from monasteries across Spain. Atmospheric and unique. Also visit El Xampanyet (Carrer de Montcada, 22) — a historic cava bar in Born that has kept its authentic soul despite tourist attention. Classic tapas, perfectly executed." },
-      { day: 12, title: "Gaudí Day", date: "Tue, Jul 21", morning: "Relaxed morning — your Sagrada Família tower tour isn't until 11:30am. Start with breakfast at the hotel or a local café, then explore the Eixample neighborhood's modernista architecture along Passeig de Gràcia at a leisurely pace. 🎫 11:15am — Sagrada Família entry (via Carrer de la Marina). 🎫 11:30am — Nativity Tower tour (Torre del Nacimiento). Tickets confirmed for all four: Tanzeem, Rajeev, Zameer (General, €36 each), and Ameer (under 11, free). Reservation #100592048. Bring passports — ID required at entry. Download the Sagrada Família Official app beforehand and enter your reservation locator for the audio guide. Allow 2 hours for the full visit including the tower.", afternoon: "Park Güell (timed entry, book ahead). The mosaic terrace and gingerbread gatehouses are iconic. Then walk downhill through the Gràcia neighborhood — a village within the city. Lunch at La Pepita (legendary patatas bravas and creative tapas, packed with locals).", evening: "Early dinner at Hermòs Bar de Peix inside Mercat de la Llibertat in Gràcia — a hidden seafood counter inside the local market with seasonal dishes, natural wines, and just a few stools at a bar. Far from touristy, incredible quality. 🔖 Book Hermòs via Instagram or phone — only a few seats. Aim for 7:30–8pm to leave time for Casa Batlló. 🎫 9:00pm — Casa Batlló (Passeig de Gràcia, 43 — a 5-minute walk from Monument Hotel). ✅ Confirmed. Ref #101083422. Gold Ticket with free cancellation. Gaudí's masterpiece at night is pure magic — the dragon-scale roof, the bone-like balconies, and the light-filled interior are even more atmospheric after dark. Excellent AR/VR guide included. Allow 1–1.5 hours. You'll be back at the hotel by 10:30pm.", local: "In Gràcia, stop at Plaça del Sol or Plaça de la Vila de Gràcia — neighborhood squares where local families gather, kids play, and the vibe is completely untouristy." },
+      { day: 12, title: "Gaudí Day", date: "Tue, Jul 21", morning: "Relaxed morning — your Sagrada Família tower tour isn't until 11:30am. Start with breakfast at the hotel or a local café, then explore the Eixample neighborhood's modernista architecture along Passeig de Gràcia at a leisurely pace. 🎫 11:15am — Sagrada Família entry (via Carrer de la Marina). 🎫 11:30am — Nativity Tower tour (Torre del Nacimiento). Tickets confirmed for all four: Tanzeem, Rajeev, Zameer (General, €36 each), and Ameer (under 11, free). Reservation #100592048. Bring passports — ID required at entry. Download the Sagrada Família Official app beforehand and enter your reservation locator for the audio guide. Allow 2 hours for the full visit including the tower.", afternoon: "🎫 3:00pm — Park Güell (Monumental Zone), timed entry confirmed. Locator #700637831221 / Order #626215124532. The mosaic terrace and gingerbread gatehouses are iconic. Then walk downhill through the Gràcia neighborhood — a village within the city. Lunch at La Pepita (legendary patatas bravas and creative tapas, packed with locals) before heading up, or a snack after coming down.", evening: "Early dinner at Hermòs Bar de Peix inside Mercat de la Llibertat in Gràcia — a hidden seafood counter inside the local market with seasonal dishes, natural wines, and just a few stools at a bar. Far from touristy, incredible quality. 🔖 Book Hermòs via Instagram or phone — only a few seats. Aim for 7:30–8pm to leave time for Casa Batlló. 🎫 9:00pm — Casa Batlló (Passeig de Gràcia, 43 — a 5-minute walk from Monument Hotel). ✅ Confirmed. Ref #101083422. Gold Ticket with free cancellation. Gaudí's masterpiece at night is pure magic — the dragon-scale roof, the bone-like balconies, and the light-filled interior are even more atmospheric after dark. Excellent AR/VR guide included. Allow 1–1.5 hours. You'll be back at the hotel by 10:30pm.", local: "In Gràcia, stop at Plaça del Sol or Plaça de la Vila de Gràcia — neighborhood squares where local families gather, kids play, and the vibe is completely untouristy." },
       { day: 13, title: "Born, Picasso & Beach", date: "Wed, Jul 22", morning: "Relaxed morning — Picasso isn't until 12:30pm. Start with El Born neighborhood — Barcelona's coolest quarter. Browse boutiques, see the Born Cultural Centre (excavated medieval streets under glass). 🎩 MAGIC: Stop at El Rey de la Magia (Carrer de la Princesa, 11 — right in El Born, nearest metro Jaume I). The oldest magic shop in Europe, open since 1881. Three spaces: a shop crammed with tricks, books, and equipment; a museum of historic magic props; and a tiny 60-seat theater with regular shows (Thu–Sun, €10–20). The owners perform live demonstrations before selling you anything — then take you behind a curtain to a secret area where the trick is revealed. Your 14-year-old will lose his mind here. Buy him something special and check if there's a show on Thursday Jul 23 (your Disfrutar day has a free afternoon — perfect timing).", afternoon: "🎫 12:30pm — Museu Picasso (Carrer de Montcada, 15–23 — steps from El Rey de la Magia, same street). ✅ Confirmed booking for Wed Jul 22 at 12:30pm. Housed in five connected medieval palaces. The collection traces Picasso from age 9 to master — the 14-year-old seeing what Picasso painted at his exact age is a powerful moment. The Las Meninas series (reimagining Velázquez) connects perfectly to your Prado visit. Free for both boys (under 16) — only 2 adult tickets needed. Allow 1.5–2 hours. Then walk to Barceloneta beach — the boys can swim while you grab a drink at a chiringuito (beach bar).", evening: "Start at Can Paixano / La Xampanyeria (Carrer de la Reina Cristina, 7) — a legendary standing cava bar in Barceloneta. €1 glasses of cava, excellent cured meats. Chaotic, fun, totally local — 🔖 no reservation, just elbow in. Then for a proper sit-down seafood dinner, walk to Casa Maians (Carrer de Sant Carles, 28) — one of the few genuinely non-touristy restaurants in Barceloneta. Short seasonal menu on a mirror-board, outstanding black rice with red prawns, and wonderful bombas. 🔖 Reservation recommended — small space.", local: "Skip the tourist paella along the boardwalk. Can Paixano is 2 blocks inland and 10x better at a fraction of the price." },
       { day: 14, title: "⭐ Disfrutar Day", date: "Thu, Jul 23", morning: "A deliberately relaxed morning — you have the meal of a lifetime tonight. Sleep in, enjoy a long breakfast at the hotel. Then stroll to the Mercat del Ninot (directly across the street from Disfrutar) — a beautifully renovated local market. Browse the stalls, grab fresh fruit and coffee. The boys can see where Disfrutar's chefs source their ingredients.", afternoon: "Keep it light — you want to arrive hungry. Walk through the Eixample neighborhood admiring the modernista architecture on every block. Visit the lesser-known Casa Amatller (next to Casa Batlló, far fewer crowds, chocolate tasting included). 🎩 MAGIC: If El Rey de la Magia has a Thursday afternoon show (check schedule at the shop on Wednesday), this is the perfect time — the theater is steps from El Born and you'll be back with hours to spare before Disfrutar. Then head back to the hotel to freshen up and change. Disfrutar is smart-casual but this is the #1 restaurant in the world — dress the occasion. Light snack only if needed.", evening: "🌟 7:15pm — Disfrutar (Carrer de Villarroel, 163). Three Michelin stars, #1 in The World's 50 Best Restaurants. Expect 20–28 courses of avant-garde Mediterranean cuisine from chefs Oriol Castro, Eduard Xatruch and Mateu Casañas (all former elBulli). The 'solid bubbles,' deconstructed ceviche, and famous olive spherifications are sensory theatre — the boys will be mesmerized. Choose between the Classic menu (signature dishes) or the Festival menu (seasonal creations). Wine pairing highly recommended for the adults. Allow 2.5–3 hours. This will be a meal your family talks about for years.", local: "Disfrutar means 'to enjoy' — the chefs actively encourage photos. The ceramic-lined interior is inspired by the Ninot market across the street and the Mediterranean coast. Don't skip the final 'chocolate peppers' — they look exactly like real chillies but are filled with chocolate cream. Pure magic." },
       { day: 15, title: "Montjuïc, Miró & Farewell", date: "Fri, Jul 24", morning: "Fundació Joan Miró on Montjuïc hill — a beautiful building, playful art that kids respond to strongly. Miró's childlike style makes abstract art accessible. The rooftop sculpture garden has amazing views.", afternoon: "MNAC (Museu Nacional d'Art de Catalunya) — the Romanesque collection (1,000-year-old church frescoes rescued from Pyrenean chapels) is unlike anything else in the world. The building itself, at the top of Montjuïc, has commanding views. Take the escalators up, cable car or funicular options for fun transit.", evening: "Your final Barcelona evening. Sunset at Bunkers del Carmel (the locals' secret viewpoint — old Civil War anti-aircraft bunkers with 360° panoramic views of the entire city). Bring snacks and drinks. Go 45 min before sunset. Then farewell dinner at Cal Pep (Plaça de les Olles, 8 — counter-style seafood tapas near the Born, one of Barcelona's most beloved restaurants. The fried baby squid, clams with jamón, and tortillitas de camarones are legendary. Sit at the bar and let Pep's team guide you). 🔖 Reservation essential — book well ahead via their website or phone +34 933 107 961.", local: "On Montjuïc, find the Jardins de Laribal — hidden terraced gardens with fountains and tile work, almost no tourists. The Bunkers del Carmel sunset is the most magical experience in Barcelona that most tourists never find — the walk up is part of the charm." },
@@ -350,6 +379,7 @@ let activeDay = 0;
 let showTravel = false;
 let showTransport = false;
 let showTickets = false;
+let showRestaurants = false;
 let showHotel = false;
 let showFlights = false;
 
@@ -465,6 +495,52 @@ function getFlightsPanelHTML() {
       <div style="font-size:0.72rem; line-height:1.6; padding:0.3rem 0; border-bottom:1px solid #f0f0f0"><b>Jul 15 FCO:</b> Depart <b>T1</b> (Iberia). Arrived Jul 11 at <b>T3</b> (BA).</div>
       <div style="font-size:0.72rem; line-height:1.6; padding:0.3rem 0"><b>Jul 26 LHR:</b> Depart <b>T3</b> (Virgin). Arrived Jul 25 at <b>T5</b> (BA).</div>
     </div>
+
+    <div style="background:white; border-radius:14px; padding:1rem; border:1.5px solid #e5e5ea; margin-top:0.75rem">
+      <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#0071e3; margin-bottom:0.6rem">💳 Amex Platinum Lounge Access</div>
+
+      <div style="background:#f0f7ff; border-radius:10px; padding:0.7rem 0.8rem; margin-bottom:0.5rem">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem">
+          <span style="font-size:0.75rem; font-weight:700; color:#1d1d1f">JFK T4 — Jul 7</span>
+          <span style="font-size:0.55rem; font-weight:700; color:#0071e3; background:#e0edff; padding:0.15rem 0.4rem; border-radius:3px">⭐ CENTURION LOUNGE</span>
+        </div>
+        <div style="font-size:0.68rem; color:#555; line-height:1.55">Amex flagship — 2 floors, chef dining, craft cocktails, hidden speakeasy "1850," children's room. Enter from 4pm (3hrs before 7pm departure). T4 is Virgin Atlantic's terminal — direct walk from check-in.</div>
+        <div style="font-size:0.6rem; color:#86868b; margin-top:0.25rem">👥 Guests: $50/adult, $30/child (free if $75K card spend in prior year)</div>
+      </div>
+
+      <div style="background:#f5f5f7; border-radius:10px; padding:0.7rem 0.8rem; margin-bottom:0.5rem">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem">
+          <span style="font-size:0.75rem; font-weight:700; color:#1d1d1f">LHR T5 — Jul 11</span>
+          <span style="font-size:0.55rem; font-weight:700; color:#86868b; background:#e8e8e8; padding:0.15rem 0.4rem; border-radius:3px">SKIP</span>
+        </div>
+        <div style="font-size:0.68rem; color:#888; line-height:1.55">No Centurion Lounge in T5 (it's in T3). 6:40am departure means 4am airport arrival — most lounges not open yet. Not worth the effort.</div>
+      </div>
+
+      <div style="background:#f0fdf4; border-radius:10px; padding:0.7rem 0.8rem; margin-bottom:0.5rem">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem">
+          <span style="font-size:0.75rem; font-weight:700; color:#1d1d1f">FCO T1 — Jul 15</span>
+          <span style="font-size:0.55rem; font-weight:700; color:#248a3d; background:#dcfce7; padding:0.15rem 0.4rem; border-radius:3px">PRIORITY PASS + FAST TRACK</span>
+        </div>
+        <div style="font-size:0.68rem; color:#555; line-height:1.55">Priority Pass lounges available in T1. Check Priority Pass app for current options. <b>Bonus:</b> Flash your Amex Platinum at security for fast-track lane access at FCO — works even with US-issued cards.</div>
+      </div>
+
+      <div style="background:#f0f7ff; border-radius:10px; padding:0.7rem 0.8rem; margin-bottom:0.5rem">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem">
+          <span style="font-size:0.75rem; font-weight:700; color:#1d1d1f">BCN T1 — Jul 25</span>
+          <span style="font-size:0.55rem; font-weight:700; color:#0071e3; background:#e0edff; padding:0.15rem 0.4rem; border-radius:3px">⭐ SALA VIP MIRÓ</span>
+        </div>
+        <div style="font-size:0.68rem; color:#555; line-height:1.55">Premium VIP Lounge via Priority Pass. Sala VIP Miró is excellent — Spanish wine, jamón, olives, cheese, and hot food that rivals airline business class lounges. Children under 12 free (Ameer enters free). Enter from ~12pm for 2:40pm flight.</div>
+      </div>
+
+      <div style="background:#f0f7ff; border-radius:10px; padding:0.7rem 0.8rem">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem">
+          <span style="font-size:0.75rem; font-weight:700; color:#1d1d1f">LHR T3 — Jul 26</span>
+          <span style="font-size:0.55rem; font-weight:700; color:#0071e3; background:#e0edff; padding:0.15rem 0.4rem; border-radius:3px">⭐ CENTURION LOUNGE</span>
+        </div>
+        <div style="font-size:0.68rem; color:#555; line-height:1.55">Centurion Lounge right in your departure terminal. Perfect farewell — end the trip in style. Enter from 5pm (3hrs before 8:05pm departure). British tea cart is a signature feature of the LHR Centurion.</div>
+        <div style="font-size:0.6rem; color:#86868b; margin-top:0.25rem">👥 Guests: $50/adult, $30/child (free if $75K card spend in prior year)</div>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -503,9 +579,11 @@ function render() {
   // Hotel button label
   document.getElementById('hotelBtnLabel').textContent = `Hotels (${city.hotels.length})`;
   document.getElementById('ticketsBtnLabel').textContent = `Tickets (${city.tickets.length})`;
+  document.getElementById('restaurantsBtnLabel').textContent = `Dining (${city.restaurants.length})`;
   document.getElementById('travelBtn').className = `action-btn ${showTravel ? 'active' : ''}`;
   document.getElementById('transportBtn').className = `action-btn ${showTransport ? 'active' : ''}`;
   document.getElementById('ticketsBtn').className = `action-btn ${showTickets ? 'active' : ''}`;
+  document.getElementById('restaurantsBtn').className = `action-btn ${showRestaurants ? 'active' : ''}`;
   document.getElementById('hotelBtn').className = `action-btn ${showHotel ? 'active' : ''}`;
 
   // Travel panel
@@ -562,6 +640,29 @@ function render() {
       `).join('')}
     </div>`;
   } else { tkp.style.display = 'none'; }
+
+  // Restaurants panel
+  const rp = document.getElementById('restaurantsPanel');
+  if (showRestaurants) {
+    rp.style.display = 'block';
+    rp.innerHTML = `<div class="fade-in">
+      <div class="panel-label" style="color:${city.color}">Dining · ${city.name}</div>
+      ${city.restaurants.map(r => `
+        <div style="background:white; border:1.5px solid ${r.status.includes('✅') ? '#dcfce7' : '#fef3c7'}; border-radius:10px; padding:0.9rem 1rem; margin-bottom:0.5rem">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.3rem">
+            <h4 style="font-size:0.92rem; font-weight:600; color:#1a1a2e; margin:0">${r.name}</h4>
+            <span style="font-size:0.6rem; font-family:'DM Sans',sans-serif; font-weight:700; padding:0.15rem 0.45rem; border-radius:4px; ${r.status.includes('✅') ? 'background:#ecfdf5; color:#059669' : 'background:#fffbeb; color:#d97706'}">${r.status}</span>
+          </div>
+          <div style="font-size:0.78rem; font-weight:600; color:${city.color}; margin-bottom:0.3rem">
+            🍽️ ${r.date} · ${r.time}${r.ref ? ` · ${r.ref}` : ''}
+          </div>
+          ${r.address ? `<div style="font-size:0.72rem; color:#636366; margin-bottom:0.2rem">📍 ${r.address}</div>` : ''}
+          ${r.phone ? `<div style="font-size:0.72rem; color:#636366; margin-bottom:0.2rem">📞 ${r.phone}</div>` : ''}
+          <p style="font-size:0.75rem; line-height:1.6; color:#888; margin:0.3rem 0 0 0">${r.notes}</p>
+        </div>
+      `).join('')}
+    </div>`;
+  } else { rp.style.display = 'none'; }
 
   // Hotel panel
   const hp = document.getElementById('hotelPanel');
@@ -623,14 +724,15 @@ function timeBlock(icon, label, text, color) {
   </div>`;
 }
 
-function setCity(key) { activeCity = key; activeDay = 0; showHotel = false; showTravel = false; showTransport = false; showTickets = false; showFlights = false; render(); }
+function setCity(key) { activeCity = key; activeDay = 0; showHotel = false; showTravel = false; showTransport = false; showTickets = false; showRestaurants = false; showFlights = false; render(); }
 function setDay(i) { activeDay = i; render(); }
 function toggleFlights() { showFlights = !showFlights; render(); }
 function togglePanel(panel) {
-  if (panel === 'travel') { showTravel = !showTravel; showHotel = false; showTransport = false; showTickets = false; }
-  else if (panel === 'transport') { showTransport = !showTransport; showTravel = false; showHotel = false; showTickets = false; }
-  else if (panel === 'tickets') { showTickets = !showTickets; showTravel = false; showTransport = false; showHotel = false; }
-  else { showHotel = !showHotel; showTravel = false; showTransport = false; showTickets = false; }
+  if (panel === 'travel') { showTravel = !showTravel; showHotel = false; showTransport = false; showTickets = false; showRestaurants = false; }
+  else if (panel === 'transport') { showTransport = !showTransport; showTravel = false; showHotel = false; showTickets = false; showRestaurants = false; }
+  else if (panel === 'tickets') { showTickets = !showTickets; showTravel = false; showTransport = false; showHotel = false; showRestaurants = false; }
+  else if (panel === 'restaurants') { showRestaurants = !showRestaurants; showTravel = false; showTransport = false; showTickets = false; showHotel = false; }
+  else { showHotel = !showHotel; showTravel = false; showTransport = false; showTickets = false; showRestaurants = false; }
   render();
 }
 
